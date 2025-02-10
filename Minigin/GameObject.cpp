@@ -8,7 +8,7 @@ dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Update()
 {
-	float deltaTime = Time::m_DeltaTime;
+	float deltaTime = Time::GetInstance().m_DeltaTime;
 
 	printf("%f\n", deltaTime);
 }
