@@ -9,6 +9,10 @@ void dae::SceneManager::Update()
 	}
 }
 
+void dae::SceneManager::FixedUpdate() // should have float FixedTime
+{
+}
+
 void dae::SceneManager::Render()
 {
 	for (const auto& scene : m_scenes)

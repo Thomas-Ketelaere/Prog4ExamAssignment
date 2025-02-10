@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include "Singleton.h"
 
 namespace dae
 {
@@ -15,5 +16,11 @@ namespace dae
 		Minigin(Minigin&& other) = delete;
 		Minigin& operator=(const Minigin& other) = delete;
 		Minigin& operator=(Minigin&& other) = delete;
+
+	private:
+		float& m_DeltaTime{ dae::Singleton<float>::GetInstance() };
+
+		int m_MsPerFrame{ 16 }; //60 fps
+		float m_FixedTimeStep{ 0.016f };
 	};
 }

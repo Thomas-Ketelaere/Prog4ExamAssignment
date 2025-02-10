@@ -2,10 +2,16 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include "Time.h"
 
 dae::GameObject::~GameObject() = default;
 
-void dae::GameObject::Update(){}
+void dae::GameObject::Update()
+{
+	float deltaTime = Time::m_DeltaTime;
+
+	printf("%f\n", deltaTime);
+}
 
 void dae::GameObject::Render() const
 {
