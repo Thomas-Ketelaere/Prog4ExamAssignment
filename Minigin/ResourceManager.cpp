@@ -18,13 +18,13 @@ void dae::ResourceManager::Init(const std::filesystem::path& dataPath)
 	}
 }
 
-std::unique_ptr<dae::Texture2D> dae::ResourceManager::LoadTexture(const std::string& file)
+dae::Texture2D* dae::ResourceManager::LoadTexture(const std::string& file)
 {
 	const auto fullPath = m_dataPath/file;
 	const auto filename = fs::path(fullPath).filename().string();
 	if(m_LoadedTextures.find(filename) == m_LoadedTextures.end())
 		m_LoadedTextures.insert(std::pair(filename, std::make_unique<Texture2D>(fullPath.string())));
-	return std::move(m_LoadedTextures.at(filename));
+	return m_LoadedTextures.at(filename).get();
 }
 
 dae::Font* dae::ResourceManager::LoadFont(const std::string& file, uint8_t size)

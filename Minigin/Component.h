@@ -18,6 +18,9 @@ namespace dae
 		virtual void Update() {}
 		virtual void FixedUpdate() {}
 		virtual void Render() const {}
+		
+		GameObject* GetGameObject() const { return m_pGameObject; }
+		Transform* GetTransform() const { return m_pTransform; }
 
 	private:
 		friend class GameObject;

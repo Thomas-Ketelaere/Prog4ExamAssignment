@@ -1,6 +1,14 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
+void dae::SceneManager::Start()
+{
+	for (auto& scene : m_scenes)
+	{
+		scene->Start();
+	}
+}
+
 void dae::SceneManager::Update()
 {
 	for(auto& scene : m_scenes)
@@ -11,6 +19,7 @@ void dae::SceneManager::Update()
 
 void dae::SceneManager::FixedUpdate() // should have float FixedTime
 {
+
 }
 
 void dae::SceneManager::Render()

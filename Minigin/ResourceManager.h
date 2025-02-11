@@ -13,7 +13,7 @@ namespace dae
 	{
 	public:
 		void Init(const std::filesystem::path& data);
-		std::unique_ptr<Texture2D> LoadTexture(const std::string& file);
+		dae::Texture2D* LoadTexture(const std::string& file);
 		dae::Font* LoadFont(const std::string& file, uint8_t size);
 	private:
 		friend class Singleton<ResourceManager>;

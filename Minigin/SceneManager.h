@@ -12,6 +12,7 @@ namespace dae
 	public:
 		Scene& CreateScene(const std::string& name);
 
+		void Start();
 		void Update();
 		void FixedUpdate();
 		void Render();
