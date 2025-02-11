@@ -1,10 +1,10 @@
 #pragma once
 #include <SDL.h>
 #include "Singleton.h"
+#include "Texture2D.h"
 
 namespace dae
 {
-	class Texture2D;
 	/**
 	 * Simple RAII wrapper for the SDL renderer
 	 */
