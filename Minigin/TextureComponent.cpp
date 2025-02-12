@@ -10,6 +10,6 @@ dae::TextureComponent::TextureComponent(const std::string& fullPath)
 
 void dae::TextureComponent::Render() const
 {
-	auto transform = GetTransform()->GetPosition();
+	const auto& transform = GetTransform()->GetPosition();
 	Renderer::GetInstance().RenderTexture(*m_Texture, transform.x, transform.y);
 }
