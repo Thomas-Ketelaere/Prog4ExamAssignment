@@ -12,8 +12,8 @@ namespace dae
 	{
 	public:
 		void Start();
-		virtual void Update();
-		virtual void Render() const;
+		void Update();
+		void Render() const;
 
 		void AddComponent(std::unique_ptr<Component> newComponent);
 		template <typename T>
