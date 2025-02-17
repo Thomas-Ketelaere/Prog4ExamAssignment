@@ -16,10 +16,18 @@ namespace dae
 
 		virtual void Start() {}
 		virtual void Update() {}
+		virtual void LateUpdate() {}
 		virtual void FixedUpdate() {}
 		virtual void Render() const {}
+
+		bool IsMarkedDestroy() { return m_Destroy; }
+
+		virtual void Destroy()
+		{
+			m_Destroy = true;
+		}
 		
-		GameObject* GetGameObject() const { return m_pGameObject; }
+		GameObject* GetParent() const { return m_pGameObject; }
 		Transform* GetTransform() const { return m_pTransform; }
 
 	private:
@@ -28,6 +36,7 @@ namespace dae
 		GameObject* m_pGameObject = nullptr; 
 		Transform* m_pTransform = nullptr; // every component will have a transform, so we just add it in here, instead of adding it to every individual one
 
+		bool m_Destroy{};
 	};
 }
 

@@ -11,16 +11,6 @@ namespace dae
 	class GameObject
 	{
 	public:
-		void Start();
-		void Update();
-		void Render() const;
-
-		void AddComponent(std::unique_ptr<Component> newComponent);
-		template <typename T>
-		T* GetComponent() const;
-
-		void SetPosition(float x, float y);
-
 		GameObject();
 		virtual ~GameObject();
 		GameObject(const GameObject& other) = delete;
@@ -28,10 +18,37 @@ namespace dae
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
+		void Start();
+		void Update();
+		void LateUpdate();
+		void Render() const;
+
+		bool IsMarkedDestroy() { return m_Destroy; }
+
+		void AddComponent(std::unique_ptr<Component> newComponent);
+		void SetWorldPosition(float x, float y);
+
+		void SetParent(GameObject* parentUPtr, bool keepWorldPosition);
+		void RemoveChild(GameObject* child);
+		void AddChild(GameObject* child);
+		void SetLocalPosition(const glm::vec3& position);
+		void SetPositionDirty() { m_PositionIsDirty = true; }
+		void UpdateWorldPosition();
+		bool IsChild(GameObject* child);
+
+		const glm::vec3& GetWorldPosition();
+
+		template <typename T>
+		T* GetComponent() const;
+
 	private:
 		Transform* m_Transform{};
 		// todo: mmm, every gameobject has a texture? Is that correct?
-		std::vector<std::shared_ptr<Component>> m_ComponentsVector;
+		std::vector<std::unique_ptr<Component>> m_ComponentsVector;
+		std::vector<std::unique_ptr<GameObject>> m_Children;
+		GameObject* m_Parent{ nullptr };
+		bool m_Destroy;
+		bool m_PositionIsDirty{};
 	};
 
 	template<typename T>

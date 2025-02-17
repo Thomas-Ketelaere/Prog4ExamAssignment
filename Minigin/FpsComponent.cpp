@@ -7,7 +7,7 @@
 
 void dae::FpsComponent::Start()
 {
-	m_TextComponent = GetGameObject()->GetComponent<TextComponent>();
+	m_TextComponent = GetParent()->GetComponent<TextComponent>();
 }
 
 void dae::FpsComponent::Update()
