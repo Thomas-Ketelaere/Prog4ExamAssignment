@@ -7,14 +7,16 @@ namespace dae
 	class MovementComponent final : public Component
 	{
 	public:
-		MovementComponent();
+		MovementComponent(GameObject* gameObject);
 
 		virtual void Start() override;
 		virtual void Update() override;
 
 
 		void SetSpeed(float newSpeedX, float newSpeedY);
-		void SetRotationSpeed(float newRotationSpeed, glm::vec3& newRotationPoint);
+		void SetRotation(float newRotationSpeed, float rotationPositionX, float rotationPositionY);
+		void SetRotationPoint(float rotationPositionX, float rotationPositionY);
+		void CalculateRadiusAndAngle();
 
 	private:
 		void UpdatePosition();

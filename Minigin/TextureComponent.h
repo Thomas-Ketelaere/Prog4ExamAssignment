@@ -9,7 +9,7 @@ namespace dae
 	class TextureComponent final : public Component
 	{
 	public:
-		TextureComponent(const std::string& fullPath);
+		TextureComponent(GameObject* gameObject, const std::string& fullPath);
 
 		virtual void Render() const override;
 		

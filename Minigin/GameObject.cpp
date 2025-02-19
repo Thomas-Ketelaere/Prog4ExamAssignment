@@ -8,7 +8,7 @@
 
 dae::GameObject::GameObject()
 {
-	auto tempTransform = std::make_unique<Transform>();
+	auto tempTransform = std::make_unique<Transform>(this);
 	m_Transform = tempTransform.get();
 	AddComponent(std::move(tempTransform));
 }
@@ -25,8 +25,8 @@ void dae::GameObject::Start()
 
 void dae::GameObject::Update()
 {
-	float deltaTime = Time::GetInstance().m_DeltaTime;
-	printf("%f\n", deltaTime);
+	//float deltaTime = Time::GetInstance().m_DeltaTime;
+	//printf("%f\n", deltaTime);
 
 	for (std::unique_ptr<Component>& component : m_ComponentsVector)
 	{
@@ -56,8 +56,6 @@ void dae::GameObject::Render() const
 
 void dae::GameObject::AddComponent(std::unique_ptr<Component> newComponent)
 {
-	newComponent->m_pGameObject = this; // this component belongs to this game object
-	newComponent->m_pTransform = m_Transform;
 	m_ComponentsVector.emplace_back(std::move(newComponent));
 }
 
@@ -88,9 +86,9 @@ void dae::GameObject::SetParent(GameObject* parent, bool keepWorldPosition)
 
 void dae::GameObject::RemoveChild(GameObject* child)
 {
-	std::erase_if(m_Children, [&](std::unique_ptr<GameObject>& go)
+	std::erase_if(m_Children, [&](GameObject* go)
 		{ 
-			return go.get() == child;
+			return go == child;
 		});
 }
 
@@ -124,9 +122,9 @@ void dae::GameObject::UpdateWorldPosition()
 
 bool dae::GameObject::IsChild(GameObject* child)
 {
-	for (std::unique_ptr<GameObject>& go : m_Children)
+	for (GameObject* go : m_Children)
 	{
-		if (go.get() == child) return true;
+		if (go == child) return true;
 	}
 
 	return false;

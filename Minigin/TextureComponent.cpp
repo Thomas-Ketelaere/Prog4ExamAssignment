@@ -3,7 +3,8 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 
-dae::TextureComponent::TextureComponent(const std::string& fullPath)
+dae::TextureComponent::TextureComponent(GameObject* gameObject, const std::string& fullPath):
+	Component(gameObject)
 {
 	m_Texture = ResourceManager::GetInstance().LoadTexture(fullPath);
 }

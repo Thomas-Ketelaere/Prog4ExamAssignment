@@ -1,4 +1,5 @@
 #pragma once
+
 namespace dae
 {
 	class GameObject;
@@ -6,7 +7,7 @@ namespace dae
 	class Component
 	{
 	public:
-		Component() = default;
+		Component(GameObject* gameObject);
 		virtual ~Component() = default;
 
 		Component(const Component& other) = delete;
@@ -26,15 +27,16 @@ namespace dae
 		{
 			m_Destroy = true;
 		}
-		
-		GameObject* GetParent() const { return m_pGameObject; }
+	
+
+		GameObject* GetGameObject() const { return m_pGameObject; }
 		Transform* GetTransform() const { return m_pTransform; }
 
 	private:
-		friend class GameObject;
+		//friend class GameObject;
 
 		GameObject* m_pGameObject = nullptr; 
-		Transform* m_pTransform = nullptr; // every component will have a transform, so we just add it in here, instead of adding it to every individual one
+		Transform* m_pTransform = nullptr; //pointer to one transform from GameObject
 
 		bool m_Destroy{};
 	};

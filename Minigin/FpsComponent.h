@@ -7,6 +7,7 @@ namespace dae
 	class FpsComponent final : public Component
 	{
 	public:
+		FpsComponent(GameObject* gameObject);
 
 		virtual void Start() override;
 		virtual void Update() override;

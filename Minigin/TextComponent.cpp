@@ -5,15 +5,13 @@
 #include "Renderer.h"
 #include "Transform.h"
 
-dae::TextComponent::TextComponent(const std::string& text, Font* font):
-	m_Text{text},
-	m_Font{std::move(font)},
-	m_NeedsUpdate{true},
+dae::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font):
+	Component(gameObject),
+	m_Text{ text },
+	m_Font{ std::move(font) },
+	m_NeedsUpdate{ true },
 	m_TextTexture(nullptr)
 {
-	int a{};
-	int b{};
-	a = b;
 }
 
 void dae::TextComponent::Update()

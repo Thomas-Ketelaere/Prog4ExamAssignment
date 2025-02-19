@@ -1,5 +1,10 @@
 #include "Transform.h"
 
+dae::Transform::Transform(GameObject* gameObject):
+	Component(gameObject)
+{
+}
+
 void dae::Transform::SetWorldPosition(const float x, const float y, const float z)
 {
 	m_WorldPosition.x = x;

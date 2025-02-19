@@ -7,6 +7,8 @@ namespace dae
 	class Transform final : public Component
 	{
 	public:
+		Transform(GameObject* gameObject);
+
 		const glm::vec3& GetWorldPosition() const { return m_WorldPosition; }
 		void SetWorldPosition(float x, float y, float z);
 		const glm::vec3& GetLocalPosition() const { return m_LocalPosition; }

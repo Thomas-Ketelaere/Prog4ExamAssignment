@@ -5,9 +5,14 @@
 #include <sstream>
 #include <iomanip>
 
+dae::FpsComponent::FpsComponent(GameObject* gameObject):
+	Component(gameObject)
+{
+}
+
 void dae::FpsComponent::Start()
 {
-	m_TextComponent = GetParent()->GetComponent<TextComponent>();
+	m_TextComponent = GetGameObject()->GetComponent<TextComponent>();
 }
 
 void dae::FpsComponent::Update()

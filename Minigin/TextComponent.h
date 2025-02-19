@@ -10,7 +10,7 @@ namespace dae
 	class TextComponent final : public Component
 	{
 	public:
-		TextComponent(const std::string& text, Font* font);
+		TextComponent(GameObject* gameObject, const std::string& text, Font* font);
 		
 		virtual void Update() override;
 		virtual void Render() const override;
