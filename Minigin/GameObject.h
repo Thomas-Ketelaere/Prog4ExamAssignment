@@ -8,7 +8,7 @@ namespace dae
 	class Texture2D;
 	class Component;
 	// todo: this should become final.
-	class GameObject
+	class GameObject final
 	{
 	public:
 		GameObject();
@@ -29,8 +29,6 @@ namespace dae
 		void SetWorldPosition(float x, float y);
 
 		void SetParent(GameObject* parentUPtr, bool keepWorldPosition);
-		void RemoveChild(GameObject* child);
-		void AddChild(GameObject* child);
 		void SetLocalPosition(const glm::vec3& position);
 		void SetPositionDirty() { m_PositionIsDirty = true; }
 		void UpdateWorldPosition();
@@ -46,6 +44,9 @@ namespace dae
 		T* GetComponent() const;
 
 	private:
+		void RemoveChild(GameObject* child);
+		void AddChild(GameObject* child);
+
 		TransformComponent* m_Transform{};
 		// todo: mmm, every gameobject has a texture? Is that correct?
 		std::vector<std::unique_ptr<Component>> m_ComponentsVector;

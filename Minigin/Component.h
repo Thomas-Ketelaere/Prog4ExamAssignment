@@ -33,7 +33,6 @@ namespace dae
 		TransformComponent* GetTransform() const { return m_pTransform; }
 
 	private:
-		//friend class GameObject;
 
 		GameObject* m_pGameObject = nullptr; 
 		TransformComponent* m_pTransform = nullptr; //pointer to one transform from GameObject
