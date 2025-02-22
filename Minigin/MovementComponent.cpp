@@ -1,5 +1,5 @@
 #include "MovementComponent.h"
-#include "Transform.h"
+#include "TransformComponent.h"
 #include "Time.h"
 #define _USE_MATH_DEFINES
 #include "math.h"
@@ -42,6 +42,7 @@ void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationP
 	m_RotationSpeed = newRotationSpeed;
 	m_RotationPoint.x = rotationPositionX;
 	m_RotationPoint.y = rotationPositionY;
+	CalculateRadiusAndAngle();
 	m_Rotate = true;
 }
 
@@ -49,12 +50,12 @@ void dae::MovementComponent::SetRotationPoint(float rotationPositionX, float rot
 {
 	m_RotationPoint.x = rotationPositionX; 
 	m_RotationPoint.y = rotationPositionY;
+	CalculateRadiusAndAngle();
 	m_Rotate = true;
 }
 
 void dae::MovementComponent::CalculateRadiusAndAngle()
 {
-
 	m_Radius = glm::distance(m_RotationPoint, GetTransform()->GetWorldPosition());
 	m_Angle = atan2(GetTransform()->GetWorldPosition().y - m_RotationPoint.y, GetTransform()->GetWorldPosition().x - m_RotationPoint.x);
 }

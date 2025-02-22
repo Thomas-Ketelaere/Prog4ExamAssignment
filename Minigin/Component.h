@@ -3,7 +3,7 @@
 namespace dae
 {
 	class GameObject;
-	class Transform;
+	class TransformComponent;
 	class Component
 	{
 	public:
@@ -30,13 +30,13 @@ namespace dae
 	
 
 		GameObject* GetGameObject() const { return m_pGameObject; }
-		Transform* GetTransform() const { return m_pTransform; }
+		TransformComponent* GetTransform() const { return m_pTransform; }
 
 	private:
 		//friend class GameObject;
 
 		GameObject* m_pGameObject = nullptr; 
-		Transform* m_pTransform = nullptr; //pointer to one transform from GameObject
+		TransformComponent* m_pTransform = nullptr; //pointer to one transform from GameObject
 
 		bool m_Destroy{};
 	};

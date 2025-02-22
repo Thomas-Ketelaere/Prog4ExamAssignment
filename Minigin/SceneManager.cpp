@@ -22,6 +22,14 @@ void dae::SceneManager::FixedUpdate() // should have float FixedTime
 
 }
 
+void dae::SceneManager::LateUpdate()
+{
+	for (const auto& scene : m_scenes)
+	{
+		scene->LateUpdate();
+	}
+}
+
 void dae::SceneManager::Render()
 {
 	for (const auto& scene : m_scenes)

@@ -8,7 +8,7 @@
 
 dae::GameObject::GameObject()
 {
-	auto tempTransform = std::make_unique<Transform>(this);
+	auto tempTransform = std::make_unique<TransformComponent>(this);
 	m_Transform = tempTransform.get();
 	AddComponent(std::move(tempTransform));
 }
@@ -67,10 +67,8 @@ void dae::GameObject::SetWorldPosition(float x, float y)
 
 void dae::GameObject::SetParent(GameObject* parent, bool keepWorldPosition)
 {
-	if (IsChild(parent) || parent == this || m_Parent == parent)
-		return;
-	if (parent == nullptr)
-		SetLocalPosition(GetWorldPosition());
+	if (IsChild(parent) || parent == this || m_Parent == parent) return;
+	if (parent == nullptr) SetLocalPosition(GetWorldPosition());
 	else
 	{
 		if (keepWorldPosition)
@@ -100,6 +98,7 @@ void dae::GameObject::AddChild(GameObject* child)
 void dae::GameObject::SetLocalPosition(const glm::vec3& position)
 {
 	m_Transform->SetLocalPosition(position.x, position.y, 0.f);
+	SetPositionDirty();
 }
 
 void dae::GameObject::UpdateWorldPosition()
@@ -134,4 +133,10 @@ const glm::vec3& dae::GameObject::GetWorldPosition()
 {
 	UpdateWorldPosition();
 	return m_Transform->GetWorldPosition();
+}
+
+dae::TransformComponent* dae::GameObject::GetTransform()
+{
+	UpdateWorldPosition();
+	return m_Transform;
 }

@@ -3,7 +3,7 @@
 #include <SDL_ttf.h>
 #include "Font.h"
 #include "Renderer.h"
-#include "Transform.h"
+#include "TransformComponent.h"
 
 dae::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font):
 	Component(gameObject),

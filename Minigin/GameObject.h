@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Transform.h"
+#include "TransformComponent.h"
 #include <vector>
 
 namespace dae
@@ -39,13 +39,14 @@ namespace dae
 		const glm::vec3& GetWorldPosition();
 
 		GameObject* GetParent() const { return m_Parent; }
-		Transform* GetTransform() const { return m_Transform; }
+		TransformComponent* GetTransform();
+		
 
 		template <typename T>
 		T* GetComponent() const;
 
 	private:
-		Transform* m_Transform{};
+		TransformComponent* m_Transform{};
 		// todo: mmm, every gameobject has a texture? Is that correct?
 		std::vector<std::unique_ptr<Component>> m_ComponentsVector;
 		std::vector<GameObject*> m_Children;
