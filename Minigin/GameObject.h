@@ -30,7 +30,7 @@ namespace dae
 
 		void SetParent(GameObject* parentUPtr, bool keepWorldPosition);
 		void SetLocalPosition(const glm::vec3& position);
-		void SetPositionDirty() { m_PositionIsDirty = true; }
+		void SetPositionDirty();
 		void UpdateWorldPosition();
 		bool IsChild(GameObject* child);
 

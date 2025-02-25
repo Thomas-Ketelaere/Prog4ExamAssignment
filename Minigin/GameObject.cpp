@@ -101,6 +101,15 @@ void dae::GameObject::SetLocalPosition(const glm::vec3& position)
 	SetPositionDirty();
 }
 
+void dae::GameObject::SetPositionDirty()
+{
+	m_PositionIsDirty = true;
+	for (GameObject* go : m_Children)
+	{
+		go->SetPositionDirty();
+	}
+}
+
 void dae::GameObject::UpdateWorldPosition()
 {
 	if(m_PositionIsDirty)
