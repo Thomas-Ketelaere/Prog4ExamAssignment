@@ -11,10 +11,12 @@
 dae::TrashCashComponent::TrashCashComponent(GameObject* gameObject) :
     Component(gameObject),
     m_Number{ 0 },
-    m_AmountSteps{ 11 } //1, 2, 4, 8, ..., 1024 (11 times)
+    m_AmountSteps{ 11 }, //1, 2, 4, 8, ..., 1024 (11 times)
+    m_SampleAmount{ 50 },
+    m_MaxStepSize{ 1024 }
 {
     m_DurationArr = new float[m_AmountSteps];
-    m_StepArr = new float[m_AmountSteps];
+    m_StepArr = new float[m_AmountSteps] {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
 }
 
 dae::TrashCashComponent::~TrashCashComponent()
@@ -32,7 +34,8 @@ dae::TrashCashComponent::~TrashCashComponent()
 
 void dae::TrashCashComponent::Start()
 {
-    TrashTheCastGameObjectAlt();
+    TrashTheCash();
+    //TrashTheCastGameObjectAlt();
 }
 
 void dae::TrashCashComponent::Update()
@@ -67,10 +70,8 @@ void dae::TrashCashComponent::Render() const
 
     ImGui::Plot("Exercise 2 graph", conf);
 
-    // Text box for inputting the number
     ImGui::InputInt("Value", const_cast<int*>(&m_Number), 0, 0);
 
-    // Same line to keep the buttons next to the text box
     ImGui::SameLine();
     if (ImGui::Button("+"))
     {
@@ -91,22 +92,52 @@ void dae::TrashCashComponent::Render() const
 
 void dae::TrashCashComponent::TrashTheCash()
 {
-    int stepCounter{};
+    //int stepCounter{};
     int arraySize = 99999999;
 	int* arr = new int[arraySize] {};
+
+    std::vector<float> durationVct{};
+
+    for (int sampleCounter{}; sampleCounter < m_SampleAmount; ++sampleCounter)
+    {
+        for (int stepsize = 1; stepsize <= m_MaxStepSize; stepsize *= 2)
+        {
+            const auto currentTime = std::chrono::high_resolution_clock::now();
+            for (int i = 0; i < arraySize; i += stepsize)
+            {
+                arr[i] *= 2;
+            }
+            const auto endTime = std::chrono::high_resolution_clock::now();
+            durationVct.emplace_back(std::chrono::duration<float>(endTime - currentTime).count());
+
+            //m_DurationArr[stepCounter] = std::chrono::duration<float>(endTime - currentTime).count();
+            //++stepCounter;
+        }
+    }
+
+    for (int i = 0; i < m_AmountSteps; ++i)
+    {
+        float sum{};
+        for (int j = 0; j < m_SampleAmount; ++j)
+        {
+            sum += durationVct[i + j * m_AmountSteps];
+        }
+        m_DurationArr[i] = sum / m_SampleAmount;
+    }
+
 	
-	for (int stepsize = 1; stepsize <= 1024; stepsize *= 2)
-	{
-		const auto currentTime = std::chrono::high_resolution_clock::now();
-		for (int i = 0; i < arraySize; i += stepsize)
-		{
-			arr[i] *= 2;
-		}
-		const auto endTime = std::chrono::high_resolution_clock::now();
-        m_DurationArr[stepCounter] = std::chrono::duration<float>(endTime - currentTime).count();
-        m_StepArr[stepCounter] = float(stepsize);
-        ++stepCounter;
-	}
+	//for (int stepsize = 1; stepsize <= 1024; stepsize *= 2)
+	//{
+	//	const auto currentTime = std::chrono::high_resolution_clock::now();
+	//	for (int i = 0; i < arraySize; i += stepsize)
+	//	{
+	//		arr[i] *= 2;
+	//	}
+	//	const auto endTime = std::chrono::high_resolution_clock::now();
+ //       m_DurationArr[stepCounter] = std::chrono::duration<float>(endTime - currentTime).count();
+ //       m_StepArr[stepCounter] = float(stepsize);
+ //       ++stepCounter;
+	//}
 
 	delete[] arr;
 }

@@ -21,9 +21,9 @@ namespace dae
 
 		float* m_DurationArr;
 		float* m_StepArr;
-		//std::vector<float> m_DurationVct;
 		const int m_AmountSteps;
-
+		const int m_MaxStepSize;
+		int m_SampleAmount;
 		int m_Number;
 	};
 }
@@ -42,14 +42,14 @@ class gameobject
 {
 	transform local;
 public:
-	int id;
+	int id{};
 };
 
 class gameobjectTransformPtr
 {
 	transform* local;
 public:
-	int id;
+	int id{};
 };
 
 
