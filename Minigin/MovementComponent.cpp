@@ -33,8 +33,6 @@ void dae::MovementComponent::SetSpeed(float newSpeedX, float newSpeedY)
 {
 	m_SpeedX = newSpeedX;
 	m_SpeedY = newSpeedY;
-
-	m_Move = true;
 }
 
 void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationPositionX, float rotationPositionY)
@@ -43,7 +41,6 @@ void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationP
 	m_RotationPoint.x = rotationPositionX;
 	m_RotationPoint.y = rotationPositionY;
 	CalculateRadiusAndAngle();
-	m_Rotate = true;
 }
 
 void dae::MovementComponent::SetRotationPoint(float rotationPositionX, float rotationPositionY)
@@ -51,13 +48,24 @@ void dae::MovementComponent::SetRotationPoint(float rotationPositionX, float rot
 	m_RotationPoint.x = rotationPositionX; 
 	m_RotationPoint.y = rotationPositionY;
 	CalculateRadiusAndAngle();
-	m_Rotate = true;
 }
 
 void dae::MovementComponent::CalculateRadiusAndAngle()
 {
 	m_Radius = glm::distance(m_RotationPoint, GetTransform()->GetWorldPosition());
 	m_Angle = atan2(GetTransform()->GetWorldPosition().y - m_RotationPoint.y, GetTransform()->GetWorldPosition().x - m_RotationPoint.x);
+}
+
+void dae::MovementComponent::InputMovement(float horizontal, float vertical)
+{
+	const float deltaTime = Time::GetInstance().m_DeltaTime;
+	float xPos = GetGameObject()->GetWorldPosition().x;
+	float yPos = GetGameObject()->GetWorldPosition().y;
+	xPos += m_SpeedX * deltaTime * horizontal;
+	yPos += m_SpeedY * deltaTime * vertical;
+	m_RotationPoint.x += m_SpeedX * deltaTime;
+	m_RotationPoint.y += m_SpeedY * deltaTime;
+	GetGameObject()->SetWorldPosition(xPos, yPos);
 }
 
 void dae::MovementComponent::UpdatePosition()
@@ -84,6 +92,5 @@ void dae::MovementComponent::UpdateRotation()
 	}
 
 	const glm::vec3 newPosition {m_RotationPoint.x + m_Radius * cos(m_Angle), m_RotationPoint.y + m_Radius * sin(m_Angle), 0};
-	GetTransform()->SetWorldPosition(newPosition.x, newPosition.y, 0.f);
 	GetGameObject()->SetWorldPosition(newPosition.x, newPosition.y);
 }

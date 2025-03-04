@@ -18,6 +18,11 @@ namespace dae
 		void SetRotationPoint(float rotationPositionX, float rotationPositionY);
 		void CalculateRadiusAndAngle();
 
+		void ActivateMove(bool activate) { m_Move = activate; }
+		void ActivateRotate(bool activate) { m_Rotate = activate; };
+
+		void InputMovement(float horizontal, float vertical);
+
 	private:
 		void UpdatePosition();
 		void UpdateRotation();
