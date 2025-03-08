@@ -58,14 +58,6 @@ bool dae::InputManager::ProcessInput()
 		{
 			return false;
 		}
-		if (e.type == SDL_KEYDOWN)
-		{
-
-		}
-		if (e.type == SDL_MOUSEBUTTONDOWN)
-		{
-
-		}
 
 		for (const auto& binding : m_GameBindingVct)
 		{
@@ -75,12 +67,6 @@ bool dae::InputManager::ProcessInput()
 
 				switch (binding->m_KeyState)
 				{
-				case KeyState::Pressed:
-					if (e.type == SDL_KEYDOWN)
-					{
-						binding->m_GameBinding->Execute();
-					}
-					break;
 				case KeyState::Down:
 					if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 					{
@@ -101,6 +87,20 @@ bool dae::InputManager::ProcessInput()
 		}
 	}
 	
+	// this will check if the button is getting held down (by checking every loop if it is pressed or not)
+	const Uint8* keyStates = SDL_GetKeyboardState(NULL);
+	for (const auto& binding : m_GameBindingVct)
+	{
+		if (binding->m_ControllerIndex == -1)
+		{
+			if (binding->m_KeyState != KeyState::Pressed) continue; 
+
+			if (keyStates[SDL_GetScancodeFromKey(binding->m_KeyBinding)])
+			{
+				binding->m_GameBinding->Execute();
+			}
+		}
+	}
 
 	return true;
 }
