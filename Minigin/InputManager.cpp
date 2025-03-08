@@ -15,7 +15,7 @@ void dae::InputManager::Start()
 
 bool dae::InputManager::ProcessInput()
 {
-	//Controller
+	//GamePad
 	for (const auto& controller : m_ControllerVct)
 	{
 		controller->ProcessInputController();
@@ -50,10 +50,7 @@ bool dae::InputManager::ProcessInput()
 		}
 	}
 
-
-
 	//SDL
-
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{

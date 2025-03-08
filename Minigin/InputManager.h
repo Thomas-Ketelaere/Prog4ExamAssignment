@@ -4,7 +4,6 @@
 #include "Controller.h"
 #include "GameActorCommand.h"
 #include <memory>
-#pragma comment(lib, "xinput.lib")
 
 namespace dae
 {
@@ -29,7 +28,6 @@ namespace dae
 	public:
 		void Start();
 		bool ProcessInput();
-		//template <typename Binding> Binding* AddBinding();
 		void AddBinding(std::unique_ptr<GameActorCommand> binding, KeyState keyState, unsigned int keyBind, int controllerIndex);
 
 	private:

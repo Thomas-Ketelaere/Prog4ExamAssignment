@@ -33,6 +33,7 @@ void dae::MovementComponent::SetSpeed(float newSpeedX, float newSpeedY)
 {
 	m_SpeedX = newSpeedX;
 	m_SpeedY = newSpeedY;
+	m_Move = true;
 }
 
 void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationPositionX, float rotationPositionY)
@@ -41,6 +42,7 @@ void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationP
 	m_RotationPoint.x = rotationPositionX;
 	m_RotationPoint.y = rotationPositionY;
 	CalculateRadiusAndAngle();
+	m_Rotate = true;
 }
 
 void dae::MovementComponent::SetRotationPoint(float rotationPositionX, float rotationPositionY)

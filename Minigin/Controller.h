@@ -1,6 +1,5 @@
 #pragma once
-#include "windows.h"
-#include <Xinput.h>
+#include <memory>
 
 namespace dae
 {
@@ -8,22 +7,18 @@ namespace dae
 	{
 	public:
 		Controller(int controllerIndex);
-		void ProcessInputController();
+		~Controller();
 
-		int GetControllerIndex() const { return m_ControllerIndex; }
+		void ProcessInputController();
+		int GetControllerIndex() const;
 
 		bool IsDownThisFrame(unsigned int button) const;
 		bool IsUpThisFrame(unsigned int button) const;
 		bool IsPressed(unsigned int button) const;
 
 	private:
-		
-		XINPUT_STATE m_CurrentState;
-		XINPUT_STATE m_PreviousState;
-
-		int m_ControllerIndex;
-		int m_ButtonsPressedThisFrame;
-		int m_ButtonsReleasedThisFrame;
+		class ControllerImpl;
+		std::unique_ptr<ControllerImpl> m_pImpl;
 	};
 }
 
