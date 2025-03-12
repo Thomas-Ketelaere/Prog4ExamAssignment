@@ -4,6 +4,7 @@
 #include "Font.h"
 #include "Renderer.h"
 #include "TransformComponent.h"
+#include "ResourceManager.h"
 
 dae::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font):
 	Component(gameObject),
@@ -49,4 +50,9 @@ void dae::TextComponent::ChangeText(const std::string& newText)
 	m_Text = newText;
 	m_NeedsUpdate = true;
 
+}
+
+void dae::TextComponent::ChangeFontSize(uint8_t newSize)
+{
+	m_Font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", newSize);
 }

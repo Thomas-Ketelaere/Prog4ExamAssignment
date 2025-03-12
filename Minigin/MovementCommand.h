@@ -1,50 +1,18 @@
 #pragma once
 #include "GameActorCommand.h"
+#include <glm.hpp>
 namespace dae
 {
 	class MovementComponent;
-	class MoveLeftCommand : public GameActorCommand
+	class MoveCommand : public GameActorCommand
 	{
 	public:
-		MoveLeftCommand(GameObject* actor);
+		MoveCommand(GameObject* actor);
 		virtual void Execute() override;
 
-		void SetSpeed(float speed) { m_Speed = speed; }
+		void SetSpeed(glm::vec2 speed) { m_Speed = speed; }
 	private:
-		float m_Speed;
-	};
-
-	class MoveRightCommand : public GameActorCommand
-	{
-	public:
-		MoveRightCommand(GameObject* actor);
-		virtual void Execute() override;
-
-		void SetSpeed(float speed) { m_Speed = speed; }
-	private:
-		float m_Speed;
-	};
-
-	class MoveUpCommand : public GameActorCommand
-	{
-	public:
-		MoveUpCommand(GameObject* actor);
-		virtual void Execute() override;
-
-		void SetSpeed(float speed) { m_Speed = speed; }
-	private:
-		float m_Speed;
-	};
-
-	class MoveDownCommand : public GameActorCommand
-	{
-	public:
-		MoveDownCommand(GameObject* actor);
-		virtual void Execute() override;
-
-		void SetSpeed(float speed) { m_Speed = speed; }
-	private:
-		float m_Speed;
+		glm::vec2 m_Speed;
 	};
 }
 

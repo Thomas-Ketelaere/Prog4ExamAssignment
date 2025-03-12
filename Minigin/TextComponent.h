@@ -16,6 +16,7 @@ namespace dae
 		virtual void Render() const override;
 
 		void ChangeText(const std::string& newText);
+		void ChangeFontSize(uint8_t newSize);
 
 	private:
 		Font* m_Font;
