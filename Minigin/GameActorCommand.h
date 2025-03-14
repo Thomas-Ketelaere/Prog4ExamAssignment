@@ -7,14 +7,11 @@ namespace dae
 	{
 	public:
 		GameActorCommand(GameObject* actor);
-		//void SetButton(unsigned int button);
-
 	protected:
 		GameObject* GetGameActor() const { return m_GameActor; }
 
 	private:
 		GameObject* m_GameActor;
-		unsigned int m_Button;
 	};
 
 }

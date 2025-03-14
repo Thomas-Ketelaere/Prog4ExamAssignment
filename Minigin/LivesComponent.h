@@ -12,10 +12,10 @@ namespace dae
 
 		void LoseLive();
 		int GetLives() const { return m_CurrentLives; }
-		Subject* GetActorDiedSubject() const { return m_ActorDiedEvent.get(); }
+		Subject* GetActorDiedSubject() const { return m_pActorDiedEvent.get(); }
 	private:
 		int m_CurrentLives;
-		std::unique_ptr<Subject> m_ActorDiedEvent;
+		std::unique_ptr<Subject> m_pActorDiedEvent;
 	};
 
 }

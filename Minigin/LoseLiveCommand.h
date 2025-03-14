@@ -1,6 +1,5 @@
 #pragma once
 #include "GameActorCommand.h"
-#include <memory>
 namespace dae
 {
 	class LivesComponent;
