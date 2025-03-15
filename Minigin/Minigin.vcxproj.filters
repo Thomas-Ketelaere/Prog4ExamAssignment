@@ -279,7 +279,7 @@
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Achievements.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Observers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
