@@ -39,6 +39,7 @@ namespace dae
 		GameObject* GetParent() const { return m_Parent; }
 		TransformComponent* GetTransform();
 		
+		void Destroy() { m_Destroy = true; }
 
 		template <typename T>
 		T* GetComponent() const;

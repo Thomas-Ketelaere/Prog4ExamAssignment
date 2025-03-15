@@ -11,6 +11,9 @@ dae::LivesComponent::LivesComponent(GameObject* gameObject, int maxLives):
 
 void dae::LivesComponent::LoseLive()
 {
-	--m_CurrentLives;
-	m_pActorDiedEvent->NotifyObservers(Event::PlayerDied, GetGameObject());
+	if (m_CurrentLives > 0)
+	{
+		--m_CurrentLives;
+		m_pActorDiedEvent->NotifyObservers(Event::PlayerDied, GetGameObject());
+	}
 }

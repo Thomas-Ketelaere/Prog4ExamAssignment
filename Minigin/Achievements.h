@@ -1,16 +1,14 @@
 #pragma once
 #include "Singleton.h"
-#include <string>
+#include "Observer.h"
 
 namespace dae
 {
-	class Achievements : public Singleton<Achievements>
+	class Achievements : public Singleton<Achievements>, public Observer
 	{
 	public:
-		bool SetAchievement(const char* ID);
+		virtual void Notify(Event event, GameObject* gameObject) override;
 	private:
-		friend class Singleton<Achievements>;
-		Achievements() = default;
-		
+		bool SetAchievement(const char* ID);
 	};
 }

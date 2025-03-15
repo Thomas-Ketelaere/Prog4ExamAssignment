@@ -15,7 +15,6 @@ namespace dae
 		int GetCurrentScore() { return m_CurrentScore; }
 	private:
 		int m_CurrentScore{};
-		int m_ScoreToWin{ 500 };
 		std::unique_ptr<Subject> m_pActorScoreEvent;
 	};
 }
