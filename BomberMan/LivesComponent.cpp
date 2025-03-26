@@ -14,6 +14,7 @@ void dae::LivesComponent::LoseLive()
 	if (m_CurrentLives > 0)
 	{
 		--m_CurrentLives;
-		m_pActorDiedEvent->NotifyObservers(Event::PlayerDied, GetGameObject());
+		Event e (make_sdbm_hash("PlayerDied"));
+		m_pActorDiedEvent->NotifyObservers(e, GetGameObject());
 	}
 }

@@ -15,7 +15,7 @@ void dae::ScoreTextComponent::Start()
 
 void dae::ScoreTextComponent::Notify(Event event, GameObject* gameObject)
 {
-	if (event == Event::PlayerGainedScore)
+	if (event.id == make_sdbm_hash("PlayerGainedScore"))
 	{
 		int newScore = gameObject->GetComponent<ScoreComponent>()->GetCurrentScore();
 		m_TextComponent->ChangeText("Current score: " + std::to_string(newScore));

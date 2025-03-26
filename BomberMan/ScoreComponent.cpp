@@ -10,5 +10,6 @@ dae::ScoreComponent::ScoreComponent(GameObject* gameObject):
 void dae::ScoreComponent::GainScore(int amount)
 {
 	m_CurrentScore += amount;
-	m_pActorScoreEvent->NotifyObservers(Event::PlayerGainedScore, GetGameObject());
+	Event e(make_sdbm_hash("PlayerGainedScore"));
+	m_pActorScoreEvent->NotifyObservers(e, GetGameObject());
 }

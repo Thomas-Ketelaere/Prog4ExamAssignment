@@ -6,7 +6,7 @@
 
 void dae::Achievements::Notify(Event event, GameObject* gameObject)
 {
-	if (event == Event::PlayerGainedScore)
+	if (event.id == make_sdbm_hash("PlayerGainedScore"))
 	{
 		if (gameObject->GetComponent<ScoreComponent>()->GetCurrentScore() >= 500.f)
 		{

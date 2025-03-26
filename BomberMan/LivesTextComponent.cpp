@@ -15,7 +15,7 @@ void dae::LivesTextComponent::Start()
 
 void dae::LivesTextComponent::Notify(Event event, GameObject* gameObject)
 {
-	if (event == Event::PlayerDied)
+	if (event.id == make_sdbm_hash("PlayerDied"))
 	{
 		int newLives = gameObject->GetComponent<LivesComponent>()->GetLives();
 		m_TextComponent->ChangeText("Lives: " + std::to_string(newLives));
