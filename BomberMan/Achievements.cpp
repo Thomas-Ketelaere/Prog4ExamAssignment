@@ -1,7 +1,7 @@
 #include "Achievements.h"
-#include <steam_api.h>
 #include "GameObject.h"
 #include "ScoreComponent.h"
+#include <iostream>
 
 
 void dae::Achievements::Notify(Event event, GameObject* gameObject)
@@ -15,8 +15,7 @@ void dae::Achievements::Notify(Event event, GameObject* gameObject)
 	}
 }
 
-bool dae::Achievements::SetAchievement(const char* ID)
+void dae::Achievements::SetAchievement(const char* ID)
 {
-	SteamUserStats()->SetAchievement(ID);
-	return SteamUserStats()->StoreStats();
+	std::cout << "ACHIEVMENT RECEIVED: " << ID << std::endl;
 }

@@ -1,6 +1,6 @@
 #include "MovementCommand.h"
 #include "GameObject.h"
-#include "Time.h"
+#include "Timer.h"
 
 dae::MoveCommand::MoveCommand(GameObject* actor) :
 	GameActorCommand(actor),

@@ -1,6 +1,6 @@
 #include "MovementComponent.h"
 #include "TransformComponent.h"
-#include "Time.h"
+#include "Timer.h"
 #define _USE_MATH_DEFINES
 #include "math.h"
 #include "GameObject.h"

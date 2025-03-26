@@ -9,6 +9,6 @@ namespace dae
 	public:
 		virtual void Notify(Event event, GameObject* gameObject) override;
 	private:
-		bool SetAchievement(const char* ID);
+		void SetAchievement(const char* ID);
 	};
 }

@@ -1,7 +1,7 @@
 #include "FpsComponent.h"
 #include "GameObject.h"
 #include "TextComponent.h"
-#include "Time.h"
+#include "Timer.h"
 #include <sstream>
 #include <iomanip>
 

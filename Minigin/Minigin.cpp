@@ -10,8 +10,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
-#include "Time.h"
-#include <steam_api.h>
+#include "Timer.h"
 
 SDL_Window* g_window{};
 
@@ -97,7 +96,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	float lag = 0.0f;
 	while (doContinue)
 	{
-		SteamAPI_RunCallbacks();
 		const auto currentTime = std::chrono::high_resolution_clock::now();
 		const float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
 		lastTime = currentTime;
