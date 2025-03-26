@@ -15,6 +15,7 @@ namespace dae
 		
 	private:
 		Texture2D* m_Texture;
+		
 	};
 }
 

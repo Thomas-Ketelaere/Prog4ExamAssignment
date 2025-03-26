@@ -171,6 +171,7 @@
     <ClCompile Include="RotatingMovingPointComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreTextComponent.cpp" />
+    <ClCompile Include="SpriteSheetComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Achievements.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="RotatingMovingPointComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreTextComponent.h" />
+    <ClInclude Include="SpriteSheetComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

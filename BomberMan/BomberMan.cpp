@@ -30,6 +30,7 @@
 #include "ScoreTextComponent.h"
 #include "GainPointsCommand.h"
 #include "Achievements.h"
+#include "SpriteSheetComponent.h"
 #include <iostream>
 
 void LoadPlayerGamePad(dae::Scene& scene)
@@ -141,7 +142,7 @@ void LoadPlayerKeyboard(dae::Scene& scene)
 	// ------- INPUT KEYBOARD ---------
 
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
-	auto playerInputKeyboard = std::make_unique<dae::TextureComponent>(playerInputObjectKeyboard.get(), "Bomberman.png");
+	auto playerInputKeyboard = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f);
 	playerInputObjectKeyboard->SetWorldPosition(450, 300);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboard));
 
