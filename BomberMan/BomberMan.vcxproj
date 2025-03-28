@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Achievements.cpp" />
+    <ClCompile Include="BombComponent.cpp" />
     <ClCompile Include="BomberMan.cpp" />
     <ClCompile Include="FpsComponent.cpp" />
     <ClCompile Include="GainPointsCommand.cpp" />
@@ -172,9 +173,11 @@
     <ClCompile Include="RotatingMovingPointComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreTextComponent.cpp" />
+    <ClCompile Include="SpawnBombCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Achievements.h" />
+    <ClInclude Include="BombComponent.h" />
     <ClInclude Include="FpsComponent.h" />
     <ClInclude Include="GainPointsCommand.h" />
     <ClInclude Include="GridComponent.h" />
@@ -186,6 +189,7 @@
     <ClInclude Include="RotatingMovingPointComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreTextComponent.h" />
+    <ClInclude Include="SpawnBombCommand.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

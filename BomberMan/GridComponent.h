@@ -20,18 +20,24 @@ namespace dae
 	{
 	public:
 		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight);
-
+		virtual ~GridComponent() override;
+		
 		virtual void Render() const override;
+
+		void SpawnBomb(glm::vec2 position);
+		void ExplodeBomb(int index, int range);
 
 		bool IsCellWalkable(const glm::vec2& position);
 		
 	private:
 		int GetIndexFromPosition(const glm::vec2& position) const;
+		glm::vec2 GetCellPositionFromIndex(const int index) const;
+		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
 
 		//REMOVE
 		glm::vec2 lastPosition{};
 
-		std::vector<Cell> m_Cells;
+		std::vector<Cell*> m_pCells;
 		float m_CellWidth;
 		float m_CellHeight;
 		const int m_AmountColumns;

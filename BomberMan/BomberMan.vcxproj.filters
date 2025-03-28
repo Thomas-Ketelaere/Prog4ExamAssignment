@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BomberMan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FpsComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -58,6 +55,15 @@
       <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="GridComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnBombCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="BomberMan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BombComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -96,6 +102,12 @@
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="GridComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnBombCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="BombComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,7 +19,6 @@
 #include "MovementComponent.h"
 #include "RotatingMovingPointComponent.h"
 #include "GameObject.h"
-#include "TrashCashComponent.h"
 #include "InputManager.h"
 #include "MovementCommand.h"
 #include "LivesComponent.h"
@@ -32,6 +31,7 @@
 #include "Achievements.h"
 #include "SpriteSheetComponent.h"
 #include "GridComponent.h"
+#include "SpawnBombCommand.h"
 #include <iostream>
 
 void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
@@ -176,6 +176,8 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 	auto gainBigScoreCommandKeyboard = std::make_unique<dae::GainPointsCommand>(playerInputObjectKeyboard.get());
 	gainBigScoreCommandKeyboard->SetGainScore(100);
 
+	auto spawnBombCommandKeyboard = std::make_unique<dae::SpawnBombCommand>(playerInputObjectKeyboard.get());
+
 	dae::InputManager::GetInstance().AddBinding(std::move(moveLeftCommandKeyboard), dae::KeyState::Pressed, SDLK_a, -1);
 	dae::InputManager::GetInstance().AddBinding(std::move(moveRightCommandKeyboard), dae::KeyState::Pressed, SDLK_d, -1);
 	dae::InputManager::GetInstance().AddBinding(std::move(moveUpCommandKeyboard), dae::KeyState::Pressed, SDLK_w, -1);
@@ -183,6 +185,7 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 	dae::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandKeyboard), dae::KeyState::Up, SDLK_q, -1);
 	dae::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandKeyboard), dae::KeyState::Up, SDLK_e, -1);
 	dae::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandKeyboard), dae::KeyState::Up, SDLK_r, -1);
+	dae::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), dae::KeyState::Up, SDLK_f, -1);
 
 	scene.Add(std::move(playerInputObjectKeyboard));
 	scene.Add(std::move(playerKeyboardLivesTextObject));
