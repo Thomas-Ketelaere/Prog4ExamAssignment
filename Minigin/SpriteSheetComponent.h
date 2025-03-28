@@ -13,7 +13,9 @@ namespace dae
 		virtual void Render() const override;
 		virtual void Update() override;
 
-		void SetDirectionSprite(glm::vec2 direction);
+		void SetRow(int newRow) { m_CurrentRow = newRow; }
+		void SetColumn(int newColumn) { m_CurrentColumn = newColumn; }
+		void ShouldAnimate(bool animate) { m_Animate = animate; }
 
 		int GetWidthSprite() const { return m_Width; }
 		int GetHeightSprite() const { return m_Height; }
@@ -31,7 +33,7 @@ namespace dae
 		int m_Width;
 		int m_Height;
 
-		bool m_Move{};
+		bool m_Animate;
 	};
 }
 

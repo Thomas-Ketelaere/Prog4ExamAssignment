@@ -3,7 +3,7 @@
 #include <glm.hpp>
 namespace dae
 {
-	class SpriteSheetComponent;
+	class PlayerSpriteComponent;
 	class GridComponent;
 	class MoveCommand : public GameActorCommand
 	{
@@ -14,7 +14,7 @@ namespace dae
 		void SetSpeed(glm::vec2 speed) { m_Speed = speed; }
 	private:
 		glm::vec2 m_Speed;
-		SpriteSheetComponent* m_pSpriteSheetComponent;
+		PlayerSpriteComponent* m_pPlayerSpriteComponent;
 		GridComponent* m_pGridComponent;
 	};
 }

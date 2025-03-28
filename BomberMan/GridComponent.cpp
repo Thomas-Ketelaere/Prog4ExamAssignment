@@ -71,17 +71,34 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 {
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // range can be bigger than one, and needs to go over all the cells then
 	{
-		Cell* cellRight = m_pCells[GetIndexWithCellOffset(rangeCounter, 0, index)];
-		if (cellRight->m_CellState == CellState::BreakableWall) cellRight->m_CellState = CellState::Empty;
-
-		Cell* cellLeft = m_pCells[GetIndexWithCellOffset(-rangeCounter, 0, index)];
-		if (cellLeft->m_CellState == CellState::BreakableWall) cellLeft->m_CellState = CellState::Empty;
-
-		Cell* cellDown = m_pCells[GetIndexWithCellOffset(0, rangeCounter, index)];
-		if (cellDown->m_CellState == CellState::BreakableWall) cellDown->m_CellState = CellState::Empty;
-
-		Cell* cellUp = m_pCells[GetIndexWithCellOffset(0, -rangeCounter, index)];
-		if (cellUp->m_CellState == CellState::BreakableWall) cellUp->m_CellState = CellState::Empty;
+		int indexRight = GetIndexWithCellOffset(rangeCounter, 0, index);
+		if (indexRight != -1)
+		{
+			Cell* cellRight = m_pCells[indexRight];
+			if (cellRight->m_CellState == CellState::BreakableWall) cellRight->m_CellState = CellState::Empty;
+		}
+		
+		int indexLeft = GetIndexWithCellOffset(-rangeCounter, 0, index);
+		if (indexLeft != -1)
+		{
+			Cell* cellLeft = m_pCells[indexLeft];
+			if (cellLeft->m_CellState == CellState::BreakableWall) cellLeft->m_CellState = CellState::Empty;
+		}
+		
+		int indexDown = GetIndexWithCellOffset(0, rangeCounter, index);
+		if (indexDown != -1)
+		{
+			Cell* cellDown = m_pCells[indexDown];
+			if (cellDown->m_CellState == CellState::BreakableWall) cellDown->m_CellState = CellState::Empty;
+		}
+		
+		int indexUp = GetIndexWithCellOffset(0, -rangeCounter, index);
+		if(indexUp != -1)
+		{
+			Cell* cellUp = m_pCells[indexUp];
+			if (cellUp->m_CellState == CellState::BreakableWall) cellUp->m_CellState = CellState::Empty;
+		}
+		
 	}
 }
 
@@ -124,7 +141,13 @@ int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, 
 	int newRow = currentRow + rowOffset;
 	int newColumn = currentColumn + columnOffset;
 
-	return newRow * m_AmountColumns + newColumn;
+	if (newRow < 0 || newColumn < 0 || newRow >= m_AmountRows || newColumn >= m_AmountColumns) // not a valid index
+	{
+		return -1;
+	}
+
+	int newIndex = newRow * m_AmountColumns + newColumn;
+	return newIndex;
 }
 
 

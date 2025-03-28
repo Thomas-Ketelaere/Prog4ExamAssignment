@@ -18,5 +18,6 @@ void dae::BombComponent::Update()
 	if (m_AccumulatedTime >= m_TimeToExplode)
 	{
 		m_pGridComponent->ExplodeBomb(m_CellIndex, 1);
+		Destroy();
 	}
 }

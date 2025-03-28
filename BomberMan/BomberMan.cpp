@@ -32,6 +32,7 @@
 #include "SpriteSheetComponent.h"
 #include "GridComponent.h"
 #include "SpawnBombCommand.h"
+#include "PlayerSpriteComponent.h"
 #include <iostream>
 
 void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
@@ -144,9 +145,11 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
 	playerInputObjectKeyboard->SetParent(levelParent, true);
-	auto playerInputKeyboard = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f);
+	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f);
+	auto playerInputKeyboardSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
 	playerInputObjectKeyboard->SetWorldPosition(450, 300);
-	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboard));
+	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
+	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSetter));
 
 	//lives
 	auto playerLivesKeyboard = std::make_unique<dae::LivesComponent>(playerInputObjectKeyboard.get(), 3);

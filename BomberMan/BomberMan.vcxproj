@@ -170,6 +170,7 @@
     <ClCompile Include="LoseLiveCommand.cpp" />
     <ClCompile Include="MovementCommand.cpp" />
     <ClCompile Include="MovementComponent.cpp" />
+    <ClCompile Include="PlayerSpriteComponent.cpp" />
     <ClCompile Include="RotatingMovingPointComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreTextComponent.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="LoseLiveCommand.h" />
     <ClInclude Include="MovementCommand.h" />
     <ClInclude Include="MovementComponent.h" />
+    <ClInclude Include="PlayerSpriteComponent.h" />
     <ClInclude Include="RotatingMovingPointComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreTextComponent.h" />
