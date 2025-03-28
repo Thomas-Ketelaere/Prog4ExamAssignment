@@ -99,4 +99,30 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, float x, float y, in
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }
 
+void dae::Renderer::DrawRectangle(float x, float y, float width, float height, const SDL_Color& color) const
+{
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
+	SDL_Rect rect{};
+	rect.x = static_cast<int>(x);
+	rect.y = static_cast<int>(y);
+	rect.w = static_cast<int>(width);
+	rect.h = static_cast<int>(height);
+
+	SDL_RenderDrawRect(m_renderer, &rect);
+}
+
+void dae::Renderer::FillRectangle(float x, float y, float width, float height, const SDL_Color& color) const
+{
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
+	SDL_Rect rect{};
+	rect.x = static_cast<int>(x);
+	rect.y = static_cast<int>(y);
+	rect.w = static_cast<int>(width);
+	rect.h = static_cast<int>(height);
+
+	SDL_RenderFillRect(m_renderer, &rect);
+}
+
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }

@@ -57,7 +57,7 @@
     <ClCompile Include="Achievements.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteSheetComponent.cpp">
+    <ClCompile Include="GridComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,7 +95,7 @@
     <ClInclude Include="Achievements.h">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteSheetComponent.h">
+    <ClInclude Include="GridComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,6 +15,9 @@ namespace dae
 
 		void SetDirectionSprite(glm::vec2 direction);
 
+		int GetWidthSprite() const { return m_Width; }
+		int GetHeightSprite() const { return m_Height; }
+
 	private:
 		Texture2D* m_Texture;
 

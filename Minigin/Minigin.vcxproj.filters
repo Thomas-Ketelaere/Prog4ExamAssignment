@@ -129,6 +129,9 @@
     <ClInclude Include="Events.h">
       <Filter>Header Files\Observers</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteSheetComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">
@@ -214,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="Subject.cpp">
       <Filter>Source Files\Observers</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteSheetComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

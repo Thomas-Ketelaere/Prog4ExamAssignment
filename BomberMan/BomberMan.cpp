@@ -31,12 +31,14 @@
 #include "GainPointsCommand.h"
 #include "Achievements.h"
 #include "SpriteSheetComponent.h"
+#include "GridComponent.h"
 #include <iostream>
 
-void LoadPlayerGamePad(dae::Scene& scene)
+void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 {
 	// --------GAMEPAD-----------
 	auto playerInputObjectGamepad = std::make_unique<dae::GameObject>();
+	playerInputObjectGamepad->SetParent(levelParent, true);
 	auto playerInput = std::make_unique<dae::TextureComponent>(playerInputObjectGamepad.get(), "Bomberman.png");
 	playerInputObjectGamepad->SetWorldPosition(400, 300);
 	playerInputObjectGamepad->AddComponent(std::move(playerInput));
@@ -103,14 +105,13 @@ void LoadPlayerGamePad(dae::Scene& scene)
 	dae::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandGamepad), dae::KeyState::Up, 0x2000, 0);
 	dae::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandGamepad), dae::KeyState::Up, 0x4000, 0);
 
-
 	scene.Add(std::move(playerInputObjectGamepad));
 	scene.Add(std::move(playerGamepadLivesTextObject));
 	scene.Add(std::move(playerGamepadScoreTextObject));
 	// --------END GAMEPAD-----------
 }
 
-void LoadPlayerKeyboard(dae::Scene& scene)
+void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 {
 	// --------KEYBOARD-----------
 	//display lives
@@ -142,6 +143,7 @@ void LoadPlayerKeyboard(dae::Scene& scene)
 	// ------- INPUT KEYBOARD ---------
 
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
+	playerInputObjectKeyboard->SetParent(levelParent, true);
 	auto playerInputKeyboard = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f);
 	playerInputObjectKeyboard->SetWorldPosition(450, 300);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboard));
@@ -160,13 +162,13 @@ void LoadPlayerKeyboard(dae::Scene& scene)
 	playerInputObjectKeyboard->AddComponent(std::move(playerScoreKeyboard));
 
 	auto moveLeftCommandKeyboard = std::make_unique<dae::MoveCommand>(playerInputObjectKeyboard.get());
-	moveLeftCommandKeyboard->SetSpeed({ -25.f, 0.f });
+	moveLeftCommandKeyboard->SetSpeed({ -50.f, 0.f });
 	auto moveRightCommandKeyboard = std::make_unique<dae::MoveCommand>(playerInputObjectKeyboard.get());
-	moveRightCommandKeyboard->SetSpeed({ 25.f, 0.f });
+	moveRightCommandKeyboard->SetSpeed({ 50.f, 0.f });
 	auto moveUpCommandKeyboard = std::make_unique<dae::MoveCommand>(playerInputObjectKeyboard.get());
-	moveUpCommandKeyboard->SetSpeed({ 0.f, -25.f });
+	moveUpCommandKeyboard->SetSpeed({ 0.f, -50.f });
 	auto moveDownCommandKeyboard = std::make_unique<dae::MoveCommand>(playerInputObjectKeyboard.get());
-	moveDownCommandKeyboard->SetSpeed({ 0.f, 25.f });
+	moveDownCommandKeyboard->SetSpeed({ 0.f, 50.f });
 
 	auto loseLivesCommandKeyboard = std::make_unique<dae::LoseLiveCommand>(playerInputObjectKeyboard.get());
 	auto gainSmallScoreCommandKeyboard = std::make_unique<dae::GainPointsCommand>(playerInputObjectKeyboard.get());
@@ -273,8 +275,16 @@ void load()
 	//scene.Add(std::move(trashCashObject));
 
 	//Input
-	LoadPlayerGamePad(scene);
-	LoadPlayerKeyboard(scene);
+
+	auto gridObject = std::make_unique<dae::GameObject>();
+	gridObject->SetWorldPosition(0, 0);
+	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 30, 13, 992, 450);
+	gridObject->AddComponent(std::move(gridView));
+
+	LoadPlayerGamePad(scene, gridObject.get());
+	LoadPlayerKeyboard(scene, gridObject.get());
+
+	scene.Add(std::move(gridObject));
 
 	// --------TUTORIAL TEXT----------
 	auto tutorialObjectGamepad = std::make_unique<dae::GameObject>();

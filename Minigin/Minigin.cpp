@@ -55,8 +55,8 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		640,
-		480,
+		992,
+		450,
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
@@ -105,7 +105,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		doContinue = input.ProcessInput();
 		while (lag >= m_FixedTimeStep)
 		{
-			sceneManager.FixedUpdate(); //should have m_FixedStep passing
+			sceneManager.FixedUpdate(); 
 			lag -= m_FixedTimeStep;
 		}
 		sceneManager.Update();
