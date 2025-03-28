@@ -76,64 +76,87 @@ void dae::GridComponent::Render() const
 void dae::GridComponent::SpawnBomb(glm::vec2 position)
 {
 	int index = GetIndexFromPosition(position);
-	glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
-	auto bombComponent = std::make_unique<BombComponent>(GetGameObject(), this, index, 1.f);
-	GetGameObject()->AddComponent(std::move(bombComponent));
+	if (m_pCells[index]->m_CellState == CellState::Empty)
+	{
+		glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
+		auto bombComponent = std::make_unique<BombComponent>(GetGameObject(), this, index, 1.f);
+		auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Bomb.png", 3, 1, 0.3f, true, true);
+		bombSpriteComponent->SetCustomPosition(spawnPosition);
+		bombSpriteComponent->ShouldAnimate(true);
+		GetGameObject()->AddComponent(std::move(bombComponent));
+		GetGameObject()->AddComponent(std::move(bombSpriteComponent));
+	}
 }
 
 void dae::GridComponent::ExplodeBomb(int index, int range)
 {
-	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // range can be bigger than one, and needs to go over all the cells then
+	// also check once for place with bomb on
+
+	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
 	{
 		int indexRight = GetIndexWithCellOffset(rangeCounter, 0, index);
-		if (indexRight != -1)
+		if (indexRight == -1) break;
+
+		Cell* cell = m_pCells[indexRight];
+		if (cell->m_CellState == CellState::HardWall) break; 
+
+		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			Cell* cell = m_pCells[indexRight];
-			if (cell->m_CellState == CellState::BreakableWall)
-			{
-				cell->m_CellState = CellState::Empty;
-				cell->m_pSpriteSheetWall->ShouldAnimate(true);
-				cell->m_pSpriteSheetWall->SetColumn(1);
-			}
-				
+			cell->m_CellState = CellState::Empty;
+			cell->m_pSpriteSheetWall->ShouldAnimate(true);
+			cell->m_pSpriteSheetWall->SetColumn(1);
 		}
-		
+	}
+
+	// Left direction
+	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
+	{
 		int indexLeft = GetIndexWithCellOffset(-rangeCounter, 0, index);
-		if (indexLeft != -1)
+		if (indexLeft == -1) break;
+
+		Cell* cell = m_pCells[indexLeft];
+		if (cell->m_CellState == CellState::HardWall) break;
+
+		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			Cell* cell = m_pCells[indexLeft];
-			if (cell->m_CellState == CellState::BreakableWall)
-			{
-				cell->m_CellState = CellState::Empty;
-				cell->m_pSpriteSheetWall->ShouldAnimate(true);
-				cell->m_pSpriteSheetWall->SetColumn(1);
-			}
+			cell->m_CellState = CellState::Empty;
+			cell->m_pSpriteSheetWall->ShouldAnimate(true);
+			cell->m_pSpriteSheetWall->SetColumn(1);
 		}
-		
+	}
+
+	// Down direction
+	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
+	{
 		int indexDown = GetIndexWithCellOffset(0, rangeCounter, index);
-		if (indexDown != -1)
+		if (indexDown == -1) break;
+
+		Cell* cell = m_pCells[indexDown];
+		if (cell->m_CellState == CellState::HardWall) break;
+
+		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			Cell* cell = m_pCells[indexDown];
-			if (cell->m_CellState == CellState::BreakableWall)
-			{
-				cell->m_CellState = CellState::Empty;
-				cell->m_pSpriteSheetWall->ShouldAnimate(true);
-				cell->m_pSpriteSheetWall->SetColumn(1);
-			}
+			cell->m_CellState = CellState::Empty;
+			cell->m_pSpriteSheetWall->ShouldAnimate(true);
+			cell->m_pSpriteSheetWall->SetColumn(1);
 		}
-		
+	}
+
+	// Up direction
+	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
+	{
 		int indexUp = GetIndexWithCellOffset(0, -rangeCounter, index);
-		if(indexUp != -1)
+		if (indexUp == -1) break;
+
+		Cell* cell = m_pCells[indexUp];
+		if (cell->m_CellState == CellState::HardWall) break;
+
+		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			Cell* cell = m_pCells[indexUp];
-			if (cell->m_CellState == CellState::BreakableWall)
-			{
-				cell->m_CellState = CellState::Empty;
-				cell->m_pSpriteSheetWall->ShouldAnimate(true);
-				cell->m_pSpriteSheetWall->SetColumn(1);
-			}
+			cell->m_CellState = CellState::Empty;
+			cell->m_pSpriteSheetWall->ShouldAnimate(true);
+			cell->m_pSpriteSheetWall->SetColumn(1);
 		}
-		
 	}
 }
 

@@ -34,6 +34,7 @@ namespace dae
 		bool IsCellWalkable(const glm::vec2& position);
 		
 	private:
+
 		int GetIndexFromPosition(const glm::vec2& position) const;
 		glm::vec2 GetCellPositionFromIndex(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
