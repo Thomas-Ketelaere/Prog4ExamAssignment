@@ -145,7 +145,7 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
 	playerInputObjectKeyboard->SetParent(levelParent, true);
-	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f);
+	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputKeyboardSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
 	playerInputObjectKeyboard->SetWorldPosition(450, 300);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));

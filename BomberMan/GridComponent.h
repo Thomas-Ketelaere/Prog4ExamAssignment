@@ -4,6 +4,8 @@
 #include <glm.hpp>
 namespace dae
 {
+	class SpriteSheetComponent;
+	class TextureComponent;
 	enum class CellState
 	{
 		Empty, HardWall, BreakableWall
@@ -14,6 +16,8 @@ namespace dae
 		Cell(glm::vec2 position) { m_Position = position; }
 		CellState m_CellState{};
 		glm::vec2 m_Position{};
+		SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
+		TextureComponent* m_pHardWallTexture = nullptr;
 	};
 
 	class GridComponent final : public Component

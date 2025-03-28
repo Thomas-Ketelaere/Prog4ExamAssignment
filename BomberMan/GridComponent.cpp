@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "BombComponent.h"
 #include "GameObject.h"
+#include "SpriteSheetComponent.h"
+#include "TextureComponent.h"
 #include <memory>
 
 dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight):
@@ -23,6 +25,18 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 			if (m_pCells.size() % 7 == 0)
 			{
 				cell->m_CellState = CellState::BreakableWall;
+				auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
+				spriteSheetWall->SetCustomPosition(position);
+				cell->m_pSpriteSheetWall = spriteSheetWall.get();
+				GetGameObject()->AddComponent(std::move(spriteSheetWall));
+			}
+			else if (m_pCells.size() % 13 == 0)
+			{
+				cell->m_CellState = CellState::HardWall;
+				auto spriteSheetWall = std::make_unique<TextureComponent>(GetGameObject(), "HardWall.png", true);
+				spriteSheetWall->SetCustomPosition(position);
+				cell->m_pHardWallTexture = spriteSheetWall.get();
+				GetGameObject()->AddComponent(std::move(spriteSheetWall));
 			}
 
 			m_pCells.emplace_back(cell);
@@ -45,7 +59,7 @@ void dae::GridComponent::Render() const
 	{
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			Renderer::GetInstance().FillRectangle(cell->m_Position.x, cell->m_Position.y, m_CellWidth, m_CellHeight, color);
+			
 		}
 		else
 		{
@@ -74,29 +88,50 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 		int indexRight = GetIndexWithCellOffset(rangeCounter, 0, index);
 		if (indexRight != -1)
 		{
-			Cell* cellRight = m_pCells[indexRight];
-			if (cellRight->m_CellState == CellState::BreakableWall) cellRight->m_CellState = CellState::Empty;
+			Cell* cell = m_pCells[indexRight];
+			if (cell->m_CellState == CellState::BreakableWall)
+			{
+				cell->m_CellState = CellState::Empty;
+				cell->m_pSpriteSheetWall->ShouldAnimate(true);
+				cell->m_pSpriteSheetWall->SetColumn(1);
+			}
+				
 		}
 		
 		int indexLeft = GetIndexWithCellOffset(-rangeCounter, 0, index);
 		if (indexLeft != -1)
 		{
-			Cell* cellLeft = m_pCells[indexLeft];
-			if (cellLeft->m_CellState == CellState::BreakableWall) cellLeft->m_CellState = CellState::Empty;
+			Cell* cell = m_pCells[indexLeft];
+			if (cell->m_CellState == CellState::BreakableWall)
+			{
+				cell->m_CellState = CellState::Empty;
+				cell->m_pSpriteSheetWall->ShouldAnimate(true);
+				cell->m_pSpriteSheetWall->SetColumn(1);
+			}
 		}
 		
 		int indexDown = GetIndexWithCellOffset(0, rangeCounter, index);
 		if (indexDown != -1)
 		{
-			Cell* cellDown = m_pCells[indexDown];
-			if (cellDown->m_CellState == CellState::BreakableWall) cellDown->m_CellState = CellState::Empty;
+			Cell* cell = m_pCells[indexDown];
+			if (cell->m_CellState == CellState::BreakableWall)
+			{
+				cell->m_CellState = CellState::Empty;
+				cell->m_pSpriteSheetWall->ShouldAnimate(true);
+				cell->m_pSpriteSheetWall->SetColumn(1);
+			}
 		}
 		
 		int indexUp = GetIndexWithCellOffset(0, -rangeCounter, index);
 		if(indexUp != -1)
 		{
-			Cell* cellUp = m_pCells[indexUp];
-			if (cellUp->m_CellState == CellState::BreakableWall) cellUp->m_CellState = CellState::Empty;
+			Cell* cell = m_pCells[indexUp];
+			if (cell->m_CellState == CellState::BreakableWall)
+			{
+				cell->m_CellState = CellState::Empty;
+				cell->m_pSpriteSheetWall->ShouldAnimate(true);
+				cell->m_pSpriteSheetWall->SetColumn(1);
+			}
 		}
 		
 	}
