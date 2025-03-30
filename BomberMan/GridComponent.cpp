@@ -6,43 +6,54 @@
 #include "TextureComponent.h"
 #include <memory>
 
-dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight):
+dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
 	m_AmountRows{amountRows},
 	m_ScreenWidth{screenWidth},
-	m_ScreenHeight{screenHeight}
+	m_ScreenHeight{screenHeight},
+	m_CellWidth{cellSize},
+	m_CellHeight{cellSize},
+	m_CanSpawnBomb{true}
 {
-	m_CellWidth = screenWidth / float(amountColumns);
-	m_CellHeight = screenHeight / float(amountRows);
 	for (int rowCounter{}; rowCounter < amountRows; ++rowCounter)
 	{
 		for (int colCounter{}; colCounter < amountColumns; ++colCounter)
 		{
 			glm::vec2 position = { colCounter * m_CellWidth, rowCounter * m_CellHeight };
 			Cell* cell = new Cell(position);
-			cell->m_CellState = CellState::Empty;
-			if (m_pCells.size() % 7 == 0)
-			{
-				cell->m_CellState = CellState::BreakableWall;
-				auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
-				spriteSheetWall->SetCustomPosition(position);
-				spriteSheetWall->ShouldAnimate(false);
-				cell->m_pSpriteSheetWall = spriteSheetWall.get();
-				GetGameObject()->AddComponent(std::move(spriteSheetWall));
-			}
-			else if (m_pCells.size() % 13 == 0)
+			if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
 			{
 				cell->m_CellState = CellState::HardWall;
 				auto spriteSheetWall = std::make_unique<TextureComponent>(GetGameObject(), "HardWall.png", true);
 				spriteSheetWall->SetCustomPosition(position);
-				cell->m_pHardWallTexture = spriteSheetWall.get();
 				GetGameObject()->AddComponent(std::move(spriteSheetWall));
+			}
+			else if (rowCounter % 2 == 0 && colCounter % 2 == 0)
+			{
+				//cell->m_CellState = CellState::BreakableWall;
+				//auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
+				//spriteSheetWall->SetCustomPosition(position);
+				//spriteSheetWall->ShouldAnimate(false);
+				//cell->m_pSpriteSheetWall = spriteSheetWall.get();
+				//GetGameObject()->AddComponent(std::move(spriteSheetWall));
+
+				cell->m_CellState = CellState::HardWall;
+				auto spriteSheetWall = std::make_unique<TextureComponent>(GetGameObject(), "HardWall.png", true);
+				spriteSheetWall->SetCustomPosition(position);
+				GetGameObject()->AddComponent(std::move(spriteSheetWall));
+			}
+			else
+			{
+				cell->m_CellState = CellState::Empty;
 			}
 
 			m_pCells.emplace_back(cell);
 		}
 	}
+
+	SDL_Color color = { 56, 135, 0, 255 };
+	Renderer::GetInstance().SetBackgroundColor(color);
 }
 
 dae::GridComponent::~GridComponent()
@@ -55,37 +66,42 @@ dae::GridComponent::~GridComponent()
 
 void dae::GridComponent::Render() const
 {
-	SDL_Color color = { 255, 0, 0, 255 };
-	for (const Cell* cell : m_pCells)
-	{
-		if (cell->m_CellState == CellState::BreakableWall)
-		{
-			
-		}
-		else
-		{
-			Renderer::GetInstance().DrawRectangle(cell->m_Position.x, cell->m_Position.y, m_CellWidth, m_CellHeight, color);
-		}
-	}
+	
+	//for (const Cell* cell : m_pCells)
+	//{
+	//	if (cell->m_CellState == CellState::BreakableWall)
+	//	{
+	//		
+	//	}
+	//	else
+	//	{
+	//		Renderer::GetInstance().DrawRectangle(cell->m_Position.x, cell->m_Position.y, m_CellWidth, m_CellHeight, color);
+	//	}
+	//}
 }
 
 
 void dae::GridComponent::SpawnBomb(glm::vec2 position)
 {
-	int index = GetIndexFromPosition(position);
-	if (m_pCells[index]->m_CellState == CellState::Empty)
+	if (m_CanSpawnBomb)
 	{
-		glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
-		auto bombComponent = std::make_unique<BombComponent>(GetGameObject(), this, index, 1.f);
-		auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Bomb.png", 3, 1, 0.3f, true, true);
-		bombSpriteComponent->SetCustomPosition(spawnPosition);
-		GetGameObject()->AddComponent(std::move(bombComponent));
-		GetGameObject()->AddComponent(std::move(bombSpriteComponent));
+		int index = GetIndexFromPosition(position);
+		if (m_pCells[index]->m_CellState == CellState::Empty)
+		{
+			glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
+			auto bombComponent = std::make_unique<BombComponent>(GetGameObject(), this, index, 1.f);
+			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Bomb.png", 3, 1, 0.3f, true, true);
+			bombSpriteComponent->SetCustomPosition(spawnPosition);
+			GetGameObject()->AddComponent(std::move(bombComponent));
+			GetGameObject()->AddComponent(std::move(bombSpriteComponent));
+			m_CanSpawnBomb = false;
+		}
 	}
 }
 
 void dae::GridComponent::ExplodeBomb(int index, int range)
 {
+	m_CanSpawnBomb = true;
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
 	auto spriteSheetExplosionCenter = std::make_unique<SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);

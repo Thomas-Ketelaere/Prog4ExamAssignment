@@ -201,12 +201,12 @@ void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
 
-	auto backgroundObject = std::make_unique<dae::GameObject>();
-	auto background = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga");
-	backgroundObject->SetWorldPosition(0, 0);
-	backgroundObject->AddComponent(std::move(background));
-
-	scene.Add(std::move(backgroundObject));
+	//auto backgroundObject = std::make_unique<dae::GameObject>();
+	//auto background = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga");
+	//backgroundObject->SetWorldPosition(0, 0);
+	//backgroundObject->AddComponent(std::move(background));
+	//
+	//scene.Add(std::move(backgroundObject));
 
 	auto logoObject = std::make_unique<dae::GameObject>();
 	auto logo = std::make_unique<dae::TextureComponent>(logoObject.get(), "logo.tga");
@@ -284,7 +284,7 @@ void load()
 
 	auto gridObject = std::make_unique<dae::GameObject>();
 	gridObject->SetWorldPosition(0, 0);
-	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 30, 13, 992, 450);
+	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 31, 13, 992, 416, 32.f);
 	gridObject->AddComponent(std::move(gridView));
 
 	LoadPlayerGamePad(scene, gridObject.get());

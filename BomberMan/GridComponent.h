@@ -19,13 +19,12 @@ namespace dae
 		CellState m_CellState{};
 		glm::vec2 m_Position{};
 		SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
-		TextureComponent* m_pHardWallTexture = nullptr;
 	};
 
 	class GridComponent final : public Component
 	{
 	public:
-		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight);
+		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize);
 		virtual ~GridComponent() override;
 		
 		virtual void Render() const override;
@@ -48,6 +47,8 @@ namespace dae
 		const int m_AmountRows;
 		const int m_ScreenWidth;
 		const int m_ScreenHeight;
+
+		bool m_CanSpawnBomb;
 	};
 }
 
