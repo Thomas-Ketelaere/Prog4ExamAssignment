@@ -9,7 +9,7 @@ dae::SpriteSheetComponent::SpriteSheetComponent(GameObject* gameObject, const st
 	m_Columns{ amountColumns },
 	m_Rows{amountRows},
 	m_Interval{interval},
-	m_Animate{false},
+	m_Animate{true},
 	m_DestroyAfterPlayed{destroyAfterPlayed},
 	m_UseCustomPosition{ useCustomPosition }
 

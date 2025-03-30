@@ -27,6 +27,7 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 				cell->m_CellState = CellState::BreakableWall;
 				auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
 				spriteSheetWall->SetCustomPosition(position);
+				spriteSheetWall->ShouldAnimate(false);
 				cell->m_pSpriteSheetWall = spriteSheetWall.get();
 				GetGameObject()->AddComponent(std::move(spriteSheetWall));
 			}
@@ -66,10 +67,6 @@ void dae::GridComponent::Render() const
 			Renderer::GetInstance().DrawRectangle(cell->m_Position.x, cell->m_Position.y, m_CellWidth, m_CellHeight, color);
 		}
 	}
-
-	//REMOVE
-	SDL_Color lastColor = { 255, 255, 255, 255 };
-	Renderer::GetInstance().DrawRectangle(lastPosition.x, lastPosition.y, 32, 32, lastColor);
 }
 
 
@@ -82,7 +79,6 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 		auto bombComponent = std::make_unique<BombComponent>(GetGameObject(), this, index, 1.f);
 		auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Bomb.png", 3, 1, 0.3f, true, true);
 		bombSpriteComponent->SetCustomPosition(spawnPosition);
-		bombSpriteComponent->ShouldAnimate(true);
 		GetGameObject()->AddComponent(std::move(bombComponent));
 		GetGameObject()->AddComponent(std::move(bombSpriteComponent));
 	}
@@ -91,6 +87,10 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 void dae::GridComponent::ExplodeBomb(int index, int range)
 {
 	// also check once for place with bomb on
+	Cell* cellCenter = m_pCells[index];
+	auto spriteSheetExplosionCenter = std::make_unique<SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
+	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
+	GetGameObject()->AddComponent(std::move(spriteSheetExplosionCenter));
 
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
 	{
@@ -105,6 +105,18 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 			cell->m_CellState = CellState::Empty;
 			cell->m_pSpriteSheetWall->ShouldAnimate(true);
 			cell->m_pSpriteSheetWall->SetColumn(1);
+			break;
+		}
+		else // empty cell
+		{
+			if (rangeCounter != range)
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionSide.png");
+			}
+			else
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionEndRight.png");
+			}
 		}
 	}
 
@@ -122,6 +134,19 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 			cell->m_CellState = CellState::Empty;
 			cell->m_pSpriteSheetWall->ShouldAnimate(true);
 			cell->m_pSpriteSheetWall->SetColumn(1);
+			break;
+		}
+
+		else // empty cell
+		{
+			if (rangeCounter != range)
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionSide.png");
+			}
+			else
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionEndLeft.png");
+			}
 		}
 	}
 
@@ -139,6 +164,20 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 			cell->m_CellState = CellState::Empty;
 			cell->m_pSpriteSheetWall->ShouldAnimate(true);
 			cell->m_pSpriteSheetWall->SetColumn(1);
+			break;
+		}
+
+		else // empty cell
+		{
+			if (rangeCounter != range)
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionDown.png");
+			}
+			else
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionEndDown.png");
+			}
+
 		}
 	}
 
@@ -156,13 +195,25 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 			cell->m_CellState = CellState::Empty;
 			cell->m_pSpriteSheetWall->ShouldAnimate(true);
 			cell->m_pSpriteSheetWall->SetColumn(1);
+			break;
+		}
+
+		else // empty cell
+		{
+			if (rangeCounter != range)
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionUp.png");
+			}
+			else
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionEndUp.png");
+			}
 		}
 	}
 }
 
 bool dae::GridComponent::IsCellWalkable(const glm::vec2& position)
 {
-	lastPosition = position;
 	if (position.x < 0 || position.x > m_ScreenWidth || position.y < 0 || position.y > m_ScreenHeight)
 	{
 		return false;
@@ -174,6 +225,13 @@ bool dae::GridComponent::IsCellWalkable(const glm::vec2& position)
 		return true;
 	}
 	return false;
+}
+
+void dae::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
+{
+	auto spriteSheetExplosion = std::make_unique<SpriteSheetComponent>(GetGameObject(), fullPath, 7, 1, 0.1f, true, true);
+	spriteSheetExplosion->SetCustomPosition(position);
+	GetGameObject()->AddComponent(std::move(spriteSheetExplosion));
 }
 
 int dae::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const

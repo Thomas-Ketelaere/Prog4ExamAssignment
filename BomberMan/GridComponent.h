@@ -2,6 +2,8 @@
 #include "Component.h"
 #include <vector>
 #include <glm.hpp>
+#include <string>
+
 namespace dae
 {
 	class SpriteSheetComponent;
@@ -34,13 +36,10 @@ namespace dae
 		bool IsCellWalkable(const glm::vec2& position);
 		
 	private:
-
+		void SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath);
 		int GetIndexFromPosition(const glm::vec2& position) const;
 		glm::vec2 GetCellPositionFromIndex(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
-
-		//REMOVE
-		glm::vec2 lastPosition{};
 
 		std::vector<Cell*> m_pCells;
 		float m_CellWidth;
