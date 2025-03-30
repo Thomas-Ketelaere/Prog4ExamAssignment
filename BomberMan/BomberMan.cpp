@@ -40,9 +40,11 @@ void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 	// --------GAMEPAD-----------
 	auto playerInputObjectGamepad = std::make_unique<dae::GameObject>();
 	playerInputObjectGamepad->SetParent(levelParent, true);
-	auto playerInput = std::make_unique<dae::TextureComponent>(playerInputObjectGamepad.get(), "Bomberman.png");
+	auto playerInputGamepadSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectGamepad.get(), "PlayerMove.png", 4, 4, 0.2f, false);
+	auto playerInputGamepadSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectGamepad.get());
 	playerInputObjectGamepad->SetWorldPosition(400, 300);
-	playerInputObjectGamepad->AddComponent(std::move(playerInput));
+	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSheet));
+	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSetter));
 
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 	//display Player
@@ -98,6 +100,8 @@ void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 	auto gainBigScoreCommandGamepad = std::make_unique<dae::GainPointsCommand>(playerInputObjectGamepad.get());
 	gainBigScoreCommandGamepad->SetGainScore(100);
 
+	auto spawnBombCommandGamepad = std::make_unique<dae::SpawnBombCommand>(playerInputObjectGamepad.get());
+
 	dae::InputManager::GetInstance().AddBinding(std::move(moveLeftCommand), dae::KeyState::Pressed, 0x004, 0);
 	dae::InputManager::GetInstance().AddBinding(std::move(moveRightCommand), dae::KeyState::Pressed, 0x008, 0);
 	dae::InputManager::GetInstance().AddBinding(std::move(moveUpCommand), dae::KeyState::Pressed, 0x001, 0);
@@ -105,6 +109,7 @@ void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 	dae::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandGamepad), dae::KeyState::Up, 0x1000, 0);
 	dae::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandGamepad), dae::KeyState::Up, 0x2000, 0);
 	dae::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandGamepad), dae::KeyState::Up, 0x4000, 0);
+	dae::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandGamepad), dae::KeyState::Up, 0x8000, 0);
 
 	scene.Add(std::move(playerInputObjectGamepad));
 	scene.Add(std::move(playerGamepadLivesTextObject));
@@ -142,7 +147,7 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 	auto playerScoreTextChangeKeyboard = std::make_unique<dae::ScoreTextComponent>(playerKeyboardScoreTextObject.get());
 
 	// ------- INPUT KEYBOARD ---------
-
+	levelParent = levelParent;
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
 	playerInputObjectKeyboard->SetParent(levelParent, true);
 	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);

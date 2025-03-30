@@ -26,8 +26,6 @@ namespace dae
 	public:
 		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize);
 		virtual ~GridComponent() override;
-		
-		virtual void Render() const override;
 
 		void SpawnBomb(glm::vec2 position);
 		void ExplodeBomb(int index, int range);

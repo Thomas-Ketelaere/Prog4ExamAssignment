@@ -19,7 +19,7 @@ namespace dae
 		void SetDirectionSprite(glm::vec2 direction);
 
 	private:
-		SpriteSheetComponent* m_pSpriteSheetComponent;
+		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		bool m_Move{};
 	};
 }
