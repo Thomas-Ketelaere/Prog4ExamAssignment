@@ -204,7 +204,7 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 
 void load()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo", true);
 
 	//auto backgroundObject = std::make_unique<dae::GameObject>();
 	//auto background = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga");

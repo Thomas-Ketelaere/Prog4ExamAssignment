@@ -3,23 +3,27 @@
 #include <string>
 #include <memory>
 #include "Singleton.h"
+#include "Scene.h"
 
 namespace dae
 {
-	class Scene;
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:
-		Scene& CreateScene(const std::string& name);
+		Scene& CreateScene(const std::string& name, bool setAsCurrentScene);
+		Scene* GetCurrentScene() const { return m_pCurrentScene; }
 
 		void Start();
 		void Update();
 		void FixedUpdate();
 		void LateUpdate();
 		void Render();
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
-		std::vector<std::shared_ptr<Scene>> m_scenes;
+		std::vector<std::unique_ptr<Scene>> m_Scenes;
+
+		Scene* m_pCurrentScene = nullptr;
 	};
 }

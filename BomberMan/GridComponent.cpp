@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "SpriteSheetComponent.h"
 #include "TextureComponent.h"
+#include "SceneManager.h"
 #include <memory>
 
 dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize):
@@ -82,14 +83,17 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 	if (m_CanSpawnBomb)
 	{
 		int index = GetIndexFromPosition(position);
-		if (m_pCells[index]->m_CellState == CellState::Empty)
+		if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
 		{
 			glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
-			auto bombComponent = std::make_unique<BombComponent>(GetGameObject(), this, index, 1.f);
-			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Bomb.png", 3, 1, 0.3f, true, true);
-			bombSpriteComponent->SetCustomPosition(spawnPosition);
-			GetGameObject()->AddComponent(std::move(bombComponent));
-			GetGameObject()->AddComponent(std::move(bombSpriteComponent));
+			auto bombObject = std::make_unique<dae::GameObject>();
+			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 1.f);
+			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.3f, true);
+			bombObject->SetWorldPosition(spawnPosition.x, spawnPosition.y);
+			bombObject->AddComponent(std::move(bombComponent));
+			bombObject->AddComponent(std::move(bombSpriteComponent));
+			bombObject->SetParent(GetGameObject(), true);
+			SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
 			m_CanSpawnBomb = false;
 		}
 	}

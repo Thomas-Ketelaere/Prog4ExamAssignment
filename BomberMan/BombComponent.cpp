@@ -1,6 +1,7 @@
 #include "BombComponent.h"
 #include "Timer.h"
 #include "GridComponent.h"
+#include "GameObject.h"
 
 
 dae::BombComponent::BombComponent(GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode) :
@@ -18,6 +19,6 @@ void dae::BombComponent::Update()
 	if (m_AccumulatedTime >= m_TimeToExplode)
 	{
 		m_pGridComponent->ExplodeBomb(m_CellIndex, 2);
-		Destroy();
+		GetGameObject()->Destroy(); //destroy bomb after explosion
 	}
 }

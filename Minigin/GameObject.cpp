@@ -25,9 +25,6 @@ void dae::GameObject::Start()
 
 void dae::GameObject::Update()
 {
-	//float deltaTime = Time::GetInstance().m_DeltaTime;
-	//printf("%f\n", deltaTime);
-
 	for (std::unique_ptr<Component>& component : m_ComponentsVector)
 	{
 		component->Update();
