@@ -8,10 +8,14 @@ namespace dae
 	class SDLSoundSystem final : public SoundSystem
 	{
 	public:
-		void Play(const sound_id id, const float volume) override;
+		SDLSoundSystem();
+		~SDLSoundSystem();
+		void Play(const SoundId id, const float volume) override;
+		void AddSound(const SoundId id, const char* filePath) override;
 
 	private:
-		std::vector<Mix_Chunk*> m_Samples;
+		//std::vector<Mix_Chunk*> m_Samples;
+		std::vector<std::pair<Sound, Mix_Chunk*>> m_Samples;
 	};
 }
 

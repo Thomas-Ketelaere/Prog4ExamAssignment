@@ -1,12 +1,17 @@
 #pragma once
+#include "SoundId.h"
+
 namespace dae
 {
-	using sound_id = unsigned short;
+	
 	class SoundSystem
 	{
 	public:
 		virtual ~SoundSystem() = default;
-		virtual void Play(const sound_id id, const float volume) = 0;
+		virtual void Play(const SoundId id, const float volume) = 0;
+
+		virtual void AddSound(const SoundId id, const char* filePath) = 0;
+
 	};
 }
 

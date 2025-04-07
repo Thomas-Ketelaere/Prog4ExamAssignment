@@ -240,6 +240,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutputP
     <ClInclude Include="SDLSoundSystem.h" />
     <ClInclude Include="ServiceLocator.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="SoundId.h" />
     <ClInclude Include="SoundSystem.h" />
     <ClInclude Include="SpriteSheetComponent.h" />
     <ClInclude Include="Subject.h" />

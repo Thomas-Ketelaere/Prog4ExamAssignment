@@ -6,7 +6,8 @@ namespace dae
 {
 	class NullSoundSystem final : public SoundSystem
 	{
-		void Play(const sound_id, const float) override {}
+		void Play(const SoundId, const float) override {}
+		void AddSound(const SoundId, const char*) override {}
 	};
 
 	class ServiceLocator final

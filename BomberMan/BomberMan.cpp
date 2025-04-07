@@ -31,7 +31,11 @@
 #include "GridComponent.h"
 #include "SpawnBombCommand.h"
 #include "PlayerSpriteComponent.h"
+#include "ServiceLocator.h"
+#include "SoundSystem.h"
 #include <iostream>
+#include <LoggingSoundSystem.h>
+#include <SDLSoundSystem.h>
 
 void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 {
@@ -309,7 +313,16 @@ void load()
 	tutorialTextKeyboard->ChangeFontSize(15);
 	tutorialObjectKeyboard->AddComponent(std::move(tutorialTextKeyboard));
 	scene.Add(std::move(tutorialObjectKeyboard));
-
+	
+	// --------SOUND----------
+	//std::unique_ptr<SoundSystem> servicelocator::_ss_instance{ std::make_unique<null_sound_system>() };
+#if _DEBUG
+	
+	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::LoggingSoundSystem>(std::make_unique<dae::SDLSoundSystem>()));
+#else
+	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
+#endif
+	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/BombExplodes.wav");
 }
 
 int main(int, char* [])
