@@ -5,6 +5,7 @@
 #include "SpriteSheetComponent.h"
 #include "TextureComponent.h"
 #include "SceneManager.h"
+#include "ServiceLocator.h"
 #include <memory>
 
 dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize):
@@ -103,6 +104,10 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 {
 	//TODO : CLEAN UP AND MAKE MORE EFFICIENT
 	m_CanSpawnBomb = true;
+
+	auto& ss = dae::ServiceLocator::GetSoundSystem();
+	ss.Play(10, 100);
+
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
 	auto spriteSheetExplosionCenter = std::make_unique<SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);

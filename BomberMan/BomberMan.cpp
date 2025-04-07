@@ -7,8 +7,6 @@
 #endif
 #endif
 
-
-
 #include "Minigin.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
