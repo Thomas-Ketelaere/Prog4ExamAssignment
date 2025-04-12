@@ -10,7 +10,7 @@
 #include "Minigin.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-#include "Scene.h"
+#include "scene.h"
 #include "TextComponent.h"
 #include "TextureComponent.h"
 #include "FpsComponent.h"
@@ -36,8 +36,9 @@
 #include <iostream>
 #include <LoggingSoundSystem.h>
 #include <SDLSoundSystem.h>
+#include "StartGameCommand.h"
 
-void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
+void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent)
 {
 	// --------GAMEPAD-----------
 	auto playerInputObjectGamepad = std::make_unique<dae::GameObject>();
@@ -55,7 +56,7 @@ void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 	auto playerTextGamepad = std::make_unique<dae::TextComponent>(playerGamepadTextObject.get(), "Player One:", font);
 	playerTextGamepad->ChangeFontSize(20);
 	playerGamepadTextObject->AddComponent(std::move(playerTextGamepad));
-	scene.Add(std::move(playerGamepadTextObject));
+	scene->Add(std::move(playerGamepadTextObject));
 
 	//display lives
 	auto playerGamepadLivesTextObject = std::make_unique<dae::GameObject>();
@@ -113,13 +114,13 @@ void LoadPlayerGamePad(dae::Scene& scene, dae::GameObject* levelParent)
 	dae::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandGamepad), dae::KeyState::Up, 0x4000, 0);
 	dae::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandGamepad), dae::KeyState::Up, 0x8000, 0);
 
-	scene.Add(std::move(playerInputObjectGamepad));
-	scene.Add(std::move(playerGamepadLivesTextObject));
-	scene.Add(std::move(playerGamepadScoreTextObject));
+	scene->Add(std::move(playerInputObjectGamepad));
+	scene->Add(std::move(playerGamepadLivesTextObject));
+	scene->Add(std::move(playerGamepadScoreTextObject));
 	// --------END GAMEPAD-----------
 }
 
-void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
+void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent)
 {
 	// --------KEYBOARD-----------
 	//display lives
@@ -138,7 +139,7 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 	auto playerTextKeyboard = std::make_unique<dae::TextComponent>(playerKeyboardTextObject.get(), "Player Two:", font);
 	playerTextKeyboard->ChangeFontSize(20);
 	playerKeyboardTextObject->AddComponent(std::move(playerTextKeyboard));
-	scene.Add(std::move(playerKeyboardTextObject));
+	scene->Add(std::move(playerKeyboardTextObject));
 
 	//display score
 	auto playerKeyboardScoreTextObject = std::make_unique<dae::GameObject>();
@@ -149,7 +150,6 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 	auto playerScoreTextChangeKeyboard = std::make_unique<dae::ScoreTextComponent>(playerKeyboardScoreTextObject.get());
 
 	// ------- INPUT KEYBOARD ---------
-	levelParent = levelParent;
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
 	playerInputObjectKeyboard->SetParent(levelParent, true);
 	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
@@ -197,39 +197,74 @@ void LoadPlayerKeyboard(dae::Scene& scene, dae::GameObject* levelParent)
 	dae::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandKeyboard), dae::KeyState::Up, SDLK_r, -1);
 	dae::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), dae::KeyState::Up, SDLK_f, -1);
 
-	scene.Add(std::move(playerInputObjectKeyboard));
-	scene.Add(std::move(playerKeyboardLivesTextObject));
-	scene.Add(std::move(playerKeyboardScoreTextObject));
+	scene->Add(std::move(playerInputObjectKeyboard));
+	scene->Add(std::move(playerKeyboardLivesTextObject));
+	scene->Add(std::move(playerKeyboardScoreTextObject));
 
 	// --------END KEYBOARD-----------
 }
 
-void load()
+void LoadStartScene()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo", true);
+	auto scene = dae::SceneManager::GetInstance().GetCurrentScene();
+
+	auto backgroundObject = std::make_unique<dae::GameObject>();
+	backgroundObject->SetWorldPosition(0, 0);
+	auto background = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga");
+	auto backgroundTwo = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga", true);
+	backgroundTwo->SetCustomPosition(glm::vec2(640, 0));
+	backgroundObject->AddComponent(std::move(background));
+	backgroundObject->AddComponent(std::move(backgroundTwo));
+	scene->Add(std::move(backgroundObject));
+
+	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
+
+	auto startButtonTextObject = std::make_unique<dae::GameObject>();
+	startButtonTextObject->SetWorldPosition(100, 275);
+	auto startButtonText = std::make_unique<dae::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? on gamepad to start game", font);
+	startButtonText->ChangeFontSize(20);
+	startButtonTextObject->AddComponent(std::move(startButtonText));
+	scene->Add(std::move(startButtonTextObject));
+
+	auto logoObject = std::make_unique<dae::GameObject>();
+	auto logo = std::make_unique<dae::TextureComponent>(logoObject.get(), "logo.tga");
+	logoObject->SetWorldPosition(500, 180);
+	logoObject->AddComponent(std::move(logo));
+
+	scene->Add(std::move(logoObject));
+
+	auto playerStartInputObjectKeyboard = std::make_unique<dae::GameObject>();
+	auto startGameCommandKeyboard = std::make_unique<dae::StartGameCommand>(playerStartInputObjectKeyboard.get());
+	dae::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), dae::KeyState::Up, SDLK_e, -1);
+	scene->Add(std::move(playerStartInputObjectKeyboard));
+}
+
+void LoadGameScene()
+{
+	auto scene = dae::SceneManager::GetInstance().GetCurrentScene();
 
 	//auto backgroundObject = std::make_unique<dae::GameObject>();
 	//auto background = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga");
 	//backgroundObject->SetWorldPosition(0, 0);
 	//backgroundObject->AddComponent(std::move(background));
 	//
-	//scene.Add(std::move(backgroundObject));
+	//scene->Add(std::move(backgroundObject));
 
 	auto logoObject = std::make_unique<dae::GameObject>();
 	auto logo = std::make_unique<dae::TextureComponent>(logoObject.get(), "logo.tga");
 	logoObject->SetWorldPosition(216, 180);
 	logoObject->AddComponent(std::move(logo));
 
-	scene.Add(std::move(logoObject));
+	scene->Add(std::move(logoObject));
 
-	
+
 	auto assignmentTextObject = std::make_unique<dae::GameObject>();
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 	auto assignmentText = std::make_unique<dae::TextComponent>(assignmentTextObject.get(), "Programming 4 Assignment", font);
 	assignmentTextObject->SetWorldPosition(80, 50);
 	assignmentTextObject->AddComponent(std::move(assignmentText));
 
-	scene.Add(std::move(assignmentTextObject));
+	scene->Add(std::move(assignmentTextObject));
 
 	auto fpsObject = std::make_unique<dae::GameObject>();
 	auto fpsText = std::make_unique<dae::TextComponent>(fpsObject.get(), "FPS:", font);
@@ -245,7 +280,7 @@ void load()
 	//fpsMovement->SetRotationSpeed(1.f, fpsRotPos);
 	//fpsObject->AddComponent(std::move(fpsMovement));
 
-	scene.Add(std::move(fpsObject));
+	scene->Add(std::move(fpsObject));
 
 
 	//PLAYER SINGLE SPRITE
@@ -279,13 +314,13 @@ void load()
 	// 
 	// 
 	// 
-	// scene.Add(std::move(playerObject));
-	// scene.Add(std::move(secondPlayerObject));
+	// scene->Add(std::move(playerObject));
+	// scene->Add(std::move(secondPlayerObject));
 
 	//auto trashCashObject = std::make_unique<dae::GameObject>();
 	//auto trashCash = std::make_unique<dae::TrashCashComponent>(trashCashObject.get());
 	//trashCashObject->AddComponent(std::move(trashCash));
-	//scene.Add(std::move(trashCashObject));
+	//scene->Add(std::move(trashCashObject));
 
 	//Input
 
@@ -297,7 +332,7 @@ void load()
 	LoadPlayerGamePad(scene, gridObject.get());
 	LoadPlayerKeyboard(scene, gridObject.get());
 
-	scene.Add(std::move(gridObject));
+	scene->Add(std::move(gridObject));
 
 	// --------TUTORIAL TEXT----------
 	auto tutorialObjectGamepad = std::make_unique<dae::GameObject>();
@@ -305,24 +340,32 @@ void load()
 	auto tutorialTextGamepad = std::make_unique<dae::TextComponent>(tutorialObjectGamepad.get(), "Use D-Pad to move, A to lose a life, B/X to gain small/big score from Balloom", font);
 	tutorialTextGamepad->ChangeFontSize(15);
 	tutorialObjectGamepad->AddComponent(std::move(tutorialTextGamepad));
-	scene.Add(std::move(tutorialObjectGamepad));
+	scene->Add(std::move(tutorialObjectGamepad));
 
 	auto tutorialObjectKeyboard = std::make_unique<dae::GameObject>();
 	tutorialObjectKeyboard->SetWorldPosition(50, 420);
 	auto tutorialTextKeyboard = std::make_unique<dae::TextComponent>(tutorialObjectKeyboard.get(), "Use WASD to move, Q to lose a life, E/R to gain small/big score from Balloom", font);
 	tutorialTextKeyboard->ChangeFontSize(15);
 	tutorialObjectKeyboard->AddComponent(std::move(tutorialTextKeyboard));
-	scene.Add(std::move(tutorialObjectKeyboard));
-	
+	scene->Add(std::move(tutorialObjectKeyboard));
+
 	// --------SOUND----------
 	//std::unique_ptr<SoundSystem> servicelocator::_ss_instance{ std::make_unique<null_sound_system>() };
 #if _DEBUG
-	
+
 	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::LoggingSoundSystem>(std::make_unique<dae::SDLSoundSystem>()));
 #else
 	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
 #endif
 	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/BombExplodes.wav");
+}
+
+void load()
+{
+	auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", true);
+	sceneStart.SetLoadingFunction(LoadStartScene);
+	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", false);
+	sceneGame.SetLoadingFunction(LoadGameScene);
 }
 
 int main(int, char* [])
@@ -331,3 +374,4 @@ int main(int, char* [])
 	engine.Run(load);
 	return 0;
 }
+

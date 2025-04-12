@@ -191,6 +191,7 @@
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreTextComponent.cpp" />
     <ClCompile Include="SpawnBombCommand.cpp" />
+    <ClCompile Include="StartGameCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Achievements.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreTextComponent.h" />
     <ClInclude Include="SpawnBombCommand.h" />
+    <ClInclude Include="StartGameCommand.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

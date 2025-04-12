@@ -19,6 +19,8 @@ namespace dae
 		void LateUpdate();
 		void Render();
 
+		void LoadScene(const std::string& sceneToLoadName);
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

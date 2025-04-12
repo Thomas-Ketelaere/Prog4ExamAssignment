@@ -15,7 +15,7 @@ namespace dae
 		void Play(const SoundId id, const float volume, const int loops = 0) override
 		{
 			_real_ss->Play(id, volume, loops);
-			std::cout << "playing " << id << " at volume " << volume << "amount loops:" << loops << std::endl;
+			std::cout << "playing " << id << " at volume " << volume << " amount loops: " << loops << std::endl;
 		}
 
 		void Stop(const SoundId id) override

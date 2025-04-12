@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
+#include "InputManager.h"
+#include <stdexcept>
 
 void dae::SceneManager::Start()
 {
@@ -31,6 +33,10 @@ void dae::SceneManager::LateUpdate()
 	//	scene->LateUpdate();
 	//}
 	m_pCurrentScene->LateUpdate();
+	std::erase_if(m_Scenes, [](const std::unique_ptr<Scene>& scene)
+		{
+			return scene->IsMarkedDestroy();
+		});
 }
 
 void dae::SceneManager::Render()
@@ -40,6 +46,28 @@ void dae::SceneManager::Render()
 	//{
 	//	scene->Render();
 	//}
+}
+
+void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
+{
+	//TODO: IMPROVE
+	for (auto& scene : m_Scenes)
+	{
+		if (scene->GetName() == sceneToLoadName)
+		{
+			if (m_pCurrentScene->GetName() == scene->GetName())
+			{
+				throw std::runtime_error("trying to load and destroy already existing/current scene");
+			}
+			auto previousScene = m_pCurrentScene;
+			//TODO: dont destroy on load (if necessary)
+			InputManager::GetInstance().ClearBindings();
+			m_pCurrentScene = scene.get();
+			scene->LoadScene();
+			scene->Start();
+			previousScene->Destroy();
+		}
+	}
 }
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name, bool setAsCurrentScene)

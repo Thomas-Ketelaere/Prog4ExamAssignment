@@ -69,6 +69,9 @@
     <ClCompile Include="PlayerSpriteComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="StartGameCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="PlayerSpriteComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="StartGameCommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -29,6 +29,7 @@ namespace dae
 		void Start();
 		bool ProcessInput();
 		void AddBinding(std::unique_ptr<GameActorCommand> binding, KeyState keyState, unsigned int keyBind, int controllerIndex);
+		void ClearBindings();
 
 	private:
 		std::vector<std::unique_ptr<Controller>> m_ControllerVct;

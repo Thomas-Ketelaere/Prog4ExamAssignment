@@ -115,3 +115,8 @@ void dae::InputManager::AddBinding(std::unique_ptr<GameActorCommand> binding, Ke
 
 	m_GameBindingVct.emplace_back(std::move(newBinding));
 }
+
+void dae::InputManager::ClearBindings()
+{
+	m_GameBindingVct.clear();
+}
