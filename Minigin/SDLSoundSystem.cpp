@@ -11,9 +11,9 @@ dae::SDLSoundSystem::~SDLSoundSystem()
 {
 }
 
-void dae::SDLSoundSystem::Play(const SoundId id, const float volume)
+void dae::SDLSoundSystem::Play(const SoundId id, const float volume, const int loops)
 {
-	for (auto pair : m_Samples)
+	for (auto& pair : m_Samples)
 	{
 		if (pair.first.id == id)
 		{
@@ -23,7 +23,26 @@ void dae::SDLSoundSystem::Play(const SoundId id, const float volume)
 				pair.first.isLoaded = true;
 			}
 			pair.second->volume = Uint8(volume);
-			Mix_PlayChannel(-1, pair.second, 0);
+			pair.first.m_Channel = Mix_PlayChannel(-1, pair.second, loops);
+		}
+	}
+}
+
+void dae::SDLSoundSystem::Stop(const SoundId id)
+{
+	for (auto& pair : m_Samples)
+	{
+		if (pair.first.id == id)
+		{
+			const int channel = pair.first.m_Channel;
+			if (channel != -1)
+			{
+				int playing = Mix_Playing(channel);
+				if (playing != 0) //is playing on that channel
+				{
+					Mix_HaltChannel(channel);
+				}
+			}
 		}
 	}
 }

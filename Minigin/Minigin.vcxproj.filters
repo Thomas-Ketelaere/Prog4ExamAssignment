@@ -150,6 +150,9 @@
     <ClInclude Include="SoundId.h">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">

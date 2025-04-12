@@ -6,7 +6,8 @@ namespace dae
 {
 	class NullSoundSystem final : public SoundSystem
 	{
-		void Play(const SoundId, const float) override {}
+		void Play(const SoundId, const float, const int) override {}
+		void Stop(const SoundId) override {}
 		void AddSound(const SoundId, const char*) override {}
 	};
 
