@@ -50,7 +50,7 @@ void dae::EnemyMovementComponent::Render() const
 		glm::vec2 pos = GetTransform()->GetWorldPosition();
 		SDL_Color color = { 0, 0, 255, 255 };
 		Renderer::GetInstance().FillRectangle(pos.x, pos.y, 20.f, 20.f, color);
-		for (int pathCounter{}; pathCounter < m_Path.size() - 1; ++pathCounter)
+		for (unsigned int pathCounter{}; pathCounter < m_Path.size() - 1; ++pathCounter)
 		{
 			glm::vec2 pointOne = m_Path[pathCounter];
 			glm::vec2 pointTwo = m_Path[pathCounter + 1];

@@ -25,7 +25,7 @@ namespace dae
 		const float m_Speed;
 		const float m_DistanceToReachPoint{ 2.f };
 
-		int m_PathIndex{};
+		unsigned int m_PathIndex{};
 
 		bool m_DebugRender{};
 	};
