@@ -31,6 +31,7 @@ namespace dae
 		void ExplodeBomb(int index, int range);
 
 		bool IsCellWalkable(const glm::vec2& position);
+		Cell* GetCellFromPosition(const glm::vec2& position);
 		
 	private:
 		void SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath);

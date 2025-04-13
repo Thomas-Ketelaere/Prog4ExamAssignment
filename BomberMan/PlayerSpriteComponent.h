@@ -11,6 +11,7 @@ namespace dae
 		PlayerSpriteComponent(GameObject* gameObject);
 
 		virtual void Start() override;
+		virtual void Render() const override;
 		virtual void Update() override;
 
 		int GetWidthSprite() const;

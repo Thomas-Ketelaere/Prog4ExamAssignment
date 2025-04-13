@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "SpriteSheetComponent.h"
 
+#include "Renderer.h" //TODO: remove after testing
+
 dae::PlayerSpriteComponent::PlayerSpriteComponent(GameObject* gameObject):
 	Component(gameObject)
 {
@@ -11,6 +13,13 @@ dae::PlayerSpriteComponent::PlayerSpriteComponent(GameObject* gameObject):
 void dae::PlayerSpriteComponent::Start()
 {
 	m_pSpriteSheetComponent = GetGameObject()->GetComponent<SpriteSheetComponent>();
+}
+
+void dae::PlayerSpriteComponent::Render() const//TODO: remove after testing
+{
+	//glm::vec3 pos = GetTransform()->GetWorldPosition();
+	//SDL_Color color = { 0, 0, 255, 255 };
+	//Renderer::GetInstance().DrawRectangle(pos.x, pos.y, 32, 32, color);
 }
 
 void dae::PlayerSpriteComponent::Update()

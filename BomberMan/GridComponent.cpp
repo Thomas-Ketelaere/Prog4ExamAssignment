@@ -23,7 +23,7 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 	{
 		for (int colCounter{}; colCounter < amountColumns; ++colCounter)
 		{
-			glm::vec2 position = { colCounter * m_CellWidth, rowCounter * m_CellHeight };
+			glm::vec2 position = { colCounter * m_CellWidth + m_CellWidth / 2, rowCounter * m_CellHeight + m_CellHeight / 2 };
 			Cell* cell = new Cell(position);
 			if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
 			{
@@ -244,6 +244,12 @@ bool dae::GridComponent::IsCellWalkable(const glm::vec2& position)
 		return true;
 	}
 	return false;
+}
+
+dae::Cell* dae::GridComponent::GetCellFromPosition(const glm::vec2& position)
+{
+	int index = GetIndexFromPosition(position);
+	return m_pCells[index];
 }
 
 void dae::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)

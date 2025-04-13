@@ -37,6 +37,7 @@
 #include <LoggingSoundSystem.h>
 #include <SDLSoundSystem.h>
 #include "StartGameCommand.h"
+#include "ColliderComponent.h"
 
 void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent)
 {
@@ -154,9 +155,12 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent)
 	playerInputObjectKeyboard->SetParent(levelParent, true);
 	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputKeyboardSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
-	playerInputObjectKeyboard->SetWorldPosition(450, 300);
+	auto playerInputKeyboardCollider = std::make_unique<dae::ColliderComponent>(playerInputObjectKeyboard.get(), 28.f, 28.f);
+	playerInputKeyboardCollider->SetDebugRendering(true);
+	playerInputObjectKeyboard->SetWorldPosition(48, 48);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSetter));
+	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardCollider));
 
 	//lives
 	auto playerLivesKeyboard = std::make_unique<dae::LivesComponent>(playerInputObjectKeyboard.get(), 3);
@@ -209,10 +213,10 @@ void LoadStartScene()
 	auto scene = dae::SceneManager::GetInstance().GetCurrentScene();
 
 	auto backgroundObject = std::make_unique<dae::GameObject>();
-	backgroundObject->SetWorldPosition(0, 0);
+	backgroundObject->SetWorldPosition(100, 300);
 	auto background = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga");
 	auto backgroundTwo = std::make_unique<dae::TextureComponent>(backgroundObject.get(), "background.tga", true);
-	backgroundTwo->SetCustomPosition(glm::vec2(640, 0));
+	backgroundTwo->SetCustomPosition(glm::vec2(740, 300));
 	backgroundObject->AddComponent(std::move(background));
 	backgroundObject->AddComponent(std::move(backgroundTwo));
 	scene->Add(std::move(backgroundObject));
@@ -220,7 +224,7 @@ void LoadStartScene()
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
 	auto startButtonTextObject = std::make_unique<dae::GameObject>();
-	startButtonTextObject->SetWorldPosition(100, 275);
+	startButtonTextObject->SetWorldPosition(500, 275);
 	auto startButtonText = std::make_unique<dae::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? on gamepad to start game", font);
 	startButtonText->ChangeFontSize(20);
 	startButtonTextObject->AddComponent(std::move(startButtonText));
@@ -362,9 +366,9 @@ void LoadGameScene()
 
 void load()
 {
-	auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", true);
+	auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", false);
 	sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", false);
+	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", true);
 	sceneGame.SetLoadingFunction(LoadGameScene);
 }
 

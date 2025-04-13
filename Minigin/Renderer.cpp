@@ -69,6 +69,10 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	dst.x = static_cast<int>(x);
 	dst.y = static_cast<int>(y);
 	SDL_QueryTexture(texture.GetSDLTexture(), nullptr, nullptr, &dst.w, &dst.h);
+
+	dst.x -= dst.w / 2;
+	dst.y -= dst.h / 2;
+
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
@@ -79,6 +83,10 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	dst.y = static_cast<int>(y);
 	dst.w = static_cast<int>(width);
 	dst.h = static_cast<int>(height);
+
+	dst.x -= dst.w / 2;
+	dst.y -= dst.h / 2;
+
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
@@ -96,6 +104,9 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, float x, float y, in
 	dst.w = width;
 	dst.h = height;
 
+	dst.x -= dst.w / 2;
+	dst.y -= dst.h / 2;
+
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }
 
@@ -109,6 +120,9 @@ void dae::Renderer::DrawRectangle(float x, float y, float width, float height, c
 	rect.w = static_cast<int>(width);
 	rect.h = static_cast<int>(height);
 
+	rect.x -= rect.w / 2;
+	rect.y -= rect.h / 2;
+
 	SDL_RenderDrawRect(m_renderer, &rect);
 }
 
@@ -121,6 +135,9 @@ void dae::Renderer::FillRectangle(float x, float y, float width, float height, c
 	rect.y = static_cast<int>(y);
 	rect.w = static_cast<int>(width);
 	rect.h = static_cast<int>(height);
+
+	rect.x -= rect.w / 2;
+	rect.y -= rect.h / 2;
 
 	SDL_RenderFillRect(m_renderer, &rect);
 }

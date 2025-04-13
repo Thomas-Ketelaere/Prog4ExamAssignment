@@ -5,6 +5,7 @@ namespace dae
 {
 	class PlayerSpriteComponent;
 	class GridComponent;
+	class ColliderComponent;
 	class MoveCommand : public GameActorCommand
 	{
 	public:
@@ -16,6 +17,7 @@ namespace dae
 		glm::vec2 m_Speed;
 		PlayerSpriteComponent* m_pPlayerSpriteComponent;
 		GridComponent* m_pGridComponent;
+		ColliderComponent* m_pColliderComponent;
 	};
 }
 
