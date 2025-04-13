@@ -142,4 +142,10 @@ void dae::Renderer::FillRectangle(float x, float y, float width, float height, c
 	SDL_RenderFillRect(m_renderer, &rect);
 }
 
+void dae::Renderer::DrawLine(float xOne, float yOne, float xTwo, float yTwo, const SDL_Color& color) const
+{
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawLine(m_renderer, int(xOne), int(yOne), int(xTwo), int(yTwo));
+}
+
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }

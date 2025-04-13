@@ -72,6 +72,9 @@
     <ClCompile Include="StartGameCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyMovementComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="StartGameCommand.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyMovementComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

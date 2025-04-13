@@ -23,8 +23,8 @@ namespace dae
 		void RenderTexture(const Texture2D& texture, float x, float y, int width, int height, int srcX, int srcY) const;
 
 		void DrawRectangle(float x, float y, float width, float height, const SDL_Color& color) const;
-
 		void FillRectangle(float x, float y, float width, float height, const SDL_Color& color) const;
+		void DrawLine(float xOne, float yOne, float xTwo, float yTwo, const SDL_Color& color) const;
 		
 		SDL_Renderer* GetSDLRenderer() const;
 

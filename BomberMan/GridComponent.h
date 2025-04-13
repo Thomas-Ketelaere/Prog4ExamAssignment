@@ -21,6 +21,19 @@ namespace dae
 		SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
 	};
 
+	struct Node
+	{
+		int index = -1;
+		int connectionIndex = -1;
+		float estimatedTotalCost = 0.f;
+		float costSoFar = 0.f;
+
+		bool operator<(const Node& other) const
+		{
+			return estimatedTotalCost < other.estimatedTotalCost;
+		};
+	};
+
 	class GridComponent final : public Component
 	{
 	public:
@@ -32,12 +45,19 @@ namespace dae
 
 		bool IsCellWalkable(const glm::vec2& position);
 		Cell* GetCellFromPosition(const glm::vec2& position);
+
+		void GetPath(std::vector<glm::vec2>& pathPositions, glm::vec2 endPosition);
 		
 	private:
 		void SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath);
 		int GetIndexFromPosition(const glm::vec2& position) const;
 		glm::vec2 GetCellPositionFromIndex(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
+
+		//A*
+		std::vector<int> FindPath(int startIndex, int endIndex);
+		float GetHeuristicCost(glm::vec2 a, glm::vec2 b);
+		std::vector<int> GetConnectionIndexFromCellIndex(int index);
 
 		std::vector<Cell*> m_pCells;
 		float m_CellWidth;

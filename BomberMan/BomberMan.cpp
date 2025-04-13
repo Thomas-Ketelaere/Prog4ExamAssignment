@@ -38,6 +38,7 @@
 #include <SDLSoundSystem.h>
 #include "StartGameCommand.h"
 #include "ColliderComponent.h"
+#include "EnemyMovementComponent.h"
 
 void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent)
 {
@@ -208,6 +209,18 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent)
 	// --------END KEYBOARD-----------
 }
 
+void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent)
+{
+	// --------ENEMIES----------
+	auto enemy = std::make_unique<dae::GameObject>();
+	enemy->SetWorldPosition(48, 48);
+	enemy->SetParent(levelParent, true);
+	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 50.f);
+	enemyMovement->SetDebugRendering(true);
+	enemy->AddComponent(std::move(enemyMovement));
+	scene->Add(std::move(enemy));
+}
+
 void LoadStartScene()
 {
 	auto scene = dae::SceneManager::GetInstance().GetCurrentScene();
@@ -335,6 +348,7 @@ void LoadGameScene()
 
 	LoadPlayerGamePad(scene, gridObject.get());
 	LoadPlayerKeyboard(scene, gridObject.get());
+	LoadEnemies(scene, gridObject.get());
 
 	scene->Add(std::move(gridObject));
 
@@ -353,6 +367,9 @@ void LoadGameScene()
 	tutorialObjectKeyboard->AddComponent(std::move(tutorialTextKeyboard));
 	scene->Add(std::move(tutorialObjectKeyboard));
 
+
+	
+
 	// --------SOUND----------
 	//std::unique_ptr<SoundSystem> servicelocator::_ss_instance{ std::make_unique<null_sound_system>() };
 #if _DEBUG
@@ -363,6 +380,8 @@ void LoadGameScene()
 #endif
 	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/BombExplodes.wav");
 }
+
+
 
 void load()
 {

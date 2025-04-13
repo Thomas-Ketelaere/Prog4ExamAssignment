@@ -252,6 +252,21 @@ dae::Cell* dae::GridComponent::GetCellFromPosition(const glm::vec2& position)
 	return m_pCells[index];
 }
 
+void dae::GridComponent::GetPath(std::vector<glm::vec2>& pathPositions, glm::vec2 endPosition)
+{
+	int startIndex = GetIndexFromPosition(pathPositions.back()); //start always on last position that it arrived
+	int endIndex = GetIndexFromPosition(endPosition);
+
+	auto indices = FindPath(startIndex, endIndex);
+
+	pathPositions.clear();
+	for (int index : indices)
+	{
+		pathPositions.emplace_back(GetCellPositionFromIndex(index));
+	}
+}
+
+
 void dae::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
 {
 	auto spriteSheetExplosion = std::make_unique<SpriteSheetComponent>(GetGameObject(), fullPath, 7, 1, 0.1f, true, true);
@@ -289,6 +304,167 @@ int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, 
 
 	int newIndex = newRow * m_AmountColumns + newColumn;
 	return newIndex;
+}
+
+std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
+{
+	//USED A* FROM GAMEPLAY PROGRAMMING COURSE
+	std::vector<int> pathIndices{};
+	std::list<Node> openList;
+	std::list<Node> closedList;
+
+	//check if cell is reachable
+	if (m_pCells[endIndex]->m_CellState != CellState::Empty)
+	{
+		pathIndices.emplace_back(startIndex);
+		return pathIndices;
+	}
+
+	Node currentNodeRecord{};
+	Node startNodeRecord{};
+	startNodeRecord.index = startIndex;
+	startNodeRecord.connectionIndex = -1;
+	startNodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndex(startIndex), GetCellPositionFromIndex(endIndex));
+	//KickStart
+	openList.push_back(startNodeRecord);
+
+	while (!openList.empty())
+	{
+		auto currentNodeRecordIt = std::min_element(openList.begin(), openList.end());
+		currentNodeRecord = *currentNodeRecordIt;
+
+		if (currentNodeRecord.index == endIndex)
+		{
+			break;
+		}
+
+		for (int connectionIndex : GetConnectionIndexFromCellIndex(currentNodeRecord.index))
+		{
+			//GraphNode* const pNextNode = m_pGraph->GetNode(pConnection->GetToNodeId());
+
+			float cost = currentNodeRecord.costSoFar + 1; // not working with different types of floor, so extra cost is always one
+			auto closedIt = std::find_if(closedList.begin(), closedList.end(), [&](const Node& record) { return record.index == connectionIndex; });
+			if (closedIt != closedList.end())
+			{
+				if (closedIt->costSoFar < cost)
+				{
+					continue;
+				}
+				else
+				{
+					closedList.erase(closedIt);
+				}
+			}
+
+			auto openIt = std::find_if(openList.begin(), openList.end(), [&](const Node& record) { return record.index == connectionIndex; });
+			if (openIt != openList.end())
+			{
+				if (openIt->costSoFar < cost)
+				{
+					continue;
+				}
+				else
+				{
+					openList.erase(openIt);
+				}
+			}
+			Node nodeRecord;
+			nodeRecord.index = connectionIndex;
+			nodeRecord.costSoFar = cost;
+			nodeRecord.connectionIndex = currentNodeRecord.index;
+			nodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndex(connectionIndex), GetCellPositionFromIndex(endIndex)) + cost;
+			openList.push_back(nodeRecord);
+		}
+
+		auto it = std::find_if(openList.begin(), openList.end(),
+			[currentNodeRecord](const Node& record)
+			{
+				return record.index == currentNodeRecord.index;
+			});
+
+		if (it != openList.end())
+		{
+			openList.erase(it);
+		}
+		closedList.push_back(currentNodeRecord);
+
+	}
+
+	while (currentNodeRecord.index != startIndex)
+	{
+		pathIndices.push_back(currentNodeRecord.index);
+
+		// Find the record in closedList where pNode matches the connection’s start node
+		auto it = std::find_if(closedList.begin(), closedList.end(),
+			[&](const Node& record)
+			{
+				return record.index == currentNodeRecord.connectionIndex;
+			});
+
+		if (it == closedList.end())
+		{
+			// Safety check: If not found, something went wrong
+			break;
+		}
+
+		currentNodeRecord = *it;  // Move to the previous node in the path
+	}
+
+	// Add the start node and reverse the path
+	pathIndices.push_back(startIndex);
+	std::reverse(pathIndices.begin(), pathIndices.end());
+
+	return pathIndices;
+}
+
+float dae::GridComponent::GetHeuristicCost(glm::vec2 a, glm::vec2 b)
+{
+	//using the Manhattan distance (TODO: why this one)
+	float manDistance = abs(a.x - b.x) + abs(a.y - b.y);
+	return manDistance;
+}
+
+std::vector<int> dae::GridComponent::GetConnectionIndexFromCellIndex(int index)
+{
+	std::vector<int> connections{};
+	//only allow connections that are walkable
+	int indexMoved = GetIndexWithCellOffset(-1, 0, index);
+	if (indexMoved != -1)
+	{
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		{
+			connections.emplace_back(indexMoved);
+		}
+	}
+	
+	indexMoved = GetIndexWithCellOffset(1, 0, index);
+	if (indexMoved != -1)
+	{
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		{
+			connections.emplace_back(indexMoved);
+		}
+	}
+
+	indexMoved = GetIndexWithCellOffset(0, -1, index);
+	if (indexMoved != -1)
+	{
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		{
+			connections.emplace_back(indexMoved);
+		}
+	}
+
+	indexMoved = GetIndexWithCellOffset(0, 1, index);
+	if (indexMoved != -1)
+	{
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		{
+			connections.emplace_back(indexMoved);
+		}
+	}
+
+	return connections;
 }
 
 

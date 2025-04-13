@@ -178,6 +178,7 @@
     <ClCompile Include="Achievements.cpp" />
     <ClCompile Include="BombComponent.cpp" />
     <ClCompile Include="BomberMan.cpp" />
+    <ClCompile Include="EnemyMovementComponent.cpp" />
     <ClCompile Include="FpsComponent.cpp" />
     <ClCompile Include="GainPointsCommand.cpp" />
     <ClCompile Include="GridComponent.cpp" />
@@ -196,6 +197,7 @@
   <ItemGroup>
     <ClInclude Include="Achievements.h" />
     <ClInclude Include="BombComponent.h" />
+    <ClInclude Include="EnemyMovementComponent.h" />
     <ClInclude Include="FpsComponent.h" />
     <ClInclude Include="GainPointsCommand.h" />
     <ClInclude Include="GridComponent.h" />
