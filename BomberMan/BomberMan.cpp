@@ -215,7 +215,7 @@ void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent)
 	auto enemy = std::make_unique<dae::GameObject>();
 	enemy->SetWorldPosition(48, 48);
 	enemy->SetParent(levelParent, true);
-	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 50.f);
+	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 20.f);
 	enemyMovement->SetDebugRendering(true);
 	enemy->AddComponent(std::move(enemyMovement));
 	scene->Add(std::move(enemy));
@@ -380,8 +380,6 @@ void LoadGameScene()
 #endif
 	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/BombExplodes.wav");
 }
-
-
 
 void load()
 {

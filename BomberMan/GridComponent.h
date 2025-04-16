@@ -10,7 +10,7 @@ namespace dae
 	class TextureComponent;
 	enum class CellState
 	{
-		Empty, HardWall, BreakableWall
+		Empty, HardWall, BreakableWall, Bomb
 	};
 
 	struct Cell
@@ -43,10 +43,13 @@ namespace dae
 		void SpawnBomb(glm::vec2 position);
 		void ExplodeBomb(int index, int range);
 
-		bool IsCellWalkable(const glm::vec2& position);
+		bool IsCellWalkable(const glm::vec2& position, bool isPlayer);
 		Cell* GetCellFromPosition(const glm::vec2& position);
 
-		void GetPath(std::vector<glm::vec2>& pathPositions, glm::vec2 endPosition);
+		const glm::vec2& GetRandomEmptyCell();
+
+		// TODO: RETURNS COPY NOW
+		const std::vector<glm::vec2> GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition);
 		
 	private:
 		void SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath);

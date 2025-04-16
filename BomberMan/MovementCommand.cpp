@@ -67,19 +67,19 @@ void dae::MoveCommand::Execute()
 	glm::vec2 bottomLeft = { pos.x - colliderWidthHalf, pos.y + colliderHeightHalf };
 	glm::vec2 bottomRight = { pos.x + colliderWidthHalf, pos.y + colliderHeightHalf };
 
-	if (!m_pGridComponent->IsCellWalkable(topLeft))
+	if (!m_pGridComponent->IsCellWalkable(topLeft, true))
 	{
 		canMove = false;
 	}
-	else if (!m_pGridComponent->IsCellWalkable(topRight))
+	else if (!m_pGridComponent->IsCellWalkable(topRight, true))
 	{
 		canMove = false;
 	}
-	else if (!m_pGridComponent->IsCellWalkable(bottomLeft))
+	else if (!m_pGridComponent->IsCellWalkable(bottomLeft, true))
 	{
 		canMove = false;
 	}
-	else if (!m_pGridComponent->IsCellWalkable(bottomRight))
+	else if (!m_pGridComponent->IsCellWalkable(bottomRight, true))
 	{
 		canMove = false;
 	}

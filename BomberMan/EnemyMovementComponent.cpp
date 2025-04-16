@@ -10,12 +10,11 @@ dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, cons
 	m_Speed{speed}
 {
 	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
-	m_Path.emplace_back(GetTransform()->GetWorldPosition());
 }
 
 void dae::EnemyMovementComponent::Start()
 {
-	m_pGridComponent->GetPath(m_Path, glm::vec2(848, 48));
+	m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition() , glm::vec2(848, 48));
 }
 
 void dae::EnemyMovementComponent::Update()
@@ -28,6 +27,16 @@ void dae::EnemyMovementComponent::Update()
 		{
 			m_PathIndex = 0;
 			//new path
+			auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
+			m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+		}
+
+		else if (!m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) //check if cell is walkable (if e.g. bomb has been placed after path calculation
+		{
+			m_PathIndex = 0;
+			//new path
+			auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
+			m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
 		}
 		
 	}

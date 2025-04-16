@@ -18,7 +18,7 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 	m_CellHeight{cellSize},
 	m_CanSpawnBomb{true}
 {
-	std::vector<Cell*> m_pEmptyCells;
+	std::vector<Cell*> emptyCells;
 	for (int rowCounter{}; rowCounter < amountRows; ++rowCounter)
 	{
 		for (int colCounter{}; colCounter < amountColumns; ++colCounter)
@@ -42,7 +42,7 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 			else
 			{
 				cell->m_CellState = CellState::Empty;
-				m_pEmptyCells.emplace_back(cell);
+				emptyCells.emplace_back(cell);
 			}
 
 			m_pCells.emplace_back(cell);
@@ -53,18 +53,20 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 	const int tempAmountOfBreakableWalls{ 10 };
 	for (int emptyCounter{}; emptyCounter < tempAmountOfBreakableWalls; ++emptyCounter)
 	{
-		int index = std::rand() % m_pEmptyCells.size();
-		Cell* cell = m_pEmptyCells[index];
+		int index = std::rand() % emptyCells.size();
+		Cell* cell = emptyCells[index];
 		if (cell->m_CellState == CellState::Empty) // make sure that it doesnt set the same cell twice
 		{
 			cell->m_CellState = CellState::BreakableWall;
 			auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
 			spriteSheetWall->SetCustomPosition(cell->m_Position);
 			spriteSheetWall->ShouldAnimate(false);
-			cell->m_pSpriteSheetWall = spriteSheetWall.get();
+			cell->m_pSpriteSheetWall = spriteSheetWall.get(); 
+			emptyCells.erase(emptyCells.begin() + index);
 			GetGameObject()->AddComponent(std::move(spriteSheetWall));
 		}
 	}
+
 
 	SDL_Color color = { 56, 135, 0, 255 };
 	Renderer::GetInstance().SetBackgroundColor(color);
@@ -95,6 +97,7 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 			bombObject->AddComponent(std::move(bombSpriteComponent));
 			bombObject->SetParent(GetGameObject(), true);
 			SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
+			m_pCells[index]->m_CellState = CellState::Bomb;
 			m_CanSpawnBomb = false;
 		}
 	}
@@ -107,6 +110,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
+	cellCenter->m_CellState = CellState::Empty;
 	auto spriteSheetExplosionCenter = std::make_unique<SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
 	GetGameObject()->AddComponent(std::move(spriteSheetExplosionCenter));
@@ -231,7 +235,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 	}
 }
 
-bool dae::GridComponent::IsCellWalkable(const glm::vec2& position)
+bool dae::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant
 {
 	if (position.x < 0 || position.x > m_ScreenWidth || position.y < 0 || position.y > m_ScreenHeight)
 	{
@@ -239,10 +243,22 @@ bool dae::GridComponent::IsCellWalkable(const glm::vec2& position)
 	}
 
 	int indexCell = GetIndexFromPosition(position);
-	if (m_pCells[indexCell]->m_CellState == CellState::Empty)
+	if (isPlayer)
 	{
-		return true;
+		if (m_pCells[indexCell]->m_CellState == CellState::Empty || m_pCells[indexCell]->m_CellState == CellState::Bomb)
+		{
+			return true;
+		}
 	}
+
+	else
+	{
+		if (m_pCells[indexCell]->m_CellState == CellState::Empty)
+		{
+			return true;
+		}
+	}
+	
 	return false;
 }
 
@@ -252,18 +268,46 @@ dae::Cell* dae::GridComponent::GetCellFromPosition(const glm::vec2& position)
 	return m_pCells[index];
 }
 
-void dae::GridComponent::GetPath(std::vector<glm::vec2>& pathPositions, glm::vec2 endPosition)
+const glm::vec2& dae::GridComponent::GetRandomEmptyCell()
 {
-	int startIndex = GetIndexFromPosition(pathPositions.back()); //start always on last position that it arrived
-	int endIndex = GetIndexFromPosition(endPosition);
+	std::vector<Cell*> emptyCells;
+	for (Cell* cell : m_pCells)
+	{
+		if (cell->m_CellState == CellState::Empty)
+		{
+			emptyCells.emplace_back(cell);
+		}
+	}
 
-	auto indices = FindPath(startIndex, endIndex);
+	int index = std::rand() % emptyCells.size();
+	return emptyCells[index]->m_Position;
+}
+
+const std::vector<glm::vec2> dae::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
+{
+	std::vector<glm::vec2> pathPositions;
+	const int startIndex = GetIndexFromPosition(startPosition); 
+	const int endIndex = GetIndexFromPosition(endPosition);
+
+	const std::vector<int> indices = FindPath(startIndex, endIndex);
 
 	pathPositions.clear();
+	
 	for (int index : indices)
 	{
 		pathPositions.emplace_back(GetCellPositionFromIndex(index));
 	}
+
+	if (indices.size() == 1) // didn't find a path, so locked in, but did already add first index in for loop above
+	{
+		std::vector<int> neighborIndices = GetConnectionIndexFromCellIndex(startIndex);
+		if (neighborIndices.size() > 0) //locked in more than one cell
+		{
+			pathPositions.emplace_back(GetCellPositionFromIndex(neighborIndices[0])); // just add first neighbor to wander between the two
+		}
+	}
+
+	return pathPositions;
 }
 
 
@@ -308,7 +352,6 @@ int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, 
 
 std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
 {
-	//USED A* FROM GAMEPLAY PROGRAMMING COURSE
 	std::vector<int> pathIndices{};
 	std::list<Node> openList;
 	std::list<Node> closedList;
@@ -325,7 +368,7 @@ std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
 	startNodeRecord.index = startIndex;
 	startNodeRecord.connectionIndex = -1;
 	startNodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndex(startIndex), GetCellPositionFromIndex(endIndex));
-	//KickStart
+
 	openList.push_back(startNodeRecord);
 
 	while (!openList.empty())
@@ -340,9 +383,8 @@ std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
 
 		for (int connectionIndex : GetConnectionIndexFromCellIndex(currentNodeRecord.index))
 		{
-			//GraphNode* const pNextNode = m_pGraph->GetNode(pConnection->GetToNodeId());
 
-			float cost = currentNodeRecord.costSoFar + 1; // not working with different types of floor, so extra cost is always one
+			float cost = currentNodeRecord.estimatedTotalCost + 1; // not working with different types of floor, so extra cost is always one
 			auto closedIt = std::find_if(closedList.begin(), closedList.end(), [&](const Node& record) { return record.index == connectionIndex; });
 			if (closedIt != closedList.end())
 			{
@@ -394,7 +436,6 @@ std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
 	{
 		pathIndices.push_back(currentNodeRecord.index);
 
-		// Find the record in closedList where pNode matches the connection’s start node
 		auto it = std::find_if(closedList.begin(), closedList.end(),
 			[&](const Node& record)
 			{
@@ -403,14 +444,12 @@ std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
 
 		if (it == closedList.end())
 		{
-			// Safety check: If not found, something went wrong
 			break;
 		}
 
 		currentNodeRecord = *it;  // Move to the previous node in the path
 	}
 
-	// Add the start node and reverse the path
 	pathIndices.push_back(startIndex);
 	std::reverse(pathIndices.begin(), pathIndices.end());
 
