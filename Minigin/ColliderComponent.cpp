@@ -21,7 +21,6 @@ void dae::ColliderComponent::Render() const
 
 bool dae::ColliderComponent::IsColliding(const glm::vec2& objectPos, const float width, const float height)
 {
-
 	glm::vec2 colliderPos = glm::vec2(GetTransform()->GetWorldPosition());
 
 	float colliderLeft = colliderPos.x - m_Width / 2;
@@ -37,4 +36,12 @@ bool dae::ColliderComponent::IsColliding(const glm::vec2& objectPos, const float
 	bool isOverlapping = !(colliderRight < objectLeft || colliderLeft > objectRight || colliderBottom < objectTop || colliderTop > objectBottom);
 
 	return isOverlapping;
+}
+
+bool dae::ColliderComponent::IsColliding(ColliderComponent* other)
+{
+	const glm::vec2 otherPos = other->GetTransform()->GetWorldPosition();
+	const float otherWidth = other->GetColliderWidth();
+	const float otherHeight = other->GetColliderHeight();
+	return IsColliding(otherPos, otherWidth, otherHeight);
 }

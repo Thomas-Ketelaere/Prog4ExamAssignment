@@ -12,6 +12,7 @@ namespace dae
 		virtual void Render() const override;
 
 		bool IsColliding(const glm::vec2& objectPos, const float width, const float height);
+		bool IsColliding(ColliderComponent* other);
 
 		float GetColliderWidth() { return m_Width; }
 		float GetColliderHeight() { return m_Height; }

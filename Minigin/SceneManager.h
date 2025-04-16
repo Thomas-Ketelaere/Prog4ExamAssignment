@@ -20,6 +20,7 @@ namespace dae
 		void Render();
 
 		void LoadScene(const std::string& sceneToLoadName);
+		void ReloadScene();
 
 	private:
 		friend class Singleton<SceneManager>;

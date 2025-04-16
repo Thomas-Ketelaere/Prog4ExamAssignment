@@ -7,7 +7,18 @@ using namespace dae;
 
 unsigned int Scene::m_idCounter = 0;
 
-Scene::Scene(const std::string& name) : m_Name(name) {}
+Scene::Scene(const std::string& name) : 
+	m_Name{ name },
+	m_Destroy{}
+{
+}
+
+void dae::Scene::ReloadScene()
+{
+	m_Objects.clear();
+	m_LoadingFunction();
+	m_Reload = false;
+}
 
 Scene::~Scene() = default;
 

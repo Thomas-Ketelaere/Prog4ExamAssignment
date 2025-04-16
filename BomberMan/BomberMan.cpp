@@ -39,6 +39,7 @@
 #include "StartGameCommand.h"
 #include "ColliderComponent.h"
 #include "EnemyMovementComponent.h"
+#include "EnemyCollider.h"
 
 void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent)
 {
@@ -122,7 +123,7 @@ void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent)
 	// --------END GAMEPAD-----------
 }
 
-void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent)
+void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::ColliderComponent*& playerKeyboardCollider)
 {
 	// --------KEYBOARD-----------
 	//display lives
@@ -157,6 +158,7 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent)
 	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputKeyboardSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
 	auto playerInputKeyboardCollider = std::make_unique<dae::ColliderComponent>(playerInputObjectKeyboard.get(), 28.f, 28.f);
+	playerKeyboardCollider = playerInputKeyboardCollider.get();
 	playerInputKeyboardCollider->SetDebugRendering(true);
 	playerInputObjectKeyboard->SetWorldPosition(48, 48);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
@@ -209,15 +211,18 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent)
 	// --------END KEYBOARD-----------
 }
 
-void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent)
+void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent, dae::ColliderComponent* playerKeyboardCollider)
 {
 	// --------ENEMIES----------
 	auto enemy = std::make_unique<dae::GameObject>();
-	enemy->SetWorldPosition(48, 48);
+	enemy->SetWorldPosition(48, 80);
 	enemy->SetParent(levelParent, true);
-	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 20.f);
+	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 10.f);
 	enemyMovement->SetDebugRendering(true);
+	auto enemyCollider = std::make_unique<dae::EnemyCollider>(enemy.get(), 25.f, 25.f);
+	enemyCollider->AddPlayerCollider(playerKeyboardCollider);
 	enemy->AddComponent(std::move(enemyMovement));
+	enemy->AddComponent(std::move(enemyCollider));
 	scene->Add(std::move(enemy));
 }
 
@@ -346,9 +351,11 @@ void LoadGameScene()
 	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 31, 13, 992, 416, 32.f);
 	gridObject->AddComponent(std::move(gridView));
 
+	//please do smth about not passing a lot of pointers in functions
+	dae::ColliderComponent* playerKeyboardCollider{};
 	LoadPlayerGamePad(scene, gridObject.get());
-	LoadPlayerKeyboard(scene, gridObject.get());
-	LoadEnemies(scene, gridObject.get());
+	LoadPlayerKeyboard(scene, gridObject.get(), playerKeyboardCollider);
+	LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
 	scene->Add(std::move(gridObject));
 

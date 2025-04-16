@@ -33,6 +33,12 @@ void dae::SceneManager::LateUpdate()
 	//	scene->LateUpdate();
 	//}
 	m_pCurrentScene->LateUpdate();
+	if (m_pCurrentScene->IsMarkedReload())
+	{
+		InputManager::GetInstance().ClearBindings();
+		m_pCurrentScene->ReloadScene();
+		m_pCurrentScene->Start();
+	}
 	std::erase_if(m_Scenes, [](const std::unique_ptr<Scene>& scene)
 		{
 			return scene->IsMarkedDestroy();
@@ -57,7 +63,7 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 		{
 			if (m_pCurrentScene->GetName() == scene->GetName())
 			{
-				throw std::runtime_error("trying to load and destroy already existing/current scene");
+				throw std::runtime_error("trying to load and destroy already existing/current scene. Use 'ReloadScene' instead.");
 			}
 			auto previousScene = m_pCurrentScene;
 			//TODO: dont destroy on load (if necessary)
@@ -68,6 +74,12 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			previousScene->Destroy();
 		}
 	}
+}
+
+void dae::SceneManager::ReloadScene()
+{
+	m_pCurrentScene->MarkForReload();
+	
 }
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name, bool setAsCurrentScene)
