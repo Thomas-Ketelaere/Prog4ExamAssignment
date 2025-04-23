@@ -6,12 +6,13 @@
 #include "Renderer.h"
 #include "SpriteSheetComponent.h"
 #include <iostream>
+#include <Subject.h>
 
 dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed):
 	Component(gameObject),
 	m_Speed{speed}
 {
-	
+	m_pEnemyDiedEvent = std::make_unique<Subject>();
 }
 
 void dae::EnemyMovementComponent::Start()
@@ -84,7 +85,10 @@ void dae::EnemyMovementComponent::StartDying()
 		m_pSpriteSheetComponent->SetColumn(0);
 		m_pSpriteSheetComponent->DestroyAfterPlayed();
 		m_pSpriteSheetComponent->SetInterval(0.5f);
-		std::cout << "Enemy component removed but not enemy itself" << std::endl;
+		std::cout << "Enemy component removed but not enemy object itself" << std::endl;
+
+		Event e(make_sdbm_hash("KilledBalloom"));
+		m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
 	}
 }
 

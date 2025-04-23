@@ -2,11 +2,13 @@
 #include "Component.h"
 #include <glm.hpp>
 #include <vector>
+#include <memory>
 
 namespace dae
 {
 	class GridComponent;
 	class SpriteSheetComponent;
+	class Subject;
 	class EnemyMovementComponent final : public Component
 	{
 	public:
@@ -14,16 +16,16 @@ namespace dae
 
 		virtual void Start() override;
 		virtual void Update() override;
-
 		virtual void Render() const override;
 
 		void StartDying();
-
 		void SetDebugRendering(bool shouldDebugRender) { m_DebugRender = shouldDebugRender; }
+
+		Subject* GetEnemyDiedSubject() const { return m_pEnemyDiedEvent.get(); }
 
 	private:
 		void SetSpriteDirection();
-
+		std::unique_ptr<Subject> m_pEnemyDiedEvent;
 		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		GridComponent* m_pGridComponent = nullptr;
 		std::vector<glm::vec2> m_Path;

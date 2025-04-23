@@ -146,9 +146,9 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Co
 
 	//display score
 	auto playerKeyboardScoreTextObject = std::make_unique<dae::GameObject>();
-	playerKeyboardScoreTextObject->SetWorldPosition(50, 320);
+	playerKeyboardScoreTextObject->SetWorldPosition(500, 32);
 	auto playerScoreTextKeyboard = std::make_unique<dae::TextComponent>(playerKeyboardScoreTextObject.get(), "Current score: 0", font);
-	playerScoreTextKeyboard->ChangeFontSize(18);
+	playerScoreTextKeyboard->ChangeFontSize(32);
 	playerKeyboardScoreTextObject->AddComponent(std::move(playerScoreTextKeyboard));
 	auto playerScoreTextChangeKeyboard = std::make_unique<dae::ScoreTextComponent>(playerKeyboardScoreTextObject.get());
 
@@ -160,7 +160,7 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Co
 	auto playerInputKeyboardCollider = std::make_unique<dae::ColliderComponent>(playerInputObjectKeyboard.get(), 28.f, 28.f);
 	playerKeyboardCollider = playerInputKeyboardCollider.get();
 	playerInputKeyboardCollider->SetDebugRendering(true);
-	playerInputObjectKeyboard->SetWorldPosition(48, 48);
+	playerInputObjectKeyboard->SetWorldPosition(48, 112);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSetter));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardCollider));
@@ -175,6 +175,7 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Co
 	auto playerScoreKeyboard = std::make_unique<dae::ScoreComponent>(playerInputObjectKeyboard.get());
 	playerScoreKeyboard->GetActorScoreSubject()->AddObserver(playerScoreTextChangeKeyboard.get());
 	playerScoreKeyboard->GetActorScoreSubject()->AddObserver(&dae::Achievements::GetInstance());
+	dae::ScoreComponent* scoreComponentPlayerKeyboard = playerScoreKeyboard.get();
 	playerKeyboardScoreTextObject->AddComponent(std::move(playerScoreTextChangeKeyboard)); // moves after observer is set
 	playerInputObjectKeyboard->AddComponent(std::move(playerScoreKeyboard));
 
@@ -209,26 +210,30 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Co
 	scene->Add(std::move(playerKeyboardScoreTextObject));
 
 	// --------END KEYBOARD-----------
-}
 
-void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent, dae::ColliderComponent* playerKeyboardCollider)
-{
 	// --------ENEMIES----------
 	auto enemy = std::make_unique<dae::GameObject>();
-	enemy->SetWorldPosition(48, 80);
+	enemy->SetWorldPosition(48, 304);
 	enemy->SetParent(levelParent, true);
 	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 15.f);
 	enemyMovement->SetDebugRendering(true);
+	enemyMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
 	auto enemyCollider = std::make_unique<dae::EnemyCollider>(enemy.get(), 25.f, 25.f);
 	enemyCollider->AddPlayerCollider(playerKeyboardCollider);
 	auto enemySprite = std::make_unique<dae::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
-	
+
 	enemy->AddComponent(std::move(enemyMovement));
 	enemy->AddComponent(std::move(enemyCollider));
 	enemy->AddComponent(std::move(enemySprite));
 
 	scene->Add(std::move(enemy));
 }
+
+//void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent, dae::ColliderComponent* playerKeyboardCollider)
+//{
+//	// --------ENEMIES----------
+//
+//}
 
 void LoadStartScene()
 {
@@ -276,25 +281,24 @@ void LoadGameScene()
 	//
 	//scene->Add(std::move(backgroundObject));
 
-	auto logoObject = std::make_unique<dae::GameObject>();
-	auto logo = std::make_unique<dae::TextureComponent>(logoObject.get(), "logo.tga");
-	logoObject->SetWorldPosition(216, 180);
-	logoObject->AddComponent(std::move(logo));
+	//auto logoObject = std::make_unique<dae::GameObject>();
+	//auto logo = std::make_unique<dae::TextureComponent>(logoObject.get(), "logo.tga");
+	//logoObject->SetWorldPosition(216, 180);
+	//logoObject->AddComponent(std::move(logo));
+	//
+	//scene->Add(std::move(logoObject));
+	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 32);
 
-	scene->Add(std::move(logoObject));
-
-
-	auto assignmentTextObject = std::make_unique<dae::GameObject>();
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	auto assignmentText = std::make_unique<dae::TextComponent>(assignmentTextObject.get(), "Programming 4 Assignment", font);
-	assignmentTextObject->SetWorldPosition(80, 50);
-	assignmentTextObject->AddComponent(std::move(assignmentText));
-
-	scene->Add(std::move(assignmentTextObject));
+	//auto assignmentTextObject = std::make_unique<dae::GameObject>();
+	//
+	//auto assignmentText = std::make_unique<dae::TextComponent>(assignmentTextObject.get(), "Programming 4 Assignment", font);
+	//assignmentTextObject->SetWorldPosition(80, 50);
+	//assignmentTextObject->AddComponent(std::move(assignmentText));
+	//scene->Add(std::move(assignmentTextObject));
 
 	auto fpsObject = std::make_unique<dae::GameObject>();
 	auto fpsText = std::make_unique<dae::TextComponent>(fpsObject.get(), "FPS:", font);
-	fpsObject->SetWorldPosition(80, 100);
+	fpsObject->SetWorldPosition(80, 32);
 	fpsObject->AddComponent(std::move(fpsText));
 
 	auto fpsCounter = std::make_unique<dae::FpsComponent>(fpsObject.get());
@@ -352,14 +356,14 @@ void LoadGameScene()
 
 	auto gridObject = std::make_unique<dae::GameObject>();
 	gridObject->SetWorldPosition(0, 0);
-	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 31, 13, 992, 416, 32.f);
+	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f);
 	gridObject->AddComponent(std::move(gridView));
 
 	//please do smth about not passing a lot of pointers in functions
 	dae::ColliderComponent* playerKeyboardCollider{};
 	LoadPlayerGamePad(scene, gridObject.get());
 	LoadPlayerKeyboard(scene, gridObject.get(), playerKeyboardCollider);
-	LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
+	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
 	scene->Add(std::move(gridObject));
 

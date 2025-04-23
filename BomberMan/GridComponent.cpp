@@ -10,7 +10,7 @@
 #include "EnemyMovementComponent.h"
 
 #include "PlayerSpriteComponent.h"
-dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize):
+dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
 	m_AmountRows{amountRows},
@@ -19,14 +19,15 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 	m_CellWidth{cellSize},
 	m_CellHeight{cellSize},
 	m_CanSpawnBomb{true},
-	m_BombExploded{}
+	m_BombExploded{},
+	m_OffsetY{offsetY}
 {
 	std::vector<Cell*> emptyCells;
 	for (int rowCounter{}; rowCounter < amountRows; ++rowCounter)
 	{
 		for (int colCounter{}; colCounter < amountColumns; ++colCounter)
 		{
-			glm::vec2 position = { colCounter * m_CellWidth + m_CellWidth / 2, rowCounter * m_CellHeight + m_CellHeight / 2 };
+			glm::vec2 position = { colCounter * m_CellWidth + m_CellWidth / 2, rowCounter * m_CellHeight + m_CellHeight / 2 + offsetY};
 			Cell* cell = new Cell(position);
 			if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
 			{
@@ -369,7 +370,7 @@ void dae::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const st
 int dae::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const
 {
 	int column = int(pos.x / m_CellWidth);
-	int row = int(pos.y / m_CellHeight);
+	int row = int((pos.y - m_OffsetY) / m_CellHeight);
 
 	int index = row * m_AmountColumns + column;
 

@@ -37,7 +37,7 @@ namespace dae
 	class GridComponent final : public Component
 	{
 	public:
-		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize);
+		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY);
 		virtual ~GridComponent() override;
 
 		virtual void LateUpdate() override;
@@ -70,6 +70,7 @@ namespace dae
 
 		float m_CellWidth;
 		float m_CellHeight;
+		const float m_OffsetY;
 		const int m_AmountColumns;
 		const int m_AmountRows;
 		const int m_ScreenWidth;
