@@ -60,9 +60,6 @@
     <ClCompile Include="SpawnBombCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="BomberMan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BombComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -77,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="EnemyCollider.cpp">
       <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BomberMan.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

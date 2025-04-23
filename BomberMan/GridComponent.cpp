@@ -7,7 +7,9 @@
 #include "SceneManager.h"
 #include "ServiceLocator.h"
 #include <memory>
+#include "EnemyMovementComponent.h"
 
+#include "PlayerSpriteComponent.h"
 dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
@@ -16,7 +18,8 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 	m_ScreenHeight{screenHeight},
 	m_CellWidth{cellSize},
 	m_CellHeight{cellSize},
-	m_CanSpawnBomb{true}
+	m_CanSpawnBomb{true},
+	m_BombExploded{}
 {
 	std::vector<Cell*> emptyCells;
 	for (int rowCounter{}; rowCounter < amountRows; ++rowCounter)
@@ -80,6 +83,38 @@ dae::GridComponent::~GridComponent()
 	}
 }
 
+void dae::GridComponent::LateUpdate()
+{
+	if (m_BombExploded)
+	{
+		std::vector<GameObject*> objectsOnGrid = GetGameObject()->GetChildren(); //TODO: copy? (maybe save it)
+		for (int index : m_ExplodedCellIndices)
+		{
+			for (GameObject* object : objectsOnGrid)
+			{
+				if (IsObjectInCell(object->GetWorldPosition(), index))
+				{
+					EnemyMovementComponent* enemyComponent = object->GetComponent<EnemyMovementComponent>();
+					if (enemyComponent)
+					{
+						enemyComponent->StartDying();
+						continue;
+					}
+
+					PlayerSpriteComponent* playerComponent = object->GetComponent<PlayerSpriteComponent>();
+					if (playerComponent)
+					{
+						playerComponent->StartDying();
+					}
+
+				}
+			}
+		}
+		m_BombExploded = false; // this should be after some time
+	}
+	
+}
+
 
 void dae::GridComponent::SpawnBomb(glm::vec2 position)
 {
@@ -90,12 +125,12 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 		{
 			glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
 			auto bombObject = std::make_unique<dae::GameObject>();
-			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 1.f);
-			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.3f, true);
+			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 3.f);
+			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
 			bombObject->SetWorldPosition(spawnPosition.x, spawnPosition.y);
 			bombObject->AddComponent(std::move(bombComponent));
 			bombObject->AddComponent(std::move(bombSpriteComponent));
-			bombObject->SetParent(GetGameObject(), true);
+			//bombObject->SetParent(GetGameObject(), true);
 			SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
 			m_pCells[index]->m_CellState = CellState::Bomb;
 			m_CanSpawnBomb = false;
@@ -107,6 +142,9 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 {
 	//TODO : CLEAN UP AND MAKE MORE EFFICIENT
 	m_CanSpawnBomb = true;
+	m_BombExploded = true;
+	m_ExplodedCellIndices.clear();
+	m_ExplodedCellIndices.emplace_back(index);
 
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
@@ -114,6 +152,8 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 	auto spriteSheetExplosionCenter = std::make_unique<SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
 	GetGameObject()->AddComponent(std::move(spriteSheetExplosionCenter));
+	
+	
 
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
 	{
@@ -121,7 +161,9 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 		if (indexRight == -1) break;
 
 		Cell* cell = m_pCells[indexRight];
-		if (cell->m_CellState == CellState::HardWall) break; 
+		if (cell->m_CellState == CellState::HardWall) break;
+
+		m_ExplodedCellIndices.emplace_back(indexRight); // player cant stand on hardwall so after check
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
@@ -151,6 +193,8 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 		Cell* cell = m_pCells[indexLeft];
 		if (cell->m_CellState == CellState::HardWall) break;
+
+		m_ExplodedCellIndices.emplace_back(indexLeft);
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
@@ -182,6 +226,8 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 		Cell* cell = m_pCells[indexDown];
 		if (cell->m_CellState == CellState::HardWall) break;
 
+		m_ExplodedCellIndices.emplace_back(indexDown);
+
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
 			cell->m_CellState = CellState::Empty;
@@ -212,6 +258,8 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 		Cell* cell = m_pCells[indexUp];
 		if (cell->m_CellState == CellState::HardWall) break;
+
+		m_ExplodedCellIndices.emplace_back(indexUp);
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
@@ -348,6 +396,16 @@ int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, 
 
 	int newIndex = newRow * m_AmountColumns + newColumn;
 	return newIndex;
+}
+
+bool dae::GridComponent::IsObjectInCell(const glm::vec2& position, const int cellIndex)
+{
+	int indexObject = GetIndexFromPosition(position);
+	if (indexObject == cellIndex)
+	{
+		return true;
+	}
+	return false;
 }
 
 std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)

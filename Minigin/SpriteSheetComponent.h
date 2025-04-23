@@ -15,9 +15,11 @@ namespace dae
 
 		void SetCustomPosition(glm::vec2 customPosition) { m_CustomPosition = customPosition; }
 		void UseCustomPosition(bool useCustomPosition) { m_UseCustomPosition = useCustomPosition; }
-		void SetRow(int newRow) { m_CurrentRow = newRow; }
+		void SetRow(int newRow);
 		void SetColumn(int newColumn) { m_CurrentColumn = newColumn; }
 		void ShouldAnimate(bool animate) { m_Animate = animate; }
+		void DestroyAfterPlayed() { m_DestroyAfterPlayed = true; }
+		void SetInterval(float interval) { m_Interval = interval; }
 
 		int GetWidthSprite() const { return m_Width; }
 		int GetHeightSprite() const { return m_Height; }
@@ -39,7 +41,7 @@ namespace dae
 
 		bool m_Animate;
 		bool m_UseCustomPosition;
-		const bool m_DestroyAfterPlayed;
+		bool m_DestroyAfterPlayed;
 	};
 }
 

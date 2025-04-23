@@ -217,12 +217,16 @@ void LoadEnemies(dae::Scene* scene, dae::GameObject* levelParent, dae::ColliderC
 	auto enemy = std::make_unique<dae::GameObject>();
 	enemy->SetWorldPosition(48, 80);
 	enemy->SetParent(levelParent, true);
-	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 10.f);
+	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 15.f);
 	enemyMovement->SetDebugRendering(true);
 	auto enemyCollider = std::make_unique<dae::EnemyCollider>(enemy.get(), 25.f, 25.f);
 	enemyCollider->AddPlayerCollider(playerKeyboardCollider);
+	auto enemySprite = std::make_unique<dae::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
+	
 	enemy->AddComponent(std::move(enemyMovement));
 	enemy->AddComponent(std::move(enemyCollider));
+	enemy->AddComponent(std::move(enemySprite));
+
 	scene->Add(std::move(enemy));
 }
 

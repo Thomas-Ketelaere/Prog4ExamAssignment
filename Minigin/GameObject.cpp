@@ -13,7 +13,14 @@ dae::GameObject::GameObject()
 	AddComponent(std::move(tempTransform));
 }
 
-dae::GameObject::~GameObject() = default;
+dae::GameObject::~GameObject()
+{
+	SetParent(nullptr, false);
+	for (GameObject* child : m_Children)
+	{
+		child->SetParent(nullptr, false);
+	}
+}
 
 void dae::GameObject::Start()
 {

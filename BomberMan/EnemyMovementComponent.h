@@ -6,6 +6,7 @@
 namespace dae
 {
 	class GridComponent;
+	class SpriteSheetComponent;
 	class EnemyMovementComponent final : public Component
 	{
 	public:
@@ -16,10 +17,15 @@ namespace dae
 
 		virtual void Render() const override;
 
+		void StartDying();
+
 		void SetDebugRendering(bool shouldDebugRender) { m_DebugRender = shouldDebugRender; }
 
 	private:
-		GridComponent* m_pGridComponent;
+		void SetSpriteDirection();
+
+		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
+		GridComponent* m_pGridComponent = nullptr;
 		std::vector<glm::vec2> m_Path;
 
 		const float m_Speed;
@@ -28,6 +34,7 @@ namespace dae
 		unsigned int m_PathIndex{};
 
 		bool m_DebugRender{};
+		bool m_IsDying{};
 	};
 
 }

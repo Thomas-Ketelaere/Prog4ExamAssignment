@@ -36,6 +36,7 @@ namespace dae
 
 		const glm::vec3& GetWorldPosition();
 
+		const std::vector<GameObject*>& GetChildren() { return m_Children; }
 		GameObject* GetParent() const { return m_Parent; }
 		TransformComponent* GetTransform();
 		

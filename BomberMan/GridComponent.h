@@ -40,6 +40,8 @@ namespace dae
 		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize);
 		virtual ~GridComponent() override;
 
+		virtual void LateUpdate() override;
+
 		void SpawnBomb(glm::vec2 position);
 		void ExplodeBomb(int index, int range);
 
@@ -56,6 +58,7 @@ namespace dae
 		int GetIndexFromPosition(const glm::vec2& position) const;
 		glm::vec2 GetCellPositionFromIndex(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
+		bool IsObjectInCell(const glm::vec2& position, const int cellIndex);
 
 		//A*
 		std::vector<int> FindPath(int startIndex, int endIndex);
@@ -63,6 +66,8 @@ namespace dae
 		std::vector<int> GetConnectionIndexFromCellIndex(int index);
 
 		std::vector<Cell*> m_pCells;
+		std::vector<int> m_ExplodedCellIndices;
+
 		float m_CellWidth;
 		float m_CellHeight;
 		const int m_AmountColumns;
@@ -71,6 +76,7 @@ namespace dae
 		const int m_ScreenHeight;
 
 		bool m_CanSpawnBomb;
+		bool m_BombExploded;
 	};
 }
 

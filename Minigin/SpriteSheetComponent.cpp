@@ -46,6 +46,7 @@ void dae::SpriteSheetComponent::Update()
 				if (m_DestroyAfterPlayed)
 				{
 					Destroy();
+					//GetGameObject()->Destroy();
 				}
 				m_CurrentColumn = 0;
 			}
@@ -59,5 +60,10 @@ void dae::SpriteSheetComponent::Update()
 		m_AccumulatedTime = 0;
 	}
 
+}
+
+void dae::SpriteSheetComponent::SetRow(int newRow)
+{
+	m_CurrentRow = newRow;
 }
 

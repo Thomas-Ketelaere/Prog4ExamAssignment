@@ -19,9 +19,11 @@ namespace dae
 
 		void SetDirectionSprite(glm::vec2 direction);
 
+		void StartDying();
 	private:
 		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		bool m_Move{};
+		bool m_IsDying{};
 	};
 }
 

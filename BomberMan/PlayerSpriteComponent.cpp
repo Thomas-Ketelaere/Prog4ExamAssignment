@@ -3,6 +3,7 @@
 #include "SpriteSheetComponent.h"
 
 #include "Renderer.h" //TODO: remove after testing
+#include "LivesComponent.h"
 
 dae::PlayerSpriteComponent::PlayerSpriteComponent(GameObject* gameObject):
 	Component(gameObject)
@@ -70,4 +71,14 @@ void dae::PlayerSpriteComponent::SetDirectionSprite(glm::vec2 direction)
 	}
 
 	m_Move = true;
+}
+
+void dae::PlayerSpriteComponent::StartDying()
+{
+	if (!m_IsDying)
+	{
+		m_IsDying = true;
+		//play dead animation
+		GetGameObject()->GetComponent<LivesComponent>()->LoseLive();
+	}
 }

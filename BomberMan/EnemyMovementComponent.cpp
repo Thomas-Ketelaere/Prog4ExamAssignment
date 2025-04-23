@@ -4,61 +4,67 @@
 #include "GridComponent.h"
 #include "Timer.h"
 #include "Renderer.h"
+#include "SpriteSheetComponent.h"
+#include <iostream>
 
 dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed):
 	Component(gameObject),
 	m_Speed{speed}
 {
-	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
+	
 }
 
 void dae::EnemyMovementComponent::Start()
 {
+	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
+	m_pSpriteSheetComponent = GetGameObject()->GetComponent<SpriteSheetComponent>();
 	m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition() , glm::vec2(848, 48));
 }
 
 void dae::EnemyMovementComponent::Update()
 {
-	glm::vec2 pos = GetTransform()->GetWorldPosition();
-	if (glm::distance(pos, m_Path[m_PathIndex]) <= m_DistanceToReachPoint)
+	if (!m_IsDying)
 	{
-		++m_PathIndex;
-		if (m_PathIndex == m_Path.size())
+		glm::vec2 pos = GetTransform()->GetWorldPosition();
+		if (glm::distance(pos, m_Path[m_PathIndex]) <= m_DistanceToReachPoint)
 		{
-			m_PathIndex = 0;
-			//new path
-			auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
-			m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+			++m_PathIndex;
+			if (m_PathIndex == m_Path.size())
+			{
+				m_PathIndex = 0;
+				//new path
+				auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
+				m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+			}
+
+			else if (!m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) //check if cell is walkable (if e.g. bomb has been placed after path calculation
+			{
+				m_PathIndex = 0;
+				//new path
+				auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
+				m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+			}
+			SetSpriteDirection();
 		}
 
-		else if (!m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) //check if cell is walkable (if e.g. bomb has been placed after path calculation
+		else
 		{
-			m_PathIndex = 0;
-			//new path
-			auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
-			m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+			glm::vec2 direction = m_Path[m_PathIndex] - pos;
+			glm::vec2 dirNorm = glm::normalize(direction);
+
+			pos += m_Speed * dirNorm * Time::GetInstance().m_DeltaTime;
+
+			GetGameObject()->SetWorldPosition(pos.x, pos.y);
 		}
-		
 	}
-
-	else
-	{
-		glm::vec2 direction = m_Path[m_PathIndex] - pos;
-		glm::vec2 dirNorm = glm::normalize(direction);
-
-		pos += m_Speed * dirNorm * Time::GetInstance().m_DeltaTime;
-
-		GetGameObject()->SetWorldPosition(pos.x, pos.y);
-	}
+	
 }
 
 void dae::EnemyMovementComponent::Render() const
 {
 	if (m_DebugRender)
 	{
-		glm::vec2 pos = GetTransform()->GetWorldPosition();
 		SDL_Color color = { 0, 0, 255, 255 };
-		Renderer::GetInstance().FillRectangle(pos.x, pos.y, 20.f, 20.f, color);
 		for (unsigned int pathCounter{}; pathCounter < m_Path.size() - 1; ++pathCounter)
 		{
 			glm::vec2 pointOne = m_Path[pathCounter];
@@ -66,4 +72,37 @@ void dae::EnemyMovementComponent::Render() const
 			Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
 		}
 	}
+}
+
+void dae::EnemyMovementComponent::StartDying()
+{
+	if (!m_IsDying)
+	{
+		m_IsDying = true;
+		//play dead animation
+		m_pSpriteSheetComponent->SetRow(2);
+		m_pSpriteSheetComponent->SetColumn(0);
+		m_pSpriteSheetComponent->DestroyAfterPlayed();
+		m_pSpriteSheetComponent->SetInterval(0.5f);
+		std::cout << "Enemy component removed but not enemy itself" << std::endl;
+	}
+}
+
+void dae::EnemyMovementComponent::SetSpriteDirection()
+{
+	glm::vec2 pos = GetTransform()->GetWorldPosition();
+	glm::vec2 direction = m_Path[m_PathIndex] - pos;
+
+	if (direction.x > 0.f)
+	{
+		// set right sprite
+		m_pSpriteSheetComponent->SetRow(0);
+	}
+
+	else if (direction.x < 0.f)
+	{
+		//set left sprite
+		m_pSpriteSheetComponent->SetRow(1);
+	}
+
 }
