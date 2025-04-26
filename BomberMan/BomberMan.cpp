@@ -268,6 +268,9 @@ void LoadStartScene()
 	auto startGameCommandKeyboard = std::make_unique<dae::StartGameCommand>(playerStartInputObjectKeyboard.get());
 	dae::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), dae::KeyState::Up, SDLK_e, -1);
 	scene->Add(std::move(playerStartInputObjectKeyboard));
+
+	dae::ServiceLocator::GetSoundSystem().LoadMusic("../Data/Sound/TitleScreen.mp3");
+	dae::ServiceLocator::GetSoundSystem().PlayMusic(0, -1);
 }
 
 void LoadGameScene()
@@ -386,22 +389,24 @@ void LoadGameScene()
 	
 
 	// --------SOUND----------
-	//std::unique_ptr<SoundSystem> servicelocator::_ss_instance{ std::make_unique<null_sound_system>() };
+	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
+	dae::ServiceLocator::GetSoundSystem().LoadMusic("../Data/Sound/MainBGM.mp3");
+	dae::ServiceLocator::GetSoundSystem().PlayMusic(0, -1);
+}
+
+void load()
+{
+	auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", true);
+	sceneStart.SetLoadingFunction(LoadStartScene);
+	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", false);
+	sceneGame.SetLoadingFunction(LoadGameScene);
+
 #if _DEBUG
 
 	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::LoggingSoundSystem>(std::make_unique<dae::SDLSoundSystem>()));
 #else
 	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
 #endif
-	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/BombExplodes.wav");
-}
-
-void load()
-{
-	auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", false);
-	sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", true);
-	sceneGame.SetLoadingFunction(LoadGameScene);
 }
 
 int main(int, char* [])

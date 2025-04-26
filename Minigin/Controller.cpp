@@ -2,7 +2,7 @@
 #include "windows.h"
 #include <Xinput.h>
 
-class  dae::Controller::ControllerImpl
+class dae::Controller::ControllerImpl
 {
 public:
 	ControllerImpl(int controllerIndex): 

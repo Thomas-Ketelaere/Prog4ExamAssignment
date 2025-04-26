@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "InputManager.h"
 #include <stdexcept>
+#include "ServiceLocator.h"
 
 void dae::SceneManager::Start()
 {
@@ -36,6 +37,8 @@ void dae::SceneManager::LateUpdate()
 	if (m_pCurrentScene->IsMarkedReload())
 	{
 		InputManager::GetInstance().ClearBindings();
+		dae::ServiceLocator::GetSoundSystem().UnloadAllSound();
+		dae::ServiceLocator::GetSoundSystem().UnloadMusic();
 		m_pCurrentScene->ReloadScene();
 		m_pCurrentScene->Start();
 	}
@@ -68,6 +71,8 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			auto previousScene = m_pCurrentScene;
 			//TODO: dont destroy on load (if necessary)
 			InputManager::GetInstance().ClearBindings();
+			dae::ServiceLocator::GetSoundSystem().UnloadAllSound();
+			dae::ServiceLocator::GetSoundSystem().UnloadMusic();
 			m_pCurrentScene = scene.get();
 			scene->LoadScene();
 			scene->Start();

@@ -8,9 +8,10 @@
 #include <iostream>
 #include <Subject.h>
 
-dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed):
+dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, std::string& name):
 	Component(gameObject),
-	m_Speed{speed}
+	m_Speed{speed},
+	m_Name{name}
 {
 	m_pEnemyDiedEvent = std::make_unique<Subject>();
 }

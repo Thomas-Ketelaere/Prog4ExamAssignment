@@ -1,7 +1,6 @@
 #pragma once
 #include "SoundSystem.h"
-#include "SDL_mixer.h"
-#include <vector>
+#include <memory>
 
 namespace dae
 {
@@ -12,10 +11,19 @@ namespace dae
 		~SDLSoundSystem();
 		void Play(const SoundId id, const float volume, const int loops = 0) override;
 		void Stop(const SoundId id) override;
+		void PlayMusic(const int volume, const int loops) override;
+		void StopMusic() override;
+
 		void AddSound(const SoundId id, const char* filePath) override;
+		void LoadMusic(const char* filePath) override;
+		void UnloadMusic() override;
+		void UnloadAllSound() override;
 
 	private:
-		std::vector<std::pair<Sound, Mix_Chunk*>> m_Samples;
+		class SoundSystemImpl;
+		std::unique_ptr<SoundSystemImpl> m_pImpl;
+
+		
 	};
 }
 

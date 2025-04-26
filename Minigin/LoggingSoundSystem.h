@@ -27,6 +27,37 @@ namespace dae
 		void AddSound(const SoundId id, const char* filePath) override 
 		{
 			_real_ss->AddSound(id, filePath);
+			std::cout << "added sound " << id << std::endl;
+		}
+
+		void PlayMusic(const int volume, const int loops) override
+		{
+			_real_ss->PlayMusic(volume, loops);
+			std::cout << "playing music at volume " << volume  << " amount loops:" << loops << std::endl;
+		}
+
+		void StopMusic() override
+		{
+			_real_ss->StopMusic();
+			std::cout << "stopped music" << std::endl;
+		}
+
+		void LoadMusic(const char* filePath) override
+		{
+			_real_ss->LoadMusic(filePath);
+			std::cout << "loaded music " << filePath << std::endl;
+		}
+
+		void UnloadMusic() override
+		{
+			_real_ss->UnloadMusic();
+			std::cout << "Unloaded music" << std::endl;
+		}
+
+		void UnloadAllSound() override
+		{
+			_real_ss->UnloadAllSound();
+			std::cout << "Unloaded all sound" << std::endl;
 		}
 	};
 }

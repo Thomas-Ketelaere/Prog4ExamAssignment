@@ -9,6 +9,15 @@ namespace dae
 		void Play(const SoundId, const float, const int) override {}
 		void Stop(const SoundId) override {}
 		void AddSound(const SoundId, const char*) override {}
+
+		void PlayMusic(const int , const int) override {}
+		void StopMusic() override {}
+		void LoadMusic(const char* ) override {}
+
+
+		void UnloadMusic() override {}
+		void UnloadAllSound() override {}
+
 	};
 
 	class ServiceLocator final
