@@ -263,8 +263,7 @@ void LoadStartScene()
 	tutorialNotes->AddComponent(std::move(tutorialNotesText));
 	scene->Add(std::move(tutorialNotes));
 
-	dae::ServiceLocator::GetSoundSystem().LoadMusic("../Data/Sound/TitleScreen.mp3");
-	dae::ServiceLocator::GetSoundSystem().PlayMusic(0, -1);
+	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 0, -1);//50 volume
 }
 
 void LoadGameScene()
@@ -358,9 +357,9 @@ void LoadGameScene()
 
 
 	auto playerLivesTextObject = std::make_unique<dae::GameObject>();
-	playerLivesTextObject->SetWorldPosition(50, 300);
+	playerLivesTextObject->SetWorldPosition(700, 30);
 	auto playerLivesText = std::make_unique<dae::TextComponent>(playerLivesTextObject.get(), "Lives: 3", font);
-	playerLivesText->ChangeFontSize(18);
+	//playerLivesText->ChangeFontSize(18);
 	playerLivesTextObject->AddComponent(std::move(playerLivesText));
 	auto playerLivesTextChange = std::make_unique<dae::LivesTextComponent>(playerLivesTextObject.get());
 
@@ -376,8 +375,7 @@ void LoadGameScene()
 
 	// --------SOUND----------
 	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
-	dae::ServiceLocator::GetSoundSystem().LoadMusic("../Data/Sound/MainBGM.mp3");
-	dae::ServiceLocator::GetSoundSystem().PlayMusic(0, -1);
+	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 0, -1); //50 volume
 }
 
 void load()

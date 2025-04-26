@@ -20,7 +20,7 @@ void dae::BombComponent::Update()
 	m_AccumulatedTime += Time::GetInstance().m_DeltaTime;
 	if (m_AccumulatedTime >= m_TimeToExplode)
 	{
-		ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("ExplodeBombSFX"), 100.f);
+		ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("ExplodeBombSFX"), 100);
 		m_pGridComponent->ExplodeBomb(m_CellIndex, 1);
 		GetGameObject()->Destroy(); //destroy bomb after explosion
 	}

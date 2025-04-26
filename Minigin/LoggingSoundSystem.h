@@ -12,7 +12,7 @@ namespace dae
 		LoggingSoundSystem(std::unique_ptr<SoundSystem>&& ss) : _real_ss(std::move(ss)) {}
 		virtual ~LoggingSoundSystem() = default;
 
-		void Play(const SoundId id, const float volume, const int loops = 0) override
+		void Play(const SoundId id, const int volume, const int loops = 0) override
 		{
 			_real_ss->Play(id, volume, loops);
 			std::cout << "playing " << id << " at volume " << volume << " amount loops: " << loops << std::endl;
@@ -30,9 +30,9 @@ namespace dae
 			std::cout << "added sound " << id << std::endl;
 		}
 
-		void PlayMusic(const int volume, const int loops) override
+		void PlayMusic(const char* filePath, const int volume, const int loops) override
 		{
-			_real_ss->PlayMusic(volume, loops);
+			_real_ss->PlayMusic(filePath, volume, loops);
 			std::cout << "playing music at volume " << volume  << " amount loops:" << loops << std::endl;
 		}
 
@@ -40,12 +40,6 @@ namespace dae
 		{
 			_real_ss->StopMusic();
 			std::cout << "stopped music" << std::endl;
-		}
-
-		void LoadMusic(const char* filePath) override
-		{
-			_real_ss->LoadMusic(filePath);
-			std::cout << "loaded music " << filePath << std::endl;
 		}
 
 		void UnloadMusic() override

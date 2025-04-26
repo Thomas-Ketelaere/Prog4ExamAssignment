@@ -126,7 +126,7 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 		{
 			glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
 			auto bombObject = std::make_unique<dae::GameObject>();
-			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 3.f);
+			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f);
 			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
 			bombObject->SetWorldPosition(spawnPosition.x, spawnPosition.y);
 			bombObject->AddComponent(std::move(bombComponent));
