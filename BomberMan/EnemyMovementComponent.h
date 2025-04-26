@@ -13,7 +13,7 @@ namespace dae
 	class EnemyMovementComponent final : public Component
 	{
 	public:
-		EnemyMovementComponent(GameObject* gameObject, const float speed, std::string& name);
+		EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name);
 
 		virtual void Start() override;
 		virtual void Update() override;
@@ -30,7 +30,7 @@ namespace dae
 		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		GridComponent* m_pGridComponent = nullptr;
 		std::vector<glm::vec2> m_Path;
-		std::string m_Name{};
+		const std::string m_Name{};
 
 		const float m_Speed;
 		const float m_DistanceToReachPoint{ 2.f };

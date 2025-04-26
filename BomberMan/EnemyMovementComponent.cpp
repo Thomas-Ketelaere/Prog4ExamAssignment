@@ -8,7 +8,7 @@
 #include <iostream>
 #include <Subject.h>
 
-dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, std::string& name):
+dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name):
 	Component(gameObject),
 	m_Speed{speed},
 	m_Name{name}
@@ -39,7 +39,7 @@ void dae::EnemyMovementComponent::Update()
 				m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
 			}
 
-			else if (!m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) //check if cell is walkable (if e.g. bomb has been placed after path calculation
+			else if (!m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) //check if cell is walkable (if e.g. bomb has been placed after path calculation)
 			{
 				m_PathIndex = 0;
 				//new path
@@ -86,10 +86,29 @@ void dae::EnemyMovementComponent::StartDying()
 		m_pSpriteSheetComponent->SetColumn(0);
 		m_pSpriteSheetComponent->DestroyAfterPlayed();
 		m_pSpriteSheetComponent->SetInterval(0.5f);
-		std::cout << "Enemy component removed but not enemy object itself" << std::endl;
+		std::cout << "TODO: Enemy component removed but not enemy object itself" << std::endl; //wait for state machine maybe?
 
-		Event e(make_sdbm_hash("KilledBalloom"));
-		m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
+		if (m_Name == "Balloom")
+		{
+			Event e(make_sdbm_hash("KilledBalloom"));
+			m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
+		}
+		
+		else if(m_Name == "Oneal")
+		{
+			//event killed oneal
+		}
+
+		else if (m_Name == "Doll")
+		{
+			//event killed Doll
+		}
+
+		else if (m_Name == "Minvo")
+		{
+			//event killed Minvo
+		}
+
 	}
 }
 
