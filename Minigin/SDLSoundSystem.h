@@ -21,8 +21,6 @@ namespace dae
 	private:
 		class SDLSoundSystemImpl;
 		std::unique_ptr<SDLSoundSystemImpl> m_pImpl;
-
-		
 	};
 }
 

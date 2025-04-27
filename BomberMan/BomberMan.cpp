@@ -210,7 +210,7 @@ void LoadStartScene()
 
 	auto startButtonTextObject = std::make_unique<dae::GameObject>();
 	startButtonTextObject->SetWorldPosition(500, 275);
-	auto startButtonText = std::make_unique<dae::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? (not working yet) on gamepad to start game", font);
+	auto startButtonText = std::make_unique<dae::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? (gamepad start not working yet) on gamepad to start game", font);
 	startButtonText->ChangeFontSize(20);
 	startButtonTextObject->AddComponent(std::move(startButtonText));
 	scene->Add(std::move(startButtonTextObject));
@@ -263,7 +263,7 @@ void LoadStartScene()
 	tutorialNotes->AddComponent(std::move(tutorialNotesText));
 	scene->Add(std::move(tutorialNotes));
 
-	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 0, -1);//50 volume
+	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 30, -1);//50 volume
 }
 
 void LoadGameScene()
@@ -375,7 +375,7 @@ void LoadGameScene()
 
 	// --------SOUND----------
 	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
-	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 0, -1); //50 volume
+	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 30, -1); //50 volume
 }
 
 void load()

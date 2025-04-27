@@ -68,7 +68,7 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			{
 				throw std::runtime_error("trying to load and destroy already existing/current scene. Use 'ReloadScene' instead.");
 			}
-			auto previousScene = m_pCurrentScene;
+			auto* previousScene = m_pCurrentScene;
 			//TODO: dont destroy on load (if necessary)
 			InputManager::GetInstance().ClearBindings();
 			dae::ServiceLocator::GetSoundSystem().UnloadAllSound();

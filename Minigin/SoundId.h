@@ -4,15 +4,19 @@
 
 using SoundId = unsigned int;
 
+enum class SoundRequest
+{
+	PlaySound, PlayMusic, StopSound, StopMusic, UnloadSound, UnloadMusic
+};
+
 struct Sound
 {
 	const SoundId id;
 	bool m_IsLoaded = false;
-	bool m_IsMusic;
-	bool m_ShouldStop{};
+	SoundRequest m_RequestType;
 	int m_Loops = 0;
 	const char* m_FilePath;
 	int m_Volume = 0;
 	int m_Channel = -1; //-1 is not playing
-	explicit Sound(SoundId _id, const char* filePath, bool isMusic) : id{ _id }, m_FilePath{ filePath }, m_IsMusic{ isMusic } {}
+	explicit Sound(SoundId _id, const char* filePath, SoundRequest soundRequest) : id{ _id }, m_FilePath{ filePath }, m_RequestType{ soundRequest } {}
 };
