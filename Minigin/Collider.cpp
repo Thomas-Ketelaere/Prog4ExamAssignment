@@ -1,27 +1,21 @@
-#include "ColliderComponent.h"
+#include "Collider.h"
 #include "Renderer.h"
 #include "TransformComponent.h"
+#include "ColliderManager.h"
+#include "GameObject.h"
 
-dae::ColliderComponent::ColliderComponent(GameObject* gameObject, const float width, const float height):
-	Component(gameObject),
+dae::Collider::Collider(GameObject* gameObject, const float width, const float height, bool isTrigger):
 	m_Width{width},
-	m_Height{height}
+	m_Height{height},
+	m_Trigger{isTrigger}
 {
+	ColliderManager::GetInstance().AddCollider(this);
+	m_pTransformComponent = gameObject->GetTransform(); //all gameobjects have a transform
 }
 
-void dae::ColliderComponent::Render() const
+bool dae::Collider::IsColliding(const glm::vec2& objectPos, const float width, const float height)
 {
-	if (m_DebugRender)
-	{
-		glm::vec3 pos = GetTransform()->GetWorldPosition();
-		SDL_Color color = { 0, 0, 255, 255 };
-		Renderer::GetInstance().DrawRectangle(pos.x, pos.y, m_Width, m_Height, color);
-	}
-}
-
-bool dae::ColliderComponent::IsColliding(const glm::vec2& objectPos, const float width, const float height)
-{
-	glm::vec2 colliderPos = glm::vec2(GetTransform()->GetWorldPosition());
+	glm::vec2 colliderPos = glm::vec2(m_pTransformComponent->GetWorldPosition());
 
 	float colliderLeft = colliderPos.x - m_Width / 2;
 	float colliderRight = colliderPos.x + m_Width / 2;
@@ -38,10 +32,15 @@ bool dae::ColliderComponent::IsColliding(const glm::vec2& objectPos, const float
 	return isOverlapping;
 }
 
-bool dae::ColliderComponent::IsColliding(ColliderComponent* other)
+bool dae::Collider::IsColliding(Collider* other)
 {
-	const glm::vec2 otherPos = other->GetTransform()->GetWorldPosition();
+	const glm::vec2 otherPos = other->GetColliderTransform()->GetWorldPosition();
 	const float otherWidth = other->GetColliderWidth();
 	const float otherHeight = other->GetColliderHeight();
 	return IsColliding(otherPos, otherWidth, otherHeight);
+}
+
+unsigned int dae::Collider::GetTag()
+{
+	return GetColliderTransform()->GetGameObject()->GetTag();
 }

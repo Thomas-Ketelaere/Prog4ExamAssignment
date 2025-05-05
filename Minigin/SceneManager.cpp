@@ -3,6 +3,7 @@
 #include "InputManager.h"
 #include <stdexcept>
 #include "ServiceLocator.h"
+#include "ColliderManager.h"
 
 void dae::SceneManager::Start()
 {
@@ -39,6 +40,7 @@ void dae::SceneManager::LateUpdate()
 		InputManager::GetInstance().ClearBindings();
 		dae::ServiceLocator::GetSoundSystem().UnloadAllSound();
 		dae::ServiceLocator::GetSoundSystem().UnloadMusic();
+		ColliderManager::GetInstance().ClearColliders();
 		m_pCurrentScene->ReloadScene();
 		m_pCurrentScene->Start();
 		InputManager::GetInstance().Start();
@@ -74,6 +76,7 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			InputManager::GetInstance().ClearBindings();
 			dae::ServiceLocator::GetSoundSystem().UnloadAllSound();
 			dae::ServiceLocator::GetSoundSystem().UnloadMusic();
+			ColliderManager::GetInstance().ClearColliders();
 			m_pCurrentScene = scene.get();
 			scene->LoadScene();
 			scene->Start();

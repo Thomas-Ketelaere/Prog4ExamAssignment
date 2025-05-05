@@ -37,20 +37,20 @@
 #include <LoggingSoundSystem.h>
 #include <SDLSoundSystem.h>
 #include "StartGameCommand.h"
-#include "ColliderComponent.h"
+#include "BaseColliderComponent.h"
 #include "EnemyMovementComponent.h"
-#include "EnemyCollider.h"
+#include "PlayerCollider.h"
 #include "Hash.h"
 
 void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent, dae::LivesTextComponent* playerLivesTextChange)
 {
 	// --------GAMEPAD-----------
 	auto playerInputObjectGamepad = std::make_unique<dae::GameObject>();
+	playerInputObjectGamepad->SetTag(make_sdbm_hash("Player"));
 	playerInputObjectGamepad->SetParent(levelParent, true);
 	auto playerInputGamepadSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectGamepad.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputGamepadSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectGamepad.get());
-	auto playerInputGamepadCollider = std::make_unique<dae::ColliderComponent>(playerInputObjectGamepad.get(), 28.f, 28.f);
-	playerInputGamepadCollider->SetDebugRendering(true);
+	auto playerInputGamepadCollider = std::make_unique<dae::PlayerCollider>(playerInputObjectGamepad.get(), 28.f, 28.f, true);
 	playerInputObjectGamepad->SetWorldPosition(48, 144);
 	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSheet));
 	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSetter));
@@ -123,8 +123,7 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Li
 	playerInputObjectKeyboard->SetParent(levelParent, true);
 	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputKeyboardSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
-	auto playerInputKeyboardCollider = std::make_unique<dae::ColliderComponent>(playerInputObjectKeyboard.get(), 28.f, 28.f);
-	dae::ColliderComponent* playerKeyboardCollider = playerInputKeyboardCollider.get();
+	auto playerInputKeyboardCollider = std::make_unique<dae::PlayerCollider>(playerInputObjectKeyboard.get(), 28.f, 28.f, true);
 	playerInputKeyboardCollider->SetDebugRendering(true);
 	playerInputObjectKeyboard->SetWorldPosition(48, 112);
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
@@ -177,13 +176,13 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Li
 
 	// --------ENEMIES----------
 	auto enemy = std::make_unique<dae::GameObject>();
+	enemy->SetTag(make_sdbm_hash("Enemy"));
 	enemy->SetWorldPosition(48, 304);
 	enemy->SetParent(levelParent, true);
 	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 15.f, "Balloom");
 	enemyMovement->SetDebugRendering(true);
 	enemyMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
-	auto enemyCollider = std::make_unique<dae::EnemyCollider>(enemy.get(), 25.f, 25.f);
-	enemyCollider->AddPlayerCollider(playerKeyboardCollider);
+	auto enemyCollider = std::make_unique<dae::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
 	auto enemySprite = std::make_unique<dae::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
 
 	enemy->AddComponent(std::move(enemyMovement));
@@ -377,7 +376,7 @@ void LoadGameScene()
 
 	// --------SOUND----------
 	dae::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
-	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 30, -1); //50 volume
+	dae::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 0, -1); //50 volume
 }
 
 void load()

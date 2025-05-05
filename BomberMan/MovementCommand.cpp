@@ -3,7 +3,7 @@
 #include "Timer.h"
 #include "PlayerSpriteComponent.h"
 #include "GridComponent.h"
-#include "ColliderComponent.h"
+#include "PlayerCollider.h"
 #include "SceneManager.h"
 #include "Hash.h"
 
@@ -12,7 +12,7 @@ dae::MoveCommand::MoveCommand(GameObject* actor) :
 	m_Speed{}
 {
 	m_pPlayerSpriteComponent = actor->GetComponent<PlayerSpriteComponent>();
-	m_pColliderComponent = actor->GetComponent<ColliderComponent>();
+	m_pColliderComponent = actor->GetComponent<PlayerCollider>();
 }
 
 void dae::MoveCommand::Execute()

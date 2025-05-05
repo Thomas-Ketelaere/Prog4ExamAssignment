@@ -10,6 +10,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "ColliderManager.h"
 #include "Timer.h"
 
 SDL_Window* g_window{};
@@ -85,6 +86,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	auto& collisions = ColliderManager::GetInstance();
 
 	sceneManager.GetCurrentScene()->LoadScene();
 
@@ -109,6 +111,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		while (lag >= m_FixedTimeStep)
 		{
 			sceneManager.FixedUpdate(); 
+			collisions.UpdateColliders();
 			lag -= m_FixedTimeStep;
 		}
 		sceneManager.Update();

@@ -72,7 +72,7 @@
     <ClCompile Include="EnemyMovementComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyCollider.cpp">
+    <ClCompile Include="PlayerCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="BomberMan.cpp">
@@ -131,7 +131,7 @@
     <ClInclude Include="EnemyMovementComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyCollider.h">
+    <ClInclude Include="PlayerCollider.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
