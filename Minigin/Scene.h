@@ -25,7 +25,7 @@ namespace dae
 
 		std::string GetName() { return m_Name; } //TODO: IMPROVE so it doesnt return a plain string
 		bool IsMarkedDestroy() { return m_Destroy; }
-		bool IsMarkedReload() { return m_Reload; }
+		bool IsMarkedReload() { return m_ShouldReload; }
 
 		~Scene();
 		Scene(const Scene& other) = delete;
@@ -34,7 +34,10 @@ namespace dae
 		Scene& operator=(Scene&& other) = delete;
 
 		void Destroy() { m_Destroy = true; }
-		void MarkForReload() { m_Reload = true; }
+		void MarkForReload() { m_ShouldReload = true; }
+
+		std::vector<GameObject*> GetAllObjectsWithTag(unsigned int tag);
+		GameObject* GetFirstObjectWithTag(unsigned int tag);
 
 	private: 
 		std::string m_Name;
@@ -42,7 +45,7 @@ namespace dae
 		std::function<void()> m_LoadingFunction;
 
 		bool m_Destroy;
-		bool m_Reload;
+		bool m_ShouldReload;
 
 		static unsigned int m_idCounter; 
 	};

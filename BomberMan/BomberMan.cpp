@@ -40,6 +40,7 @@
 #include "ColliderComponent.h"
 #include "EnemyMovementComponent.h"
 #include "EnemyCollider.h"
+#include "Hash.h"
 
 void LoadPlayerGamePad(dae::Scene* scene, dae::GameObject* levelParent, dae::LivesTextComponent* playerLivesTextChange)
 {
@@ -350,6 +351,7 @@ void LoadGameScene()
 
 	//Input
 	auto gridObject = std::make_unique<dae::GameObject>();
+	gridObject->SetTag(make_sdbm_hash("Grid"));
 	gridObject->SetWorldPosition(0, 0);
 	auto gridView = std::make_unique<dae::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f);
 	gridObject->AddComponent(std::move(gridView));
@@ -380,9 +382,9 @@ void LoadGameScene()
 
 void load()
 {
-	auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", true);
-	sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", false);
+	//auto& sceneStart = dae::SceneManager::GetInstance().CreateScene("Start", true);
+	//sceneStart.SetLoadingFunction(LoadStartScene);
+	auto& sceneGame = dae::SceneManager::GetInstance().CreateScene("Game", true);
 	sceneGame.SetLoadingFunction(LoadGameScene);
 
 #if _DEBUG

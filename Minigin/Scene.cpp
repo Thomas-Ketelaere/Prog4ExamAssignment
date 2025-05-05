@@ -9,7 +9,8 @@ unsigned int Scene::m_idCounter = 0;
 
 Scene::Scene(const std::string& name) : 
 	m_Name{ name },
-	m_Destroy{}
+	m_Destroy{},
+	m_ShouldReload{}
 {
 }
 
@@ -17,10 +18,37 @@ void dae::Scene::ReloadScene()
 {
 	m_Objects.clear();
 	m_LoadingFunction();
-	m_Reload = false;
+	m_ShouldReload = false;
 }
 
 Scene::~Scene() = default;
+
+std::vector<GameObject*> dae::Scene::GetAllObjectsWithTag(unsigned int tag)
+{
+	std::vector<GameObject*> objectsWithTag;
+	for (auto& gameObject : m_Objects)
+	{
+		if (tag == gameObject->GetTag())
+		{
+			objectsWithTag.emplace_back(gameObject.get());
+		}
+	}
+	return objectsWithTag;
+}
+
+GameObject* dae::Scene::GetFirstObjectWithTag(unsigned int tag)
+{
+	auto it = std::find_if(m_Objects.begin(), m_Objects.end(), [&](std::unique_ptr<GameObject>& gameObject)
+		{
+			return tag == gameObject->GetTag();
+		});
+
+	if (it != m_Objects.end())
+	{
+		return it->get();
+	}
+	return nullptr;
+}
 
 void Scene::Add(std::unique_ptr<GameObject> object)
 {

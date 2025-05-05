@@ -34,6 +34,9 @@ namespace dae
 		void UpdateWorldPosition();
 		bool IsChild(GameObject* child);
 
+		void SetTag(unsigned int tag) { m_Tag = tag; }
+		unsigned int GetTag() const { return m_Tag; }
+
 		const glm::vec3& GetWorldPosition();
 
 		const std::vector<GameObject*>& GetChildren() { return m_Children; }
@@ -56,6 +59,8 @@ namespace dae
 		GameObject* m_Parent{ nullptr };
 		bool m_Destroy;
 		bool m_PositionIsDirty{};
+
+		unsigned int m_Tag{};
 	};
 
 	template<typename T>

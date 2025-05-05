@@ -9,6 +9,8 @@ namespace dae
 		SpawnBombCommand(GameObject* actor);
 		virtual void Execute() override;
 
+		void Start() override {}
+
 	private:
 		GridComponent* m_pGridComponent;
 	};

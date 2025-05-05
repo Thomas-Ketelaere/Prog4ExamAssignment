@@ -4,13 +4,14 @@
 #include "PlayerSpriteComponent.h"
 #include "GridComponent.h"
 #include "ColliderComponent.h"
+#include "SceneManager.h"
+#include "Hash.h"
 
 dae::MoveCommand::MoveCommand(GameObject* actor) :
 	GameActorCommand(actor),
 	m_Speed{}
 {
 	m_pPlayerSpriteComponent = actor->GetComponent<PlayerSpriteComponent>();
-	m_pGridComponent = actor->GetParent()->GetComponent<GridComponent>();
 	m_pColliderComponent = actor->GetComponent<ColliderComponent>();
 }
 
@@ -21,41 +22,6 @@ void dae::MoveCommand::Execute()
 	pos.y += m_Speed.y * Time::GetInstance().m_DeltaTime;
 
 	glm::vec3 posToCheck{ pos };
-	//if (m_Speed.y != 0)
-	//{
-	//	if (m_Speed.y > 0)
-	//	{
-	//		posToCheck.y += m_pPlayerSpriteComponent->GetHeightSprite() / 2.5f;
-	//	}
-	//	else
-	//	{
-	//		posToCheck.y -= m_pPlayerSpriteComponent->GetHeightSprite() / 2.5f;
-	//	}
-
-	//	posToCheck.x += m_pPlayerSpriteComponent->GetWidthSprite() / 2.5f;
-	//}
-	//else if (m_Speed.x != 0)
-	//{
-	//	if (m_Speed.x > 0)
-	//	{
-	//		posToCheck.x += m_pPlayerSpriteComponent->GetWidthSprite() / 2.5f;
-	//	}
-	//	else
-	//	{
-	//		posToCheck.x -= m_pPlayerSpriteComponent->GetWidthSprite() / 2.5f;
-	//	}
-
-	//	posToCheck.y += m_pPlayerSpriteComponent->GetHeightSprite() / 2.5f;
-	//}
-
-	//if (m_pGridComponent->IsCellWalkable(posToCheck))
-	//{
-	//	GetGameActor()->SetWorldPosition(pos.x, pos.y);
-	//	m_pPlayerSpriteComponent->SetDirectionSprite(m_Speed);
-	//}
-	
-	//TODO: try to make it with collision box
-	//GetGameActor()->SetWorldPosition(pos.x, pos.y);
 
 	float colliderWidthHalf = m_pColliderComponent->GetColliderWidth() / 2;
 	float colliderHeightHalf = m_pColliderComponent->GetColliderHeight() / 2;
@@ -89,4 +55,10 @@ void dae::MoveCommand::Execute()
 		GetGameActor()->SetWorldPosition(pos.x, pos.y);
 		m_pPlayerSpriteComponent->SetDirectionSprite(m_Speed);
 	}
+}
+
+void dae::MoveCommand::Start()
+{
+	GameObject* gridObject = SceneManager::GetInstance().GetCurrentScene()->GetFirstObjectWithTag(make_sdbm_hash("Grid"));
+	m_pGridComponent = gridObject->GetComponent<GridComponent>();
 }

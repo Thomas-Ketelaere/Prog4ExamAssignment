@@ -9,6 +9,8 @@ namespace dae
 		LoseLiveCommand(GameObject* actor);
 		virtual void Execute() override;
 
+		void Start() override {}
+
 	private:
 		LivesComponent* m_pLivesComponent;
 	};

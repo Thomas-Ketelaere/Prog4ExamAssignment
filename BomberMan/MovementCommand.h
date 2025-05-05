@@ -11,13 +11,16 @@ namespace dae
 	public:
 		MoveCommand(GameObject* actor);
 		virtual void Execute() override;
+		void Start() override;
 
 		void SetSpeed(glm::vec2 speed) { m_Speed = speed; }
 	private:
 		glm::vec2 m_Speed;
 		PlayerSpriteComponent* m_pPlayerSpriteComponent;
-		GridComponent* m_pGridComponent;
+		GridComponent* m_pGridComponent{};
 		ColliderComponent* m_pColliderComponent;
+
+		
 	};
 }
 

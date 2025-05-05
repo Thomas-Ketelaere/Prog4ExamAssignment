@@ -9,6 +9,7 @@ namespace dae
 	public:
 		GainPointsCommand(GameObject* actor);
 		virtual void Execute() override;
+		void Start() override {}
 
 		void SetGainScore(int newGainScore) { m_GainScore = newGainScore; }
 	private:

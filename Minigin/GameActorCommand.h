@@ -9,7 +9,6 @@ namespace dae
 		GameActorCommand(GameObject* actor);
 	protected:
 		GameObject* GetGameActor() const { return m_GameActor; }
-
 	private:
 		GameObject* m_GameActor;
 	};

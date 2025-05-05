@@ -11,6 +11,11 @@ void dae::InputManager::Start()
 		auto controller = std::make_unique<Controller>(controllerIndex);
 		m_ControllerVct.emplace_back(std::move(controller));
 	}
+
+	for (const auto& binding : m_GameBindingVct)
+	{
+		binding->m_GameBinding->Start();
+	}
 }
 
 bool dae::InputManager::ProcessInput()
@@ -105,7 +110,7 @@ bool dae::InputManager::ProcessInput()
 	return true;
 }
 
-void dae::InputManager::AddBinding(std::unique_ptr<GameActorCommand> binding, KeyState keyState, unsigned int keyBind, int controllerIndex)
+void dae::InputManager::AddBinding(std::unique_ptr<Command> binding, KeyState keyState, unsigned int keyBind, int controllerIndex)
 {
 	auto newBinding = std::make_unique<BindingStates>();
 	newBinding->m_GameBinding = std::move(binding);

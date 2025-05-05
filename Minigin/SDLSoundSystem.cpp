@@ -124,6 +124,8 @@ private:
 			auto& pair = m_Queue.front();
 			m_Queue.pop();
 
+			lck.unlock(); // only need to lock shared resources (so m_queue in this case)
+
 			switch (pair.first.m_RequestType)
 			{
 			case SoundRequest::PlaySound:

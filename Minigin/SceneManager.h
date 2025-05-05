@@ -22,6 +22,8 @@ namespace dae
 		void LoadScene(const std::string& sceneToLoadName);
 		void ReloadScene();
 
+
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

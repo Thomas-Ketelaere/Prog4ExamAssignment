@@ -41,6 +41,7 @@ void dae::SceneManager::LateUpdate()
 		dae::ServiceLocator::GetSoundSystem().UnloadMusic();
 		m_pCurrentScene->ReloadScene();
 		m_pCurrentScene->Start();
+		InputManager::GetInstance().Start();
 	}
 	std::erase_if(m_Scenes, [](const std::unique_ptr<Scene>& scene)
 		{
@@ -76,6 +77,7 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			m_pCurrentScene = scene.get();
 			scene->LoadScene();
 			scene->Start();
+			InputManager::GetInstance().Start();
 			previousScene->Destroy();
 		}
 	}

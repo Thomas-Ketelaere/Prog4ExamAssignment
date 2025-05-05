@@ -17,7 +17,7 @@ namespace dae
 
 	struct BindingStates
 	{
-		std::unique_ptr<GameActorCommand> m_GameBinding{ nullptr };
+		std::unique_ptr<Command> m_GameBinding{ nullptr };
 		KeyState m_KeyState{};
 		unsigned int m_KeyBinding{};
 		int m_ControllerIndex{};
@@ -28,7 +28,7 @@ namespace dae
 	public:
 		void Start();
 		bool ProcessInput();
-		void AddBinding(std::unique_ptr<GameActorCommand> binding, KeyState keyState, unsigned int keyBind, int controllerIndex);
+		void AddBinding(std::unique_ptr<Command> binding, KeyState keyState, unsigned int keyBind, int controllerIndex);
 		void ClearBindings();
 
 	private:
