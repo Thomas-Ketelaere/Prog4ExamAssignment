@@ -36,9 +36,9 @@ void dae::ColliderManager::UpdateColliders()
 	//}
 
 	//cannot do 2 range based for loops bcs will go over every collider twice otherwise
-	for (int i{}; i < m_pColliderCompVct.size(); ++i)
+	for (unsigned int i{}; i < m_pColliderCompVct.size(); ++i)
 	{
-		for (int j = i + 1; j < m_pColliderCompVct.size(); ++j)
+		for (unsigned int j = i + 1; j < m_pColliderCompVct.size(); ++j)
 		{
 			auto* firstCollider = m_pColliderCompVct[i];
 			auto* secondCollider = m_pColliderCompVct[j];
