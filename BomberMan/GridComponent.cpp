@@ -62,6 +62,7 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 		if (cell->m_CellState == CellState::Empty) // make sure that it doesnt set the same cell twice
 		{
 			cell->m_CellState = CellState::BreakableWall;
+			cell->m_CellItem = CellItem::Exit; //TODO: obviously not all breakable walls are Exits, this is just for testing purposes
 			auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
 			spriteSheetWall->SetCustomPosition(cell->m_Position);
 			spriteSheetWall->ShouldAnimate(false);
@@ -168,9 +169,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			cell->m_CellState = CellState::Empty;
-			cell->m_pSpriteSheetWall->ShouldAnimate(true);
-			cell->m_pSpriteSheetWall->SetColumn(1);
+			HandleBreakableWall(cell);
 			break;
 		}
 		else // empty cell
@@ -199,9 +198,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			cell->m_CellState = CellState::Empty;
-			cell->m_pSpriteSheetWall->ShouldAnimate(true);
-			cell->m_pSpriteSheetWall->SetColumn(1);
+			HandleBreakableWall(cell);
 			break;
 		}
 
@@ -231,9 +228,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			cell->m_CellState = CellState::Empty;
-			cell->m_pSpriteSheetWall->ShouldAnimate(true);
-			cell->m_pSpriteSheetWall->SetColumn(1);
+			HandleBreakableWall(cell);
 			break;
 		}
 
@@ -264,9 +259,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
-			cell->m_CellState = CellState::Empty;
-			cell->m_pSpriteSheetWall->ShouldAnimate(true);
-			cell->m_pSpriteSheetWall->SetColumn(1);
+			HandleBreakableWall(cell);
 			break;
 		}
 
@@ -294,7 +287,38 @@ bool dae::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer
 	int indexCell = GetIndexFromPosition(position);
 	if (isPlayer)
 	{
-		if (m_pCells[indexCell]->m_CellState == CellState::Empty || m_pCells[indexCell]->m_CellState == CellState::Bomb)
+		if (m_pCells[indexCell]->m_CellState == CellState::Empty)
+		{
+			switch (m_pCells[indexCell]->m_CellItem)
+			{
+			case CellItem::Exit:
+				//Check enemies (from game manager?)
+				//Level completed
+				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
+				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
+				break;
+			case CellItem::DetonatorPU:
+				//gain ability
+				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
+				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
+				break;
+			case CellItem::FlamesPU:
+				//gain ability
+				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
+				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
+				break;
+			case CellItem::ExtraBombPU:
+				//gain ability
+				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
+				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
+				break;
+			}
+
+			return true; //is still possible to reach empty layer so return here
+		}
+
+
+		else if (m_pCells[indexCell]->m_CellState == CellState::Bomb)
 		{
 			return true;
 		}
@@ -360,6 +384,37 @@ const std::vector<glm::vec2> dae::GridComponent::GetPath(const glm::vec2& startP
 }
 
 
+void dae::GridComponent::HandleBreakableWall(Cell* cell)
+{
+	cell->m_CellState = CellState::Empty;
+	if (cell->m_CellItem == CellItem::Empty)
+	{
+		cell->m_pSpriteSheetWall->ShouldAnimate(true);
+		cell->m_pSpriteSheetWall->SetColumn(1);
+	}
+
+	else if (cell->m_CellItem == CellItem::Exit)
+	{
+		cell->m_pSpriteSheetWall->Destroy();
+		auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Exit.png", 1, 1, 0.1f, false, true);
+		spriteSheetWall->SetCustomPosition(cell->m_Position);
+		spriteSheetWall->ShouldAnimate(false);
+		cell->m_pSpriteSheetWall = spriteSheetWall.get();
+		GetGameObject()->AddComponent(std::move(spriteSheetWall));
+	}
+
+	//TODO: do this for all power ups
+	/*else if (cell->m_CellItem == CellItem::ExtraBombPU)
+	{
+		cell->m_pSpriteSheetWall->Destroy();
+		auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Exit.png", 1, 1, 0.1f, false, true);
+		spriteSheetWall->SetCustomPosition(cell->m_Position);
+		spriteSheetWall->ShouldAnimate(false);
+		cell->m_pSpriteSheetWall = spriteSheetWall.get();
+		GetGameObject()->AddComponent(std::move(spriteSheetWall));
+	}*/
+}
+
 void dae::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
 {
 	auto spriteSheetExplosion = std::make_unique<SpriteSheetComponent>(GetGameObject(), fullPath, 7, 1, 0.1f, true, true);
@@ -382,6 +437,7 @@ glm::vec2 dae::GridComponent::GetCellPositionFromIndex(const int index) const
 	return m_pCells[index]->m_Position;
 }
 
+//returns -1 if not valid
 int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex)
 {
 	int currentRow = currentIndex / m_AmountColumns;

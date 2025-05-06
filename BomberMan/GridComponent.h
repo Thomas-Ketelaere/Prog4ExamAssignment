@@ -13,10 +13,17 @@ namespace dae
 		Empty, HardWall, BreakableWall, Bomb
 	};
 
+	// PU = power up
+	enum class CellItem
+	{
+		Empty, Exit, ExtraBombPU, DetonatorPU, FlamesPU
+	};
+
 	struct Cell
 	{ 
 		Cell(glm::vec2 position) { m_Position = position; }
 		CellState m_CellState{};
+		CellItem m_CellItem{CellItem::Empty};
 		glm::vec2 m_Position{};
 		SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
 	};
@@ -54,6 +61,7 @@ namespace dae
 		const std::vector<glm::vec2> GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition);
 		
 	private:
+		void HandleBreakableWall(Cell* cell);
 		void SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath);
 		int GetIndexFromPosition(const glm::vec2& position) const;
 		glm::vec2 GetCellPositionFromIndex(const int index) const;
