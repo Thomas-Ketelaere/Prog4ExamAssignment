@@ -120,7 +120,8 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Li
 	// ------- INPUT KEYBOARD ---------
 
 	auto playerInputObjectKeyboard = std::make_unique<dae::GameObject>();
-	playerInputObjectKeyboard->SetParent(levelParent, true);
+	playerInputObjectKeyboard->SetTag(make_sdbm_hash("Player"));
+
 	auto playerInputKeyboardSpriteSheet = std::make_unique<dae::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputKeyboardSpriteSetter = std::make_unique<dae::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
 	auto playerInputKeyboardCollider = std::make_unique<dae::PlayerCollider>(playerInputObjectKeyboard.get(), 28.f, 28.f, true);
@@ -175,21 +176,38 @@ void LoadPlayerKeyboard(dae::Scene* scene, dae::GameObject* levelParent, dae::Li
 	// --------END KEYBOARD-----------
 
 	// --------ENEMIES----------
-	auto enemy = std::make_unique<dae::GameObject>();
-	enemy->SetTag(make_sdbm_hash("Enemy"));
-	enemy->SetWorldPosition(48, 304);
-	enemy->SetParent(levelParent, true);
-	auto enemyMovement = std::make_unique<dae::EnemyMovementComponent>(enemy.get(), 15.f, "Balloom");
-	enemyMovement->SetDebugRendering(true);
-	enemyMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
-	auto enemyCollider = std::make_unique<dae::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
-	auto enemySprite = std::make_unique<dae::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
+	auto enemyBalloomOne = std::make_unique<dae::GameObject>();
+	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
+	enemyBalloomOne->SetWorldPosition(48, 304);
+	enemyBalloomOne->SetParent(levelParent, true);
+	auto enemyBalloomOneMovement = std::make_unique<dae::EnemyMovementComponent>(enemyBalloomOne.get(), 15.f, "Balloom");
+	enemyBalloomOneMovement->SetDebugRendering(true);
+	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
+	auto enemyBalloomOneCollider = std::make_unique<dae::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
+	auto enemyBalloomOneSprite = std::make_unique<dae::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
 
-	enemy->AddComponent(std::move(enemyMovement));
-	enemy->AddComponent(std::move(enemyCollider));
-	enemy->AddComponent(std::move(enemySprite));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
 
-	scene->Add(std::move(enemy));
+	scene->Add(std::move(enemyBalloomOne));
+
+
+	auto enemyOnealOne = std::make_unique<dae::GameObject>();
+	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
+	enemyOnealOne->SetWorldPosition(48, 336);
+	enemyOnealOne->SetParent(levelParent, true);
+	auto enemyOnealOneMovement = std::make_unique<dae::EnemyMovementComponent>(enemyOnealOne.get(), 15.f, "Balloom", true, 100.f);
+	enemyOnealOneMovement->SetDebugRendering(true);
+	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
+	auto enemyOnealOneCollider = std::make_unique<dae::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
+	auto enemyOnealOneSprite = std::make_unique<dae::SpriteSheetComponent>(enemyOnealOne.get(), "Oneal.png", 4, 3, 0.2f, false);
+
+	enemyOnealOne->AddComponent(std::move(enemyOnealOneMovement));
+	enemyOnealOne->AddComponent(std::move(enemyOnealOneCollider));
+	enemyOnealOne->AddComponent(std::move(enemyOnealOneSprite));
+
+	scene->Add(std::move(enemyOnealOne));
 }
 
 

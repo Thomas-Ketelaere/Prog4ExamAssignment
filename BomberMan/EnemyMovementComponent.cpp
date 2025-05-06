@@ -7,11 +7,20 @@
 #include "SpriteSheetComponent.h"
 #include <iostream>
 #include <Subject.h>
+#include"SceneManager.h"
 
 dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name):
+	EnemyMovementComponent(gameObject, speed, name, false, 0.f)
+{
+	
+}
+
+dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance) :
 	Component(gameObject),
-	m_Speed{speed},
-	m_Name{name}
+	m_Speed{ speed },
+	m_Name{ name },
+	m_ShouldTrackPlayer{shouldTrackPlayer},
+	m_TriggerDistance{triggerDistance}
 {
 	m_pEnemyDiedEvent = std::make_unique<Subject>();
 }
@@ -21,6 +30,12 @@ void dae::EnemyMovementComponent::Start()
 	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
 	m_pSpriteSheetComponent = GetGameObject()->GetComponent<SpriteSheetComponent>();
 	m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition() , glm::vec2(848, 48));
+
+	if (m_ShouldTrackPlayer) // only need to get em if enemy needs to track
+	{
+		m_pPlayers = SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Player"));
+	}
+	
 }
 
 void dae::EnemyMovementComponent::Update()
@@ -31,20 +46,25 @@ void dae::EnemyMovementComponent::Update()
 		if (glm::distance(pos, m_Path[m_PathIndex]) <= m_DistanceToReachPoint)
 		{
 			++m_PathIndex;
-			if (m_PathIndex == m_Path.size())
+			if (m_PathIndex == m_Path.size() || !m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) // if player reached final cell or check if cell is walkable (if e.g. bomb has been placed after path calculation)
 			{
 				m_PathIndex = 0;
 				//new path
 				auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
 				m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+				m_CurrentlyTrackingPlayer = false;
 			}
 
-			else if (!m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) //check if cell is walkable (if e.g. bomb has been placed after path calculation)
+			if (m_ShouldTrackPlayer && !m_CurrentlyTrackingPlayer)
 			{
-				m_PathIndex = 0;
-				//new path
-				auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
-				m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
+				glm::vec2 playerPos = GetRandomPlayerPositionInRange();
+				if (playerPos.x != 0 && playerPos.y != 0)
+				{
+					m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), playerPos);
+					m_PathIndex = 0;
+					m_CurrentlyTrackingPlayer = true;
+				}
+				
 			}
 			SetSpriteDirection();
 		}
@@ -129,4 +149,35 @@ void dae::EnemyMovementComponent::SetSpriteDirection()
 		m_pSpriteSheetComponent->SetRow(1);
 	}
 
+}
+
+//returns (0, 0) if not in range
+glm::vec2 dae::EnemyMovementComponent::GetRandomPlayerPositionInRange()
+{
+	std::vector<glm::vec3> playersPositions;
+		
+	for (GameObject* player : m_pPlayers)
+	{
+		glm::vec3 playerPos = player->GetWorldPosition();
+		if (glm::distance(playerPos, GetTransform()->GetWorldPosition()) <= m_TriggerDistance)
+		{
+			playersPositions.emplace_back(playerPos);
+		}
+	}
+
+	if (playersPositions.size() == 0)
+	{
+		return glm::vec2(0, 0);
+	}
+
+	else if (playersPositions.size() == 1)
+	{
+		return playersPositions[0];
+	}
+
+	else
+	{
+		int randPos = rand() % playersPositions.size();
+		return playersPositions[randPos];
+	}
 }
