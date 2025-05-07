@@ -7,18 +7,19 @@
 #include "SpriteSheetComponent.h"
 #include <iostream>
 #include <Subject.h>
-#include"SceneManager.h"
+#include "SceneManager.h"
+#include "GameManager.h"
 
-game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name):
-	EnemyMovementComponent(gameObject, speed, name, false, 0.f)
+game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead):
+	EnemyMovementComponent(gameObject, speed, scoreWhenDead, false, 0.f)
 {
 	
 }
 
-game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance) :
+game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool shouldTrackPlayer, float triggerDistance) :
 	Component(gameObject),
 	m_Speed{ speed },
-	m_Name{ name },
+	m_ScoreWhenDead{ scoreWhenDead },
 	m_ShouldTrackPlayer{shouldTrackPlayer},
 	m_TriggerDistance{triggerDistance}
 {
@@ -106,26 +107,10 @@ void game::EnemyMovementComponent::StartDying()
 		m_pSpriteSheetComponent->SetInterval(0.5f);
 		std::cout << "TODO: Enemy component removed but not enemy object itself" << std::endl; //wait for state machine maybe?
 
-		if (m_Name == "Balloom")
-		{
-			Event e(make_sdbm_hash("KilledBalloom"));
-			m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
-		}
-		
-		else if(m_Name == "Oneal")
-		{
-			//event killed oneal
-		}
+		GameManager::GetInstance().GainScore(m_ScoreWhenDead);
 
-		else if (m_Name == "Doll")
-		{
-			//event killed Doll
-		}
-
-		else if (m_Name == "Minvo")
-		{
-			//event killed Minvo
-		}
+		Event e(make_sdbm_hash("EnemyDied"));
+		m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
 
 	}
 }

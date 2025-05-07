@@ -90,6 +90,8 @@ void game::GridComponent::LateUpdate()
 	if (m_BombExploded)
 	{
 		std::vector<RamCoreEngine::GameObject*> objectsOnGrid = GetGameObject()->GetChildren(); //TODO: copy? (maybe save it)
+		std::vector<RamCoreEngine::GameObject*> playerObjects = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Player")); //TODO: make it so it's possible to get it from one function and not adding vectors
+		objectsOnGrid.insert(objectsOnGrid.end(), playerObjects.begin(), playerObjects.end());
 		for (int index : m_ExplodedCellIndices)
 		{
 			for (RamCoreEngine::GameObject* object : objectsOnGrid)

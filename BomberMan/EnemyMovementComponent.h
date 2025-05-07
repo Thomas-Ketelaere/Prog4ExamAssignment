@@ -18,8 +18,8 @@ namespace game
 	class EnemyMovementComponent final : public RamCoreEngine::Component
 	{
 	public:
-		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name);
-		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance);
+		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead);
+		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool shouldTrackPlayer, float triggerDistance);
 
 		virtual void Start() override;
 		virtual void Update() override;
@@ -38,7 +38,7 @@ namespace game
 		GridComponent* m_pGridComponent = nullptr;
 		std::vector<glm::vec2> m_Path;
 		std::vector<RamCoreEngine::GameObject*> m_pPlayers;
-		const std::string m_Name{};
+		const int m_ScoreWhenDead;
 
 		const float m_Speed;
 		const float m_DistanceToReachPoint{ 2.f };

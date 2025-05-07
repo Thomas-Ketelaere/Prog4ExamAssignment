@@ -41,13 +41,13 @@
 #include "EnemyMovementComponent.h"
 #include "PlayerCollider.h"
 #include "Hash.h"
+#include "GameManager.h"
 
-void LoadPlayerGamePad(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* levelParent, game::LivesTextComponent* playerLivesTextChange)
+void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
 	// --------GAMEPAD-----------
 	auto playerInputObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
 	playerInputObjectGamepad->SetTag(make_sdbm_hash("Player"));
-	playerInputObjectGamepad->SetParent(levelParent, true);
 	auto playerInputGamepadSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObjectGamepad.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputGamepadSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObjectGamepad.get());
 	auto playerInputGamepadCollider = std::make_unique<game::PlayerCollider>(playerInputObjectGamepad.get(), 28.f, 28.f, true);
@@ -57,9 +57,9 @@ void LoadPlayerGamePad(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* l
 	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadCollider));
 
 	//lives
-	auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectGamepad.get(), 3);
+	/*auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectGamepad.get(), 3);
 	playerLivesKeyboard->GetActorDiedSubject()->AddObserver(playerLivesTextChange);
-	playerInputObjectGamepad->AddComponent(std::move(playerLivesKeyboard));
+	playerInputObjectGamepad->AddComponent(std::move(playerLivesKeyboard));*/
 
 	// ------- INPUT GAMEPAD ---------
 
@@ -95,11 +95,11 @@ void LoadPlayerGamePad(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* l
 	// --------END GAMEPAD-----------
 }
 
-void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* levelParent, game::LivesTextComponent* playerLivesTextChange)
+void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
 {
 	// --------KEYBOARD-----------
 	//display lives
-	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
+	//auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
 	//display Player
 	//auto playerKeyboardTextObject = std::make_unique<RamCoreEngine::GameObject>();
@@ -109,13 +109,7 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* 
 	//playerKeyboardTextObject->AddComponent(std::move(playerTextKeyboard));
 	//scene->Add(std::move(playerKeyboardTextObject));
 
-	//display score
-	auto playerKeyboardScoreTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	playerKeyboardScoreTextObject->SetWorldPosition(500, 32);
-	auto playerScoreTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(playerKeyboardScoreTextObject.get(), "Current score: 0", font);
-	playerScoreTextKeyboard->ChangeFontSize(32);
-	playerKeyboardScoreTextObject->AddComponent(std::move(playerScoreTextKeyboard));
-	auto playerScoreTextChangeKeyboard = std::make_unique<game::ScoreTextComponent>(playerKeyboardScoreTextObject.get());
+
 
 	// ------- INPUT KEYBOARD ---------
 
@@ -132,17 +126,10 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* 
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardCollider));
 
 	//lives
-	auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectKeyboard.get(), 3);
-	playerLivesKeyboard->GetActorDiedSubject()->AddObserver(playerLivesTextChange);
-	playerInputObjectKeyboard->AddComponent(std::move(playerLivesKeyboard));
+	//auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectKeyboard.get(), 3);
+	//playerLivesKeyboard->GetActorDiedSubject()->AddObserver(playerLivesTextChange);
+	//playerInputObjectKeyboard->AddComponent(std::move(playerLivesKeyboard));
 
-	//score
-	auto playerScoreKeyboard = std::make_unique<game::ScoreComponent>(playerInputObjectKeyboard.get());
-	playerScoreKeyboard->GetActorScoreSubject()->AddObserver(playerScoreTextChangeKeyboard.get());
-	playerScoreKeyboard->GetActorScoreSubject()->AddObserver(&game::Achievements::GetInstance());
-	game::ScoreComponent* scoreComponentPlayerKeyboard = playerScoreKeyboard.get();
-	playerKeyboardScoreTextObject->AddComponent(std::move(playerScoreTextChangeKeyboard)); // moves after observer is set
-	playerInputObjectKeyboard->AddComponent(std::move(playerScoreKeyboard));
 
 	auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
 	moveLeftCommandKeyboard->SetSpeed({ -50.f, 0.f });
@@ -171,43 +158,10 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* 
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_f, -1);
 
 	scene->Add(std::move(playerInputObjectKeyboard));
-	scene->Add(std::move(playerKeyboardScoreTextObject));
 
 	// --------END KEYBOARD-----------
 
-	// --------ENEMIES----------
-	auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
-	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyBalloomOne->SetWorldPosition(48, 304);
-	enemyBalloomOne->SetParent(levelParent, true);
-	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 15.f, "Balloom");
-	enemyBalloomOneMovement->SetDebugRendering(true);
-	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
-	auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
-	auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
-
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
-
-	scene->Add(std::move(enemyBalloomOne));
-
-
-	auto enemyOnealOne = std::make_unique<RamCoreEngine::GameObject>();
-	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyOnealOne->SetWorldPosition(48, 336);
-	enemyOnealOne->SetParent(levelParent, true);
-	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 15.f, "Balloom", true, 100.f);
-	enemyOnealOneMovement->SetDebugRendering(true);
-	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(scoreComponentPlayerKeyboard);
-	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
-	auto enemyOnealOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyOnealOne.get(), "Oneal.png", 4, 3, 0.2f, false);
-
-	enemyOnealOne->AddComponent(std::move(enemyOnealOneMovement));
-	enemyOnealOne->AddComponent(std::move(enemyOnealOneCollider));
-	enemyOnealOne->AddComponent(std::move(enemyOnealOneSprite));
-
-	scene->Add(std::move(enemyOnealOne));
+	
 }
 
 
@@ -373,24 +327,70 @@ void LoadGameScene()
 	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f);
 	gridObject->AddComponent(std::move(gridView));
 
-
-
 	auto playerLivesTextObject = std::make_unique<RamCoreEngine::GameObject>();
 	playerLivesTextObject->SetWorldPosition(700, 30);
-	auto playerLivesText = std::make_unique<RamCoreEngine::TextComponent>(playerLivesTextObject.get(), "Lives: 3", font);
+	std::string lives = "Lives: " + std::to_string(game::GameManager::GetInstance().GetTotalLives());
+	auto playerLivesText = std::make_unique<RamCoreEngine::TextComponent>(playerLivesTextObject.get(), lives, font);
 	//playerLivesText->ChangeFontSize(18);
 	playerLivesTextObject->AddComponent(std::move(playerLivesText));
-	auto playerLivesTextChange = std::make_unique<game::LivesTextComponent>(playerLivesTextObject.get());
+	//auto playerLivesTextChange = std::make_unique<game::LivesTextComponent>(playerLivesTextObject.get());
+	//playerLivesTextObject->AddComponent(std::move(playerLivesTextChange)); // moves after observer is set
+	scene->Add(std::move(playerLivesTextObject));
+
+	//display score
+	auto playerScoreTextObject = std::make_unique<RamCoreEngine::GameObject>();
+	playerScoreTextObject->SetWorldPosition(500, 32);
+	std::string score = "Current score: " + std::to_string(game::GameManager::GetInstance().GetTotalScore());
+	auto playerScoreText = std::make_unique<RamCoreEngine::TextComponent>(playerScoreTextObject.get(), score, font);
+	playerScoreText->ChangeFontSize(32);
+	playerScoreTextObject->AddComponent(std::move(playerScoreText));
+	auto playerScoreTextChange = std::make_unique<game::ScoreTextComponent>(playerScoreTextObject.get());
 
 	//please do smth about not passing a lot of pointers in functions
-	LoadPlayerGamePad(scene, gridObject.get(), playerLivesTextChange.get());
-	LoadPlayerKeyboard(scene, gridObject.get(), playerLivesTextChange.get());
+	LoadPlayerGamePad(scene);
+	LoadPlayerKeyboard(scene);
 	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
-	playerLivesTextObject->AddComponent(std::move(playerLivesTextChange)); // moves after observer is set
+	// --------ENEMIES----------
+	auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
+	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
+	enemyBalloomOne->SetWorldPosition(48, 304);
+	enemyBalloomOne->SetParent(gridObject.get(), true);
+	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 15.f, 100);
+	enemyBalloomOneMovement->SetDebugRendering(true);
+	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+	auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
+	auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
+
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
+
+	scene->Add(std::move(enemyBalloomOne));
+
+
+	auto enemyOnealOne = std::make_unique<RamCoreEngine::GameObject>();
+	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
+	enemyOnealOne->SetWorldPosition(48, 336);
+	enemyOnealOne->SetParent(gridObject.get(), true);
+	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 15.f, 200, true, 100.f);
+	enemyOnealOneMovement->SetDebugRendering(true);
+	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
+	auto enemyOnealOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyOnealOne.get(), "Oneal.png", 4, 3, 0.2f, false);
+
+	enemyOnealOne->AddComponent(std::move(enemyOnealOneMovement));
+	enemyOnealOne->AddComponent(std::move(enemyOnealOneCollider));
+	enemyOnealOne->AddComponent(std::move(enemyOnealOneSprite));
+
+	scene->Add(std::move(enemyOnealOne));
+
+	
+	playerScoreTextObject->AddComponent(std::move(playerScoreTextChange)); // moves after observer is set
 
 	scene->Add(std::move(gridObject));
-	scene->Add(std::move(playerLivesTextObject));
+	
+	scene->Add(std::move(playerScoreTextObject));
 
 	// --------SOUND----------
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
@@ -399,10 +399,17 @@ void LoadGameScene()
 
 void load()
 {
+	// ------------ FileReading (TODO: IMPLEMENT) --------------
+	game::GameManager::GetInstance().SetLives(3);
+
+
+	
 	//auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
 	//sceneStart.SetLoadingFunction(LoadStartScene);
 	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Game", true);
 	sceneGame.SetLoadingFunction(LoadGameScene);
+
+	// ------------ SOUND --------------
 
 #if _DEBUG
 

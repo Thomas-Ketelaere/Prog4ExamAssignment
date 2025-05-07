@@ -19,8 +19,6 @@ namespace game
 		void SetDebugRendering(bool shouldRender) { m_DebugRender = shouldRender; }
 
 	private: 
-		LivesComponent* m_pLivesComponent;
-
 		bool m_DebugRender{true};
 	};
 }

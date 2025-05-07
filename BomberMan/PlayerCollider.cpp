@@ -1,21 +1,19 @@
 #include "PlayerCollider.h"
 #include "GameObject.h"
-#include "LivesComponent.h"
+#include "GameManager.h"
 #include "Hash.h"
 #include "Renderer.h"
 #include <Events.h>
 
 game::PlayerCollider::PlayerCollider(RamCoreEngine::GameObject* gameObject, const float width, const float height, bool isTrigger) :
 	Component(gameObject),
-	Collider(gameObject, width, height, isTrigger),
-	m_pLivesComponent{}
+	Collider(gameObject, width, height, isTrigger)
 {
 	
 }
 
 void game::PlayerCollider::Start()
 {
-	m_pLivesComponent = GetGameObject()->GetComponent<LivesComponent>();
 }
 
 void game::PlayerCollider::Render() const
@@ -33,6 +31,6 @@ void game::PlayerCollider::OnTriggerOverlap(Collider* other)
 {
 	if (other->GetTag() == make_sdbm_hash("Enemy"))
 	{
-		m_pLivesComponent->LoseLive();
+		GameManager::GetInstance().LoseLive();
 	}
 }

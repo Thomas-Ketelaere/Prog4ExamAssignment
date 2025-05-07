@@ -1,7 +1,7 @@
 #include "LivesTextComponent.h"
 #include "GameObject.h"
 #include "TextComponent.h"
-#include "LivesComponent.h"
+#include "GameManager.h"
 
 game::LivesTextComponent::LivesTextComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
@@ -13,11 +13,11 @@ void game::LivesTextComponent::Start()
 	m_TextComponent = GetGameObject()->GetComponent<RamCoreEngine::TextComponent>();
 }
 
-void game::LivesTextComponent::Notify(Event event, RamCoreEngine::GameObject* gameObject)
+void game::LivesTextComponent::Notify(Event event, RamCoreEngine::GameObject*)
 {
 	if (event.id == make_sdbm_hash("PlayerDied"))
 	{
-		int newLives = gameObject->GetComponent<LivesComponent>()->GetLives();
+		int newLives = GameManager::GetInstance().GetTotalLives();
 		m_TextComponent->ChangeText("Lives: " + std::to_string(newLives));
 	}
 	

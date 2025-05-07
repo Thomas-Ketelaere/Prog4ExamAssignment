@@ -8,7 +8,6 @@ namespace RamCoreEngine
 
 namespace game
 {
-	
 	class ScoreTextComponent final : public RamCoreEngine::Component, public RamCoreEngine::Observer
 	{
 	public:

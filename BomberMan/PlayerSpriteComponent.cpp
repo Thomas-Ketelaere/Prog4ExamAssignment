@@ -1,6 +1,7 @@
 #include "PlayerSpriteComponent.h"
 #include "GameObject.h"
 #include "SpriteSheetComponent.h"
+#include "GameManager.h"
 
 #include "Renderer.h" //TODO: remove after testing
 #include "LivesComponent.h"
@@ -79,6 +80,7 @@ void game::PlayerSpriteComponent::StartDying()
 	{
 		m_IsDying = true;
 		//play dead animation
-		GetGameObject()->GetComponent<LivesComponent>()->LoseLive();
+		game::GameManager::GetInstance().LoseLive();
+		//GetGameObject()->GetComponent<LivesComponent>()->LoseLive();
 	}
 }
