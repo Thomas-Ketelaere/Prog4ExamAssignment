@@ -5,7 +5,7 @@
 #include "ServiceLocator.h"
 #include "ColliderManager.h"
 
-void dae::SceneManager::Start()
+void RamCoreEngine::SceneManager::Start()
 {
 	//for (auto& scene : m_Scenes)
 	//{
@@ -14,7 +14,7 @@ void dae::SceneManager::Start()
 	m_pCurrentScene->Start();
 }
 
-void dae::SceneManager::Update()
+void RamCoreEngine::SceneManager::Update()
 {
 	//for(auto& scene : m_Scenes)
 	//{
@@ -23,12 +23,12 @@ void dae::SceneManager::Update()
 	m_pCurrentScene->Update();
 }
 
-void dae::SceneManager::FixedUpdate() // should have float FixedTime
+void RamCoreEngine::SceneManager::FixedUpdate() // should have float FixedTime
 {
 
 }
 
-void dae::SceneManager::LateUpdate()
+void RamCoreEngine::SceneManager::LateUpdate()
 {
 	//for (const auto& scene : m_Scenes)
 	//{
@@ -38,8 +38,8 @@ void dae::SceneManager::LateUpdate()
 	if (m_pCurrentScene->IsMarkedReload())
 	{
 		InputManager::GetInstance().ClearBindings();
-		dae::ServiceLocator::GetSoundSystem().UnloadAllSound();
-		dae::ServiceLocator::GetSoundSystem().UnloadMusic();
+		RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadAllSound();
+		RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadMusic();
 		ColliderManager::GetInstance().ClearColliders();
 		m_pCurrentScene->ReloadScene();
 		m_pCurrentScene->Start();
@@ -51,7 +51,7 @@ void dae::SceneManager::LateUpdate()
 		});
 }
 
-void dae::SceneManager::Render()
+void RamCoreEngine::SceneManager::Render()
 {
 	m_pCurrentScene->Render();
 	//for (const auto& scene : m_Scenes)
@@ -60,7 +60,7 @@ void dae::SceneManager::Render()
 	//}
 }
 
-void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
+void RamCoreEngine::SceneManager::LoadScene(const std::string& sceneToLoadName)
 {
 	//TODO: IMPROVE
 	for (auto& scene : m_Scenes)
@@ -74,8 +74,8 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			auto* previousScene = m_pCurrentScene;
 			//TODO: dont destroy on load (if necessary)
 			InputManager::GetInstance().ClearBindings();
-			dae::ServiceLocator::GetSoundSystem().UnloadAllSound();
-			dae::ServiceLocator::GetSoundSystem().UnloadMusic();
+			RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadAllSound();
+			RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadMusic();
 			ColliderManager::GetInstance().ClearColliders();
 			m_pCurrentScene = scene.get();
 			scene->LoadScene();
@@ -86,13 +86,13 @@ void dae::SceneManager::LoadScene(const std::string& sceneToLoadName)
 	}
 }
 
-void dae::SceneManager::ReloadScene()
+void RamCoreEngine::SceneManager::ReloadScene()
 {
 	m_pCurrentScene->MarkForReload();
 	
 }
 
-dae::Scene& dae::SceneManager::CreateScene(const std::string& name, bool setAsCurrentScene)
+RamCoreEngine::Scene& RamCoreEngine::SceneManager::CreateScene(const std::string& name, bool setAsCurrentScene)
 {
 	auto scene = std::make_unique<Scene>(name);
 	if (setAsCurrentScene)

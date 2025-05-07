@@ -1,18 +1,24 @@
 #include "Component.h"
 #include "Observer.h"
-namespace dae
+
+namespace RamCoreEngine
 {
 	class TextComponent;
-	class ScoreTextComponent final : public Component, public Observer
+}
+
+namespace game
+{
+	
+	class ScoreTextComponent final : public RamCoreEngine::Component, public RamCoreEngine::Observer
 	{
 	public:
-		ScoreTextComponent(GameObject* gameObject);
+		ScoreTextComponent(RamCoreEngine::GameObject* gameObject);
 
 		virtual void Start() override;
-		virtual void Notify(Event event, GameObject* gameObject) override;
+		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;
 
 	private:
-		TextComponent* m_TextComponent = nullptr;
+		RamCoreEngine::TextComponent* m_TextComponent = nullptr;
 	};
 }
 

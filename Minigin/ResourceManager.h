@@ -7,14 +7,14 @@
 #include "Font.h"
 #include "Texture2D.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class ResourceManager final : public Singleton<ResourceManager>
 	{
 	public:
 		void Init(const std::filesystem::path& data);
-		dae::Texture2D* LoadTexture(const std::string& file);
-		dae::Font* LoadFont(const std::string& file, uint8_t size);
+		RamCoreEngine::Texture2D* LoadTexture(const std::string& file);
+		RamCoreEngine::Font* LoadFont(const std::string& file, uint8_t size);
 	private:
 		friend class Singleton<ResourceManager>;
 		ResourceManager() = default;

@@ -4,17 +4,16 @@
 #include <vector>
 #include <memory>
 
-namespace dae
+namespace game
 {
 	class LivesComponent;
-	class PlayerCollider final : public Collider, public Component
+	class PlayerCollider final : public RamCoreEngine::Collider, public RamCoreEngine::Component
 	{
 	public:
-		PlayerCollider(GameObject* gameObject, const float width, const float height, bool isTrigger);
+		PlayerCollider(RamCoreEngine::GameObject* gameObject, const float width, const float height, bool isTrigger);
 
 		void Start() override;
 		void Render() const override;
-
 
 		void OnTriggerOverlap(Collider* other) override;
 		void SetDebugRendering(bool shouldRender) { m_DebugRender = shouldRender; }

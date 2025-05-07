@@ -2,7 +2,7 @@
 #include "windows.h"
 #include <Xinput.h>
 
-class dae::Controller::ControllerImpl
+class RamCoreEngine::Controller::ControllerImpl
 {
 public:
 	ControllerImpl(int controllerIndex): 
@@ -37,34 +37,34 @@ private:
 	int m_ButtonsReleasedThisFrame;
 };
 
-dae::Controller::Controller(int controllerIndex) :
+RamCoreEngine::Controller::Controller(int controllerIndex) :
 	m_pImpl{ std::make_unique<ControllerImpl>(controllerIndex) }
 {
 }
 
-dae::Controller::~Controller() = default;
+RamCoreEngine::Controller::~Controller() = default;
 
-void dae::Controller::ProcessInputController()
+void RamCoreEngine::Controller::ProcessInputController()
 {
 	m_pImpl->ProcessInputController();
 }
 
-int dae::Controller::GetControllerIndex() const
+int RamCoreEngine::Controller::GetControllerIndex() const
 {
 	return m_pImpl->GetControllerIndex();
 }
 
-bool dae::Controller::IsDownThisFrame(unsigned int button) const
+bool RamCoreEngine::Controller::IsDownThisFrame(unsigned int button) const
 {
 	return m_pImpl->IsDownThisFrame(button);
 }
 
-bool dae::Controller::IsUpThisFrame(unsigned int button) const
+bool RamCoreEngine::Controller::IsUpThisFrame(unsigned int button) const
 {
 	return m_pImpl->IsUpThisFrame(button);
 }
 
-bool dae::Controller::IsPressed(unsigned int button) const
+bool RamCoreEngine::Controller::IsPressed(unsigned int button) const
 {
 	return m_pImpl->IsPressed(button);
 }

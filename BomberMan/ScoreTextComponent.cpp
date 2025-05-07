@@ -3,17 +3,17 @@
 #include "TextComponent.h"
 #include "ScoreComponent.h"
 
-dae::ScoreTextComponent::ScoreTextComponent(GameObject* gameObject):
+game::ScoreTextComponent::ScoreTextComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
 }
 
-void dae::ScoreTextComponent::Start()
+void game::ScoreTextComponent::Start()
 {
-	m_TextComponent = GetGameObject()->GetComponent<TextComponent>();
+	m_TextComponent = GetGameObject()->GetComponent<RamCoreEngine::TextComponent>();
 }
 
-void dae::ScoreTextComponent::Notify(Event event, GameObject* gameObject)
+void game::ScoreTextComponent::Notify(Event event, RamCoreEngine::GameObject* gameObject)
 {
 	if (event.id == make_sdbm_hash("PlayerGainedScore"))
 	{

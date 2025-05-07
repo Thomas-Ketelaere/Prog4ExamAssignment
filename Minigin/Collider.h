@@ -2,7 +2,7 @@
 #include <glm.hpp>
 
 
-namespace dae
+namespace RamCoreEngine
 {
 	class GameObject;
 	class TransformComponent;

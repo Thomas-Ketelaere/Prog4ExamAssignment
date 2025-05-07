@@ -3,7 +3,7 @@
 #include <functional>
 #include "GameObject.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Scene final
 	{

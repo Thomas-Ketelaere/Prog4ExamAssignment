@@ -3,7 +3,7 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 
-dae::TextureComponent::TextureComponent(GameObject* gameObject, const std::string& fullPath, bool useCustomPosition) :
+RamCoreEngine::TextureComponent::TextureComponent(GameObject* gameObject, const std::string& fullPath, bool useCustomPosition) :
 	Component(gameObject),
 	m_UseCustomPosition{ useCustomPosition },
 	m_CustomPosition{}
@@ -11,7 +11,7 @@ dae::TextureComponent::TextureComponent(GameObject* gameObject, const std::strin
 	m_Texture = ResourceManager::GetInstance().LoadTexture(fullPath);
 }
 
-void dae::TextureComponent::Render() const
+void RamCoreEngine::TextureComponent::Render() const
 {
 	if (m_UseCustomPosition)
 	{

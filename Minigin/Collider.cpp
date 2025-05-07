@@ -4,7 +4,7 @@
 #include "ColliderManager.h"
 #include "GameObject.h"
 
-dae::Collider::Collider(GameObject* gameObject, const float width, const float height, bool isTrigger):
+RamCoreEngine::Collider::Collider(GameObject* gameObject, const float width, const float height, bool isTrigger):
 	m_Width{width},
 	m_Height{height},
 	m_Trigger{isTrigger}
@@ -13,7 +13,7 @@ dae::Collider::Collider(GameObject* gameObject, const float width, const float h
 	m_pTransformComponent = gameObject->GetTransform(); //all gameobjects have a transform
 }
 
-bool dae::Collider::IsColliding(const glm::vec2& objectPos, const float width, const float height)
+bool RamCoreEngine::Collider::IsColliding(const glm::vec2& objectPos, const float width, const float height)
 {
 	glm::vec2 colliderPos = glm::vec2(m_pTransformComponent->GetWorldPosition());
 
@@ -32,7 +32,7 @@ bool dae::Collider::IsColliding(const glm::vec2& objectPos, const float width, c
 	return isOverlapping;
 }
 
-bool dae::Collider::IsColliding(Collider* other)
+bool RamCoreEngine::Collider::IsColliding(Collider* other)
 {
 	const glm::vec2 otherPos = other->GetColliderTransform()->GetWorldPosition();
 	const float otherWidth = other->GetColliderWidth();
@@ -40,7 +40,7 @@ bool dae::Collider::IsColliding(Collider* other)
 	return IsColliding(otherPos, otherWidth, otherHeight);
 }
 
-unsigned int dae::Collider::GetTag()
+unsigned int RamCoreEngine::Collider::GetTag()
 {
 	return GetColliderTransform()->GetGameObject()->GetTag();
 }

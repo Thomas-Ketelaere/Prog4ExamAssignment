@@ -5,16 +5,21 @@
 #include <memory>
 #include <string>
 
-namespace dae
+namespace RamCoreEngine
 {
-	class GridComponent;
 	class SpriteSheetComponent;
 	class Subject;
-	class EnemyMovementComponent final : public Component
+}
+
+namespace game
+{
+	class GridComponent;
+
+	class EnemyMovementComponent final : public RamCoreEngine::Component
 	{
 	public:
-		EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name);
-		EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance);
+		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name);
+		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance);
 
 		virtual void Start() override;
 		virtual void Update() override;
@@ -23,16 +28,16 @@ namespace dae
 		void StartDying();
 		void SetDebugRendering(bool shouldDebugRender) { m_DebugRender = shouldDebugRender; }
 
-		Subject* GetEnemyDiedSubject() const { return m_pEnemyDiedEvent.get(); }
+		RamCoreEngine::Subject* GetEnemyDiedSubject() const { return m_pEnemyDiedEvent.get(); }
 
 	private:
 		void SetSpriteDirection();
 		glm::vec2 GetRandomPlayerPositionInRange();
-		std::unique_ptr<Subject> m_pEnemyDiedEvent;
-		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
+		std::unique_ptr<RamCoreEngine::Subject> m_pEnemyDiedEvent;
+		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		GridComponent* m_pGridComponent = nullptr;
 		std::vector<glm::vec2> m_Path;
-		std::vector<GameObject*> m_pPlayers;
+		std::vector<RamCoreEngine::GameObject*> m_pPlayers;
 		const std::string m_Name{};
 
 		const float m_Speed;
@@ -44,7 +49,6 @@ namespace dae
 		bool m_DebugRender{};
 		bool m_IsDying{};
 		bool m_ShouldTrackPlayer{};
-		bool m_CurrentlyTrackingPlayer{};
 	};
 
 }

@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-void dae::Achievements::Notify(Event event, GameObject* gameObject)
+void game::Achievements::Notify(Event event, RamCoreEngine::GameObject* gameObject)
 {
 	if (event.id == make_sdbm_hash("PlayerGainedScore"))
 	{
@@ -15,7 +15,7 @@ void dae::Achievements::Notify(Event event, GameObject* gameObject)
 	}
 }
 
-void dae::Achievements::SetAchievement(const char* ID)
+void game::Achievements::SetAchievement(const char* ID)
 {
 	std::cout << "ACHIEVMENT RECEIVED: " << ID << std::endl;
 }

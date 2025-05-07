@@ -1,6 +1,6 @@
 #pragma once
 #include "Command.h"
-namespace dae
+namespace RamCoreEngine
 {
 	class GameObject;
 	class GameActorCommand : public Command

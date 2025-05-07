@@ -1,12 +1,12 @@
 #pragma once
 #include "GameActorCommand.h"
-namespace dae
+namespace game
 {
 	class GridComponent;
-	class SpawnBombCommand : public GameActorCommand
+	class SpawnBombCommand : public RamCoreEngine::GameActorCommand
 	{
 	public:
-		SpawnBombCommand(GameObject* actor);
+		SpawnBombCommand(RamCoreEngine::GameObject* actor);
 		void Execute() override;
 		void Start() override;
 

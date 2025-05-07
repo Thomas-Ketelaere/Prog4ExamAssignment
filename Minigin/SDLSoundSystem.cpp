@@ -6,7 +6,7 @@
 #include <mutex>
 #include <queue>
 
-class dae::SDLSoundSystem::SDLSoundSystemImpl
+class RamCoreEngine::SDLSoundSystem::SDLSoundSystemImpl
 {
 public:
 	SDLSoundSystemImpl()
@@ -173,45 +173,45 @@ private:
 	std::queue< std::pair<Sound, Mix_Chunk*>> m_Queue;
 };
 
-dae::SDLSoundSystem::SDLSoundSystem():
+RamCoreEngine::SDLSoundSystem::SDLSoundSystem():
 	m_pImpl{std::make_unique<SDLSoundSystemImpl>()}
 {
 }
 
-dae::SDLSoundSystem::~SDLSoundSystem() = default;
+RamCoreEngine::SDLSoundSystem::~SDLSoundSystem() = default;
 
-void dae::SDLSoundSystem::Play(const SoundId id, const int volume, const int loops)
+void RamCoreEngine::SDLSoundSystem::Play(const SoundId id, const int volume, const int loops)
 {
 	m_pImpl->Play(id, volume, loops);
 }
 
-void dae::SDLSoundSystem::Stop(const SoundId id)
+void RamCoreEngine::SDLSoundSystem::Stop(const SoundId id)
 {
 	m_pImpl->Stop(id);
 }
 
-void dae::SDLSoundSystem::PlayMusic(const char* filePath, const int volume, const int loops)
+void RamCoreEngine::SDLSoundSystem::PlayMusic(const char* filePath, const int volume, const int loops)
 {
 	m_pImpl->PlayMusic(filePath, volume, loops);
 }
 
-void dae::SDLSoundSystem::StopMusic()
+void RamCoreEngine::SDLSoundSystem::StopMusic()
 {
 	m_pImpl->StopMusic();
 }
 
-void dae::SDLSoundSystem::AddSound(const SoundId id, const char* filePath)
+void RamCoreEngine::SDLSoundSystem::AddSound(const SoundId id, const char* filePath)
 {
 	m_pImpl->AddSound(id, filePath);
 }
 
 
-void dae::SDLSoundSystem::UnloadMusic()
+void RamCoreEngine::SDLSoundSystem::UnloadMusic()
 {
 	m_pImpl->UnloadMusic();
 }
 
-void dae::SDLSoundSystem::UnloadAllSound()
+void RamCoreEngine::SDLSoundSystem::UnloadAllSound()
 {
 	m_pImpl->UnloadAllSound();
 }

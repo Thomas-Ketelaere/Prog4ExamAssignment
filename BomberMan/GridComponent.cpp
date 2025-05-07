@@ -10,7 +10,7 @@
 #include "EnemyMovementComponent.h"
 
 #include "PlayerSpriteComponent.h"
-dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY):
+game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
 	m_AmountRows{amountRows},
@@ -32,14 +32,14 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 			if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
 			{
 				cell->m_CellState = CellState::HardWall;
-				auto spriteSheetWall = std::make_unique<TextureComponent>(GetGameObject(), "HardWall.png", true);
+				auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
 				spriteSheetWall->SetCustomPosition(position);
 				GetGameObject()->AddComponent(std::move(spriteSheetWall));
 			}
 			else if (rowCounter % 2 == 0 && colCounter % 2 == 0)
 			{
 				cell->m_CellState = CellState::HardWall;
-				auto spriteSheetWall = std::make_unique<TextureComponent>(GetGameObject(), "HardWall.png", true);
+				auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
 				spriteSheetWall->SetCustomPosition(position);
 				GetGameObject()->AddComponent(std::move(spriteSheetWall));
 			}
@@ -63,7 +63,7 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 		{
 			cell->m_CellState = CellState::BreakableWall;
 			cell->m_CellItem = CellItem::Exit; //TODO: obviously not all breakable walls are Exits, this is just for testing purposes
-			auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
+			auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
 			spriteSheetWall->SetCustomPosition(cell->m_Position);
 			spriteSheetWall->ShouldAnimate(false);
 			cell->m_pSpriteSheetWall = spriteSheetWall.get(); 
@@ -74,10 +74,10 @@ dae::GridComponent::GridComponent(GameObject* gameObject, int amountColumns, int
 
 
 	SDL_Color color = { 56, 135, 0, 255 };
-	Renderer::GetInstance().SetBackgroundColor(color);
+	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 }
 
-dae::GridComponent::~GridComponent()
+game::GridComponent::~GridComponent()
 {
 	for (const Cell* cell : m_pCells)
 	{
@@ -85,14 +85,14 @@ dae::GridComponent::~GridComponent()
 	}
 }
 
-void dae::GridComponent::LateUpdate()
+void game::GridComponent::LateUpdate()
 {
 	if (m_BombExploded)
 	{
-		std::vector<GameObject*> objectsOnGrid = GetGameObject()->GetChildren(); //TODO: copy? (maybe save it)
+		std::vector<RamCoreEngine::GameObject*> objectsOnGrid = GetGameObject()->GetChildren(); //TODO: copy? (maybe save it)
 		for (int index : m_ExplodedCellIndices)
 		{
-			for (GameObject* object : objectsOnGrid)
+			for (RamCoreEngine::GameObject* object : objectsOnGrid)
 			{
 				if (IsObjectInCell(object->GetWorldPosition(), index))
 				{
@@ -118,7 +118,7 @@ void dae::GridComponent::LateUpdate()
 }
 
 
-void dae::GridComponent::SpawnBomb(glm::vec2 position)
+void game::GridComponent::SpawnBomb(glm::vec2 position)
 {
 	if (m_CanSpawnBomb)
 	{
@@ -126,21 +126,21 @@ void dae::GridComponent::SpawnBomb(glm::vec2 position)
 		if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
 		{
 			glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
-			auto bombObject = std::make_unique<dae::GameObject>();
+			auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
 			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f);
-			auto bombSpriteComponent = std::make_unique<SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
+			auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
 			bombObject->SetWorldPosition(spawnPosition.x, spawnPosition.y);
 			bombObject->AddComponent(std::move(bombComponent));
 			bombObject->AddComponent(std::move(bombSpriteComponent));
 			//bombObject->SetParent(GetGameObject(), true);
-			SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
+			RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
 			m_pCells[index]->m_CellState = CellState::Bomb;
 			m_CanSpawnBomb = false;
 		}
 	}
 }
 
-void dae::GridComponent::ExplodeBomb(int index, int range)
+void game::GridComponent::ExplodeBomb(int index, int range)
 {
 	//TODO : CLEAN UP AND MAKE MORE EFFICIENT
 	m_CanSpawnBomb = true;
@@ -151,7 +151,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
 	cellCenter->m_CellState = CellState::Empty;
-	auto spriteSheetExplosionCenter = std::make_unique<SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
+	auto spriteSheetExplosionCenter = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
 	GetGameObject()->AddComponent(std::move(spriteSheetExplosionCenter));
 	
@@ -277,7 +277,7 @@ void dae::GridComponent::ExplodeBomb(int index, int range)
 	}
 }
 
-bool dae::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant
+bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant
 {
 	if (position.x < 0 || position.x > m_ScreenWidth || position.y < 0 || position.y > m_ScreenHeight)
 	{
@@ -335,13 +335,13 @@ bool dae::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer
 	return false;
 }
 
-dae::Cell* dae::GridComponent::GetCellFromPosition(const glm::vec2& position)
+game::Cell* game::GridComponent::GetCellFromPosition(const glm::vec2& position)
 {
 	int index = GetIndexFromPosition(position);
 	return m_pCells[index];
 }
 
-const glm::vec2& dae::GridComponent::GetRandomEmptyCell()
+const glm::vec2& game::GridComponent::GetRandomEmptyCell()
 {
 	std::vector<Cell*> emptyCells;
 	for (Cell* cell : m_pCells)
@@ -356,7 +356,7 @@ const glm::vec2& dae::GridComponent::GetRandomEmptyCell()
 	return emptyCells[index]->m_Position;
 }
 
-const std::vector<glm::vec2> dae::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
+const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
 {
 	std::vector<glm::vec2> pathPositions;
 	const int startIndex = GetIndexFromPosition(startPosition); 
@@ -384,7 +384,7 @@ const std::vector<glm::vec2> dae::GridComponent::GetPath(const glm::vec2& startP
 }
 
 
-void dae::GridComponent::HandleBreakableWall(Cell* cell)
+void game::GridComponent::HandleBreakableWall(Cell* cell)
 {
 	cell->m_CellState = CellState::Empty;
 	if (cell->m_CellItem == CellItem::Empty)
@@ -396,7 +396,7 @@ void dae::GridComponent::HandleBreakableWall(Cell* cell)
 	else if (cell->m_CellItem == CellItem::Exit)
 	{
 		cell->m_pSpriteSheetWall->Destroy();
-		auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Exit.png", 1, 1, 0.1f, false, true);
+		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "Exit.png", 1, 1, 0.1f, false, true);
 		spriteSheetWall->SetCustomPosition(cell->m_Position);
 		spriteSheetWall->ShouldAnimate(false);
 		cell->m_pSpriteSheetWall = spriteSheetWall.get();
@@ -415,14 +415,14 @@ void dae::GridComponent::HandleBreakableWall(Cell* cell)
 	}*/
 }
 
-void dae::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
+void game::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
 {
-	auto spriteSheetExplosion = std::make_unique<SpriteSheetComponent>(GetGameObject(), fullPath, 7, 1, 0.1f, true, true);
+	auto spriteSheetExplosion = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), fullPath, 7, 1, 0.1f, true, true);
 	spriteSheetExplosion->SetCustomPosition(position);
 	GetGameObject()->AddComponent(std::move(spriteSheetExplosion));
 }
 
-int dae::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const
+int game::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const
 {
 	int column = int(pos.x / m_CellWidth);
 	int row = int((pos.y - m_OffsetY) / m_CellHeight);
@@ -432,13 +432,13 @@ int dae::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const
 	return index;
 }
 
-glm::vec2 dae::GridComponent::GetCellPositionFromIndex(const int index) const
+glm::vec2 game::GridComponent::GetCellPositionFromIndex(const int index) const
 {
 	return m_pCells[index]->m_Position;
 }
 
 //returns -1 if not valid
-int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex)
+int game::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex)
 {
 	int currentRow = currentIndex / m_AmountColumns;
 	int currentColumn = currentIndex % m_AmountColumns;
@@ -455,7 +455,7 @@ int dae::GridComponent::GetIndexWithCellOffset(int columnOffset, int rowOffset, 
 	return newIndex;
 }
 
-bool dae::GridComponent::IsObjectInCell(const glm::vec2& position, const int cellIndex)
+bool game::GridComponent::IsObjectInCell(const glm::vec2& position, const int cellIndex)
 {
 	int indexObject = GetIndexFromPosition(position);
 	if (indexObject == cellIndex)
@@ -465,7 +465,7 @@ bool dae::GridComponent::IsObjectInCell(const glm::vec2& position, const int cel
 	return false;
 }
 
-std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
+std::vector<int> game::GridComponent::FindPath(int startIndex, int endIndex)
 {
 	std::vector<int> pathIndices{};
 	std::list<Node> openList;
@@ -571,14 +571,14 @@ std::vector<int> dae::GridComponent::FindPath(int startIndex, int endIndex)
 	return pathIndices;
 }
 
-float dae::GridComponent::GetHeuristicCost(glm::vec2 a, glm::vec2 b)
+float game::GridComponent::GetHeuristicCost(glm::vec2 a, glm::vec2 b)
 {
 	//using the Manhattan distance (TODO: why this one)
 	float manDistance = abs(a.x - b.x) + abs(a.y - b.y);
 	return manDistance;
 }
 
-std::vector<int> dae::GridComponent::GetConnectionIndexFromCellIndex(int index)
+std::vector<int> game::GridComponent::GetConnectionIndexFromCellIndex(int index)
 {
 	std::vector<int> connections{};
 	//only allow connections that are walkable

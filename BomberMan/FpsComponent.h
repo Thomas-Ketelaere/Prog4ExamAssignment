@@ -1,19 +1,24 @@
 #pragma once
 #include "Component.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class TextComponent;
-	class FpsComponent final : public Component
+}
+
+namespace game
+{
+	
+	class FpsComponent final : public RamCoreEngine::Component
 	{
 	public:
-		FpsComponent(GameObject* gameObject);
+		FpsComponent(RamCoreEngine::GameObject* gameObject);
 
 		virtual void Start() override;
 		virtual void Update() override;
 
 	private:
-		TextComponent* m_TextComponent = nullptr;
+		RamCoreEngine::TextComponent* m_TextComponent = nullptr;
 	};
 }
 

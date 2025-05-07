@@ -1,13 +1,13 @@
 #pragma once
 #include "GameActorCommand.h"
 
-namespace dae
+namespace game
 {
 	class ScoreComponent;
-	class GainPointsCommand : public GameActorCommand
+	class GainPointsCommand : public RamCoreEngine::GameActorCommand
 	{
 	public:
-		GainPointsCommand(GameObject* actor);
+		GainPointsCommand(RamCoreEngine::GameObject* actor);
 		virtual void Execute() override;
 		void Start() override {}
 

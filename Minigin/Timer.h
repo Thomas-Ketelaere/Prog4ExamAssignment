@@ -1,7 +1,7 @@
 #pragma once
 #include "Singleton.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Time final : public Singleton<Time>
 	{

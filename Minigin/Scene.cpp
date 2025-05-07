@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-using namespace dae;
+using namespace RamCoreEngine;
 
 unsigned int Scene::m_idCounter = 0;
 
@@ -14,7 +14,7 @@ Scene::Scene(const std::string& name) :
 {
 }
 
-void dae::Scene::ReloadScene()
+void RamCoreEngine::Scene::ReloadScene()
 {
 	m_Objects.clear();
 	m_LoadingFunction();
@@ -23,7 +23,7 @@ void dae::Scene::ReloadScene()
 
 Scene::~Scene() = default;
 
-std::vector<GameObject*> dae::Scene::GetAllObjectsWithTag(unsigned int tag)
+std::vector<GameObject*> RamCoreEngine::Scene::GetAllObjectsWithTag(unsigned int tag)
 {
 	std::vector<GameObject*> objectsWithTag;
 	for (auto& gameObject : m_Objects)
@@ -36,7 +36,7 @@ std::vector<GameObject*> dae::Scene::GetAllObjectsWithTag(unsigned int tag)
 	return objectsWithTag;
 }
 
-GameObject* dae::Scene::GetFirstObjectWithTag(unsigned int tag)
+GameObject* RamCoreEngine::Scene::GetFirstObjectWithTag(unsigned int tag)
 {
 	//tried find_if with execution::par and execution::par_unseq but are both slower than normal one
 
@@ -67,7 +67,7 @@ void Scene::RemoveAll()
 	m_Objects.clear();
 }
 
-void dae::Scene::Start()
+void RamCoreEngine::Scene::Start()
 {
 	for (auto& object : m_Objects)
 	{
@@ -83,7 +83,7 @@ void Scene::Update()
 	}
 }
 
-void dae::Scene::LateUpdate()
+void RamCoreEngine::Scene::LateUpdate()
 {
 	for (auto& object : m_Objects)
 	{

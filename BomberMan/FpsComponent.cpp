@@ -5,19 +5,19 @@
 #include <sstream>
 #include <iomanip>
 
-dae::FpsComponent::FpsComponent(GameObject* gameObject):
+game::FpsComponent::FpsComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
 }
 
-void dae::FpsComponent::Start()
+void game::FpsComponent::Start()
 {
-	m_TextComponent = GetGameObject()->GetComponent<TextComponent>();
+	m_TextComponent = GetGameObject()->GetComponent<RamCoreEngine::TextComponent>();
 }
 
-void dae::FpsComponent::Update()
+void game::FpsComponent::Update()
 {
 	std::stringstream stream;
-	stream << std::fixed << std::setprecision(1) << 1.f / Time::GetInstance().m_DeltaTime << "FPS";
+	stream << std::fixed << std::setprecision(1) << 1.f / RamCoreEngine::Time::GetInstance().m_DeltaTime << "FPS";
 	m_TextComponent->ChangeText(stream.str());
 }

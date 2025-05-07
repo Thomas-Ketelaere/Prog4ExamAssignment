@@ -1,6 +1,6 @@
 #pragma once
 #include "Events.h"
-namespace dae
+namespace RamCoreEngine
 {
 	class GameObject;
 	class Observer

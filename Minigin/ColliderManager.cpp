@@ -1,16 +1,16 @@
 #include "ColliderManager.h"
 
-void dae::ColliderManager::AddCollider(Collider* collider)
+void RamCoreEngine::ColliderManager::AddCollider(Collider* collider)
 {
 	m_pColliderCompVct.emplace_back(collider);
 }
 
-void dae::ColliderManager::ClearColliders()
+void RamCoreEngine::ColliderManager::ClearColliders()
 {
 	m_pColliderCompVct.clear();
 }
 
-void dae::ColliderManager::UpdateColliders()
+void RamCoreEngine::ColliderManager::UpdateColliders()
 {
 	//for (const auto& firstCollider : m_pColliderCompVct)
 	//{

@@ -1,20 +1,20 @@
 #pragma once
 #include "Component.h"
 
-namespace dae
+namespace game
 {
 	class MovementComponent;
-	class RotatingMovingPointComponent final : public Component
+	class RotatingMovingPointComponent final : public RamCoreEngine::Component
 	{
 	public:
-		RotatingMovingPointComponent(GameObject* gameObject);
+		RotatingMovingPointComponent(RamCoreEngine::GameObject* gameObject);
 
 		virtual void Start() override;
 		virtual void Update() override;
 
 	private:
 		MovementComponent* m_MovementComponent = nullptr;
-		GameObject* m_Parent{ nullptr };
+		RamCoreEngine::GameObject* m_Parent{ nullptr };
 	};
 }
 

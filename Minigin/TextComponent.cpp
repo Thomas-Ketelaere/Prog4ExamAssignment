@@ -6,7 +6,7 @@
 #include "TransformComponent.h"
 #include "ResourceManager.h"
 
-dae::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font):
+RamCoreEngine::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font):
 	Component(gameObject),
 	m_Text{ text },
 	m_Font{ std::move(font) },
@@ -15,7 +15,7 @@ dae::TextComponent::TextComponent(GameObject* gameObject, const std::string& tex
 {
 }
 
-void dae::TextComponent::Update()
+void RamCoreEngine::TextComponent::Update()
 {
 	if (m_NeedsUpdate)
 	{
@@ -36,7 +36,7 @@ void dae::TextComponent::Update()
 	}
 }
 
-void dae::TextComponent::Render() const
+void RamCoreEngine::TextComponent::Render() const
 {
 	if (m_TextTexture != nullptr)
 	{
@@ -45,14 +45,14 @@ void dae::TextComponent::Render() const
 	}
 }
 
-void dae::TextComponent::ChangeText(const std::string& newText)
+void RamCoreEngine::TextComponent::ChangeText(const std::string& newText)
 {
 	m_Text = newText;
 	m_NeedsUpdate = true;
 
 }
 
-void dae::TextComponent::ChangeFontSize(uint8_t newSize)
+void RamCoreEngine::TextComponent::ChangeFontSize(uint8_t newSize)
 {
-	m_Font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", newSize);
+	m_Font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", newSize);
 }

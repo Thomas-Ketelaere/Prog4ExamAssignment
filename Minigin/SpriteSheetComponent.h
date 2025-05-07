@@ -2,7 +2,7 @@
 #include <string>
 #include <glm.hpp>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Texture2D;
 	class SpriteSheetComponent final : public Component

@@ -20,7 +20,7 @@ int GetOpenGLDriverIndex()
 	return openglIndex;
 }
 
-void dae::Renderer::Init(SDL_Window* window)
+void RamCoreEngine::Renderer::Init(SDL_Window* window)
 {
 	m_window = window;
 	m_renderer = SDL_CreateRenderer(window, GetOpenGLDriverIndex(), SDL_RENDERER_ACCELERATED);
@@ -36,7 +36,7 @@ void dae::Renderer::Init(SDL_Window* window)
 	
 }
 
-void dae::Renderer::Render() const
+void RamCoreEngine::Renderer::Render() const
 {
 	const auto& color = GetBackgroundColor();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
@@ -50,7 +50,7 @@ void dae::Renderer::Render() const
 	SDL_RenderPresent(m_renderer);
 }
 
-void dae::Renderer::Destroy()
+void RamCoreEngine::Renderer::Destroy()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -63,7 +63,7 @@ void dae::Renderer::Destroy()
 	}
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const
+void RamCoreEngine::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const
 {
 	SDL_Rect dst{};
 	dst.x = static_cast<int>(x);
@@ -76,7 +76,7 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height) const
+void RamCoreEngine::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height) const
 {
 	SDL_Rect dst{};
 	dst.x = static_cast<int>(x);
@@ -90,7 +90,7 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, float x, float y, int width, int height, int srcX, int srcY) const
+void RamCoreEngine::Renderer::RenderTexture(const Texture2D& texture, float x, float y, int width, int height, int srcX, int srcY) const
 {
 	SDL_Rect src{};
 	src.x = srcX;
@@ -110,7 +110,7 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, float x, float y, in
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }
 
-void dae::Renderer::DrawRectangle(float x, float y, float width, float height, const SDL_Color& color) const
+void RamCoreEngine::Renderer::DrawRectangle(float x, float y, float width, float height, const SDL_Color& color) const
 {
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
@@ -126,7 +126,7 @@ void dae::Renderer::DrawRectangle(float x, float y, float width, float height, c
 	SDL_RenderDrawRect(m_renderer, &rect);
 }
 
-void dae::Renderer::FillRectangle(float x, float y, float width, float height, const SDL_Color& color) const
+void RamCoreEngine::Renderer::FillRectangle(float x, float y, float width, float height, const SDL_Color& color) const
 {
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
@@ -142,10 +142,10 @@ void dae::Renderer::FillRectangle(float x, float y, float width, float height, c
 	SDL_RenderFillRect(m_renderer, &rect);
 }
 
-void dae::Renderer::DrawLine(float xOne, float yOne, float xTwo, float yTwo, const SDL_Color& color) const
+void RamCoreEngine::Renderer::DrawLine(float xOne, float yOne, float xTwo, float yTwo, const SDL_Color& color) const
 {
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(m_renderer, int(xOne), int(yOne), int(xTwo), int(yTwo));
 }
 
-SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }
+SDL_Renderer* RamCoreEngine::Renderer::GetSDLRenderer() const { return m_renderer; }

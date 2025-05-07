@@ -2,13 +2,13 @@
 #include "GameObject.h"
 #include "LivesComponent.h"
 
-dae::LoseLiveCommand::LoseLiveCommand(GameObject* actor):
+game::LoseLiveCommand::LoseLiveCommand(RamCoreEngine::GameObject* actor):
 	GameActorCommand(actor)
 {
 	m_pLivesComponent = actor->GetComponent<LivesComponent>();
 }
 
-void dae::LoseLiveCommand::Execute()
+void game::LoseLiveCommand::Execute()
 {
 	m_pLivesComponent->LoseLive();
 }

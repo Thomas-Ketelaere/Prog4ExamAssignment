@@ -3,17 +3,17 @@
 #include "TextComponent.h"
 #include "LivesComponent.h"
 
-dae::LivesTextComponent::LivesTextComponent(GameObject* gameObject):
+game::LivesTextComponent::LivesTextComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
 }
 
-void dae::LivesTextComponent::Start()
+void game::LivesTextComponent::Start()
 {
-	m_TextComponent = GetGameObject()->GetComponent<TextComponent>();
+	m_TextComponent = GetGameObject()->GetComponent<RamCoreEngine::TextComponent>();
 }
 
-void dae::LivesTextComponent::Notify(Event event, GameObject* gameObject)
+void game::LivesTextComponent::Notify(Event event, RamCoreEngine::GameObject* gameObject)
 {
 	if (event.id == make_sdbm_hash("PlayerDied"))
 	{

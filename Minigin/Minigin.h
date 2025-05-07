@@ -3,7 +3,7 @@
 #include <functional>
 #include "Singleton.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Minigin
 	{
@@ -18,7 +18,7 @@ namespace dae
 		Minigin& operator=(Minigin&& other) = delete;
 
 	private:
-		float& m_DeltaTime{ dae::Singleton<float>::GetInstance() };
+		float& m_DeltaTime{ RamCoreEngine::Singleton<float>::GetInstance() };
 
 		int m_MsPerFrame{ 16 }; //60 fps
 		float m_FixedTimeStep{ 0.016f };

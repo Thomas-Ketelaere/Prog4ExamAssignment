@@ -1,13 +1,13 @@
 #pragma once
 #include "Component.h"
 
-namespace dae
+namespace game
 {
 	class GridComponent;
-	class BombComponent final : public Component
+	class BombComponent final : public RamCoreEngine::Component
 	{
 	public:
-		BombComponent(GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode);
+		BombComponent(RamCoreEngine::GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode);
 
 		virtual void Update() override;
 	private:

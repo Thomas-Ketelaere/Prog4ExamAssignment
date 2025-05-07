@@ -3,7 +3,7 @@
 #include "TransformComponent.h"
 #include <vector>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Texture2D;
 	class Component;

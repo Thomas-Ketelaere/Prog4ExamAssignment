@@ -1,12 +1,12 @@
 #include "StartGameCommand.h"
 #include "SceneManager.h"
 
-dae::StartGameCommand::StartGameCommand(GameObject* actor) :
+game::StartGameCommand::StartGameCommand(RamCoreEngine::GameObject* actor) :
 	GameActorCommand(actor)
 {
 }
 
-void dae::StartGameCommand::Execute()
+void game::StartGameCommand::Execute()
 {
-	SceneManager::GetInstance().LoadScene("Game");
+	RamCoreEngine::SceneManager::GetInstance().LoadScene("Game");
 }

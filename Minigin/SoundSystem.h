@@ -1,7 +1,7 @@
 #pragma once
 #include "SoundId.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class SoundSystem
 	{

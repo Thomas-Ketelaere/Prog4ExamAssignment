@@ -5,7 +5,7 @@
 #include "Singleton.h"
 #include "Scene.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class SceneManager final : public Singleton<SceneManager>
 	{

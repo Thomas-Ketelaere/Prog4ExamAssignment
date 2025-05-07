@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class LoggingSoundSystem final : public SoundSystem
 	{

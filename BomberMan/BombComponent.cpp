@@ -5,7 +5,7 @@
 #include "ServiceLocator.h"
 
 
-dae::BombComponent::BombComponent(GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode) :
+game::BombComponent::BombComponent(RamCoreEngine::GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode) :
 	Component(gameObject),
 	m_pGridComponent{gridComponent},
 	m_CellIndex{cellIndex},
@@ -15,12 +15,12 @@ dae::BombComponent::BombComponent(GameObject* gameObject, GridComponent* gridCom
 	
 }
 
-void dae::BombComponent::Update()
+void game::BombComponent::Update()
 {
-	m_AccumulatedTime += Time::GetInstance().m_DeltaTime;
+	m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	if (m_AccumulatedTime >= m_TimeToExplode)
 	{
-		ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("ExplodeBombSFX"), 100);
+		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("ExplodeBombSFX"), 100);
 		m_pGridComponent->ExplodeBomb(m_CellIndex, 1);
 		GetGameObject()->Destroy(); //destroy bomb after explosion
 	}

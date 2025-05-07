@@ -2,20 +2,25 @@
 #include "Component.h"
 #include <memory>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Subject;
-	class LivesComponent final: public Component
+}
+
+namespace game
+{
+	
+	class LivesComponent final: public RamCoreEngine::Component
 	{
 	public:
-		LivesComponent(GameObject* gameObject, int maxLives);
+		LivesComponent(RamCoreEngine::GameObject* gameObject, int maxLives);
 
 		void LoseLive();
 		int GetLives() const { return m_CurrentLives; }
-		Subject* GetActorDiedSubject() const { return m_pActorDiedEvent.get(); }
+		RamCoreEngine::Subject* GetActorDiedSubject() const { return m_pActorDiedEvent.get(); }
 	private:
 		int m_CurrentLives;
-		std::unique_ptr<Subject> m_pActorDiedEvent;
+		std::unique_ptr<RamCoreEngine::Subject> m_pActorDiedEvent;
 	};
 
 }

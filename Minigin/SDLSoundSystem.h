@@ -2,7 +2,7 @@
 #include "SoundSystem.h"
 #include <memory>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class SDLSoundSystem final : public SoundSystem
 	{

@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Font;
 	class Texture2D;

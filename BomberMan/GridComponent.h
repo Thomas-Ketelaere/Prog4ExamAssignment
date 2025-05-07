@@ -4,10 +4,14 @@
 #include <glm.hpp>
 #include <string>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class SpriteSheetComponent;
-	class TextureComponent;
+}
+
+namespace game
+{
+	
 	enum class CellState
 	{
 		Empty, HardWall, BreakableWall, Bomb
@@ -25,7 +29,7 @@ namespace dae
 		CellState m_CellState{};
 		CellItem m_CellItem{CellItem::Empty};
 		glm::vec2 m_Position{};
-		SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
+		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
 	};
 
 	struct Node
@@ -41,10 +45,10 @@ namespace dae
 		};
 	};
 
-	class GridComponent final : public Component
+	class GridComponent final : public RamCoreEngine::Component
 	{
 	public:
-		GridComponent(GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY);
+		GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY);
 		virtual ~GridComponent() override;
 
 		virtual void LateUpdate() override;

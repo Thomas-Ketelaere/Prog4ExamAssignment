@@ -2,7 +2,7 @@
 #include "Collider.h"
 #include "Component.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	// class to put on objects that dont have a trigger, but do need to collide with
 	class BaseColliderComponent final : public Collider, public Component

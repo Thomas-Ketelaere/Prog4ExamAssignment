@@ -4,7 +4,7 @@
 #include <vector>
 
 
-namespace dae
+namespace RamCoreEngine
 {
 	class ColliderManager final : public Singleton<ColliderManager>
 	{

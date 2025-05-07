@@ -3,7 +3,7 @@
 #include <string>
 #include <glm.hpp>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Texture2D;
 	class TextureComponent final : public Component

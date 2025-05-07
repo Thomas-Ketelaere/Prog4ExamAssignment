@@ -2,12 +2,12 @@
 #include "Singleton.h"
 #include "Observer.h"
 
-namespace dae
+namespace game
 {
-	class Achievements : public Singleton<Achievements>, public Observer
+	class Achievements : public RamCoreEngine::Singleton<Achievements>, public RamCoreEngine::Observer
 	{
 	public:
-		virtual void Notify(Event event, GameObject* gameObject) override;
+		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;
 	private:
 		void SetAchievement(const char* ID);
 	};

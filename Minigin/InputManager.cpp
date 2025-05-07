@@ -4,7 +4,7 @@
 #include <backends/imgui_impl_sdl2.h>
 #include "GameActorCommand.h"
 
-void dae::InputManager::Start()
+void RamCoreEngine::InputManager::Start()
 {
 	for (int controllerIndex{}; controllerIndex < m_MaxControllers; ++controllerIndex)
 	{
@@ -18,7 +18,7 @@ void dae::InputManager::Start()
 	}
 }
 
-bool dae::InputManager::ProcessInput()
+bool RamCoreEngine::InputManager::ProcessInput()
 {
 	//GamePad
 	for (const auto& controller : m_ControllerVct)
@@ -110,7 +110,7 @@ bool dae::InputManager::ProcessInput()
 	return true;
 }
 
-void dae::InputManager::AddBinding(std::unique_ptr<Command> binding, KeyState keyState, unsigned int keyBind, int controllerIndex)
+void RamCoreEngine::InputManager::AddBinding(std::unique_ptr<Command> binding, KeyState keyState, unsigned int keyBind, int controllerIndex)
 {
 	auto newBinding = std::make_unique<BindingStates>();
 	newBinding->m_GameBinding = std::move(binding);
@@ -121,7 +121,7 @@ void dae::InputManager::AddBinding(std::unique_ptr<Command> binding, KeyState ke
 	m_GameBindingVct.emplace_back(std::move(newBinding));
 }
 
-void dae::InputManager::ClearBindings()
+void RamCoreEngine::InputManager::ClearBindings()
 {
 	m_GameBindingVct.clear();
 }

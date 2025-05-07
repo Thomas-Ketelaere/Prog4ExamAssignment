@@ -1,15 +1,15 @@
 #pragma once
 #include "GameActorCommand.h"
 #include <glm.hpp>
-namespace dae
+namespace game
 {
 	class PlayerSpriteComponent;
 	class GridComponent;
 	class PlayerCollider;
-	class MoveCommand : public GameActorCommand
+	class MoveCommand : public RamCoreEngine::GameActorCommand
 	{
 	public:
-		MoveCommand(GameObject* actor);
+		MoveCommand(RamCoreEngine::GameObject* actor);
 		virtual void Execute() override;
 		void Start() override;
 
@@ -19,7 +19,6 @@ namespace dae
 		PlayerSpriteComponent* m_pPlayerSpriteComponent;
 		GridComponent* m_pGridComponent{};
 		PlayerCollider* m_pColliderComponent;
-
 		
 	};
 }

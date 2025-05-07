@@ -2,12 +2,12 @@
 #include "Component.h"
 #include <glm.hpp>
 
-namespace dae
+namespace game
 {
-	class MovementComponent final : public Component
+	class MovementComponent final : public RamCoreEngine::Component
 	{
 	public:
-		MovementComponent(GameObject* gameObject);
+		MovementComponent(RamCoreEngine::GameObject* gameObject);
 
 		virtual void Start() override;
 		virtual void Update() override;

@@ -2,13 +2,18 @@
 #include "Component.h"
 #include <glm.hpp>
 
-namespace dae
+namespace RamCoreEngine
 {
 	class SpriteSheetComponent;
-	class PlayerSpriteComponent final : public Component
+}
+
+namespace game
+{
+	
+	class PlayerSpriteComponent final : public RamCoreEngine::Component
 	{
 	public:
-		PlayerSpriteComponent(GameObject* gameObject);
+		PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject);
 
 		virtual void Start() override;
 		virtual void Render() const override;
@@ -21,7 +26,7 @@ namespace dae
 
 		void StartDying();
 	private:
-		SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
+		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		bool m_Move{};
 		bool m_IsDying{};
 	};

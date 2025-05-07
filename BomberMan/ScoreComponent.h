@@ -3,23 +3,27 @@
 #include "Component.h"
 #include "Observer.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class Subject;
-	class ScoreComponent : public Component, public Observer
+}
+
+namespace game
+{
+	class ScoreComponent : public RamCoreEngine::Component, public RamCoreEngine::Observer
 	{
 	public:
-		ScoreComponent(GameObject* gameObject);
+		ScoreComponent(RamCoreEngine::GameObject* gameObject);
 
 		void GainScore(int amount);
 
-		virtual void Notify(Event event, GameObject* gameObject) override;
+		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;
 
-		Subject* GetActorScoreSubject() const { return m_pActorScoreEvent.get(); }
+		RamCoreEngine::Subject* GetActorScoreSubject() const { return m_pActorScoreEvent.get(); }
 		int GetCurrentScore() { return m_CurrentScore; }
 	private:
 		int m_CurrentScore{};
-		std::unique_ptr<Subject> m_pActorScoreEvent;
+		std::unique_ptr<RamCoreEngine::Subject> m_pActorScoreEvent;
 	};
 }
 

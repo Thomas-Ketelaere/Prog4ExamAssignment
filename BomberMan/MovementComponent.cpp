@@ -6,17 +6,17 @@
 #include "GameObject.h"
 
 
-dae::MovementComponent::MovementComponent(GameObject* gameObject):
+game::MovementComponent::MovementComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
 }
 
-void dae::MovementComponent::Start()
+void game::MovementComponent::Start()
 {
 	CalculateRadiusAndAngle();
 }
 
-void dae::MovementComponent::Update()
+void game::MovementComponent::Update()
 {
 	if (m_Move)
 	{
@@ -29,14 +29,14 @@ void dae::MovementComponent::Update()
 	}
 }
 
-void dae::MovementComponent::SetSpeed(float newSpeedX, float newSpeedY)
+void game::MovementComponent::SetSpeed(float newSpeedX, float newSpeedY)
 {
 	m_SpeedX = newSpeedX;
 	m_SpeedY = newSpeedY;
 	m_Move = true;
 }
 
-void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationPositionX, float rotationPositionY)
+void game::MovementComponent::SetRotation(float newRotationSpeed, float rotationPositionX, float rotationPositionY)
 {
 	m_RotationSpeed = newRotationSpeed;
 	m_RotationPoint.x = rotationPositionX;
@@ -45,22 +45,22 @@ void dae::MovementComponent::SetRotation(float newRotationSpeed, float rotationP
 	m_Rotate = true;
 }
 
-void dae::MovementComponent::SetRotationPoint(float rotationPositionX, float rotationPositionY)
+void game::MovementComponent::SetRotationPoint(float rotationPositionX, float rotationPositionY)
 {
 	m_RotationPoint.x = rotationPositionX; 
 	m_RotationPoint.y = rotationPositionY;
 	CalculateRadiusAndAngle();
 }
 
-void dae::MovementComponent::CalculateRadiusAndAngle()
+void game::MovementComponent::CalculateRadiusAndAngle()
 {
 	m_Radius = glm::distance(m_RotationPoint, GetTransform()->GetWorldPosition());
 	m_Angle = atan2(GetTransform()->GetWorldPosition().y - m_RotationPoint.y, GetTransform()->GetWorldPosition().x - m_RotationPoint.x);
 }
 
-void dae::MovementComponent::InputMovement(float horizontal, float vertical)
+void game::MovementComponent::InputMovement(float horizontal, float vertical)
 {
-	const float deltaTime = Time::GetInstance().m_DeltaTime;
+	const float deltaTime = RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	float xPos = GetGameObject()->GetWorldPosition().x;
 	float yPos = GetGameObject()->GetWorldPosition().y;
 	xPos += m_SpeedX * deltaTime * horizontal;
@@ -70,9 +70,9 @@ void dae::MovementComponent::InputMovement(float horizontal, float vertical)
 	GetGameObject()->SetWorldPosition(xPos, yPos);
 }
 
-void dae::MovementComponent::UpdatePosition()
+void game::MovementComponent::UpdatePosition()
 {
-	const float deltaTime = Time::GetInstance().m_DeltaTime;
+	const float deltaTime = RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	//glm::uvec3 newPosition{ GetTransform()->GetPosition() }; conversion problems
 	float xPos = GetGameObject()->GetWorldPosition().x;
 	float yPos = GetGameObject()->GetWorldPosition().y;
@@ -84,9 +84,9 @@ void dae::MovementComponent::UpdatePosition()
 
 }
 
-void dae::MovementComponent::UpdateRotation()
+void game::MovementComponent::UpdateRotation()
 {
-	m_Angle += m_RotationSpeed * Time::GetInstance().m_DeltaTime;
+	m_Angle += m_RotationSpeed * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
 	if (m_Angle > 2.f * float(M_PI))
 	{

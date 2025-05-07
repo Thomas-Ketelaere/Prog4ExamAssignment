@@ -1,4 +1,4 @@
 #include "ServiceLocator.h"
 
-std::unique_ptr<dae::SoundSystem> dae::ServiceLocator::_ss_instance = nullptr;
+std::unique_ptr<RamCoreEngine::SoundSystem> RamCoreEngine::ServiceLocator::_ss_instance = nullptr;
 

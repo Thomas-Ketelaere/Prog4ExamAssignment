@@ -5,7 +5,7 @@
 #include "GameActorCommand.h"
 #include <memory>
 
-namespace dae
+namespace RamCoreEngine
 {
 
 	enum class KeyState

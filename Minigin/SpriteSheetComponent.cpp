@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "Timer.h"
 
-dae::SpriteSheetComponent::SpriteSheetComponent(GameObject* gameObject, const std::string& fullPath, int amountColumns, int amountRows, float interval, bool destroyAfterPlayed, bool useCustomPosition) :
+RamCoreEngine::SpriteSheetComponent::SpriteSheetComponent(GameObject* gameObject, const std::string& fullPath, int amountColumns, int amountRows, float interval, bool destroyAfterPlayed, bool useCustomPosition) :
 	Component(gameObject),
 	m_Columns{ amountColumns },
 	m_Rows{amountRows},
@@ -19,7 +19,7 @@ dae::SpriteSheetComponent::SpriteSheetComponent(GameObject* gameObject, const st
 	m_Height = m_Texture->GetSize().y / amountRows;
 }
 
-void dae::SpriteSheetComponent::Render() const
+void RamCoreEngine::SpriteSheetComponent::Render() const
 {
 	if (m_UseCustomPosition)
 	{
@@ -33,7 +33,7 @@ void dae::SpriteSheetComponent::Render() const
 	
 }
 
-void dae::SpriteSheetComponent::Update()
+void RamCoreEngine::SpriteSheetComponent::Update()
 {
 	if (m_Animate) 
 	{
@@ -62,7 +62,7 @@ void dae::SpriteSheetComponent::Update()
 
 }
 
-void dae::SpriteSheetComponent::SetRow(int newRow)
+void RamCoreEngine::SpriteSheetComponent::SetRow(int newRow)
 {
 	m_CurrentRow = newRow;
 }

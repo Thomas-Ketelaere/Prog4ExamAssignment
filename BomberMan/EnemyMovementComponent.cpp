@@ -9,36 +9,36 @@
 #include <Subject.h>
 #include"SceneManager.h"
 
-dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name):
+game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name):
 	EnemyMovementComponent(gameObject, speed, name, false, 0.f)
 {
 	
 }
 
-dae::EnemyMovementComponent::EnemyMovementComponent(GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance) :
+game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const std::string& name, bool shouldTrackPlayer, float triggerDistance) :
 	Component(gameObject),
 	m_Speed{ speed },
 	m_Name{ name },
 	m_ShouldTrackPlayer{shouldTrackPlayer},
 	m_TriggerDistance{triggerDistance}
 {
-	m_pEnemyDiedEvent = std::make_unique<Subject>();
+	m_pEnemyDiedEvent = std::make_unique<RamCoreEngine::Subject>();
 }
 
-void dae::EnemyMovementComponent::Start()
+void game::EnemyMovementComponent::Start()
 {
 	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
-	m_pSpriteSheetComponent = GetGameObject()->GetComponent<SpriteSheetComponent>();
+	m_pSpriteSheetComponent = GetGameObject()->GetComponent<RamCoreEngine::SpriteSheetComponent>();
 	m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition() , glm::vec2(848, 48));
 
 	if (m_ShouldTrackPlayer) // only need to get em if enemy needs to track
 	{
-		m_pPlayers = SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Player"));
+		m_pPlayers = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Player"));
 	}
 	
 }
 
-void dae::EnemyMovementComponent::Update()
+void game::EnemyMovementComponent::Update()
 {
 	if (!m_IsDying)
 	{
@@ -48,21 +48,19 @@ void dae::EnemyMovementComponent::Update()
 			++m_PathIndex;
 			if (m_PathIndex == m_Path.size() || !m_pGridComponent->IsCellWalkable(m_Path[m_PathIndex], false)) // if player reached final cell or check if cell is walkable (if e.g. bomb has been placed after path calculation)
 			{
-				m_PathIndex = 0;
+				m_PathIndex = 1; // index 0 is already where enemy is
 				//new path
 				auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
 				m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), randomTarget);
-				m_CurrentlyTrackingPlayer = false;
 			}
 
-			if (m_ShouldTrackPlayer && !m_CurrentlyTrackingPlayer)
+			if (m_ShouldTrackPlayer) //needs to check every time it reaches a cell
 			{
 				glm::vec2 playerPos = GetRandomPlayerPositionInRange();
 				if (playerPos.x != 0 && playerPos.y != 0)
 				{
 					m_Path = m_pGridComponent->GetPath(GetTransform()->GetWorldPosition(), playerPos);
-					m_PathIndex = 0;
-					m_CurrentlyTrackingPlayer = true;
+					m_PathIndex = 1; // index 0 is already where enemy is
 				}
 				
 			}
@@ -74,7 +72,7 @@ void dae::EnemyMovementComponent::Update()
 			glm::vec2 direction = m_Path[m_PathIndex] - pos;
 			glm::vec2 dirNorm = glm::normalize(direction);
 
-			pos += m_Speed * dirNorm * Time::GetInstance().m_DeltaTime;
+			pos += m_Speed * dirNorm * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
 			GetGameObject()->SetWorldPosition(pos.x, pos.y);
 		}
@@ -82,7 +80,7 @@ void dae::EnemyMovementComponent::Update()
 	
 }
 
-void dae::EnemyMovementComponent::Render() const
+void game::EnemyMovementComponent::Render() const
 {
 	if (m_DebugRender)
 	{
@@ -91,12 +89,12 @@ void dae::EnemyMovementComponent::Render() const
 		{
 			glm::vec2 pointOne = m_Path[pathCounter];
 			glm::vec2 pointTwo = m_Path[pathCounter + 1];
-			Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
+			RamCoreEngine::Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
 		}
 	}
 }
 
-void dae::EnemyMovementComponent::StartDying()
+void game::EnemyMovementComponent::StartDying()
 {
 	if (!m_IsDying)
 	{
@@ -132,7 +130,7 @@ void dae::EnemyMovementComponent::StartDying()
 	}
 }
 
-void dae::EnemyMovementComponent::SetSpriteDirection()
+void game::EnemyMovementComponent::SetSpriteDirection()
 {
 	glm::vec2 pos = GetTransform()->GetWorldPosition();
 	glm::vec2 direction = m_Path[m_PathIndex] - pos;
@@ -152,11 +150,11 @@ void dae::EnemyMovementComponent::SetSpriteDirection()
 }
 
 //returns (0, 0) if not in range
-glm::vec2 dae::EnemyMovementComponent::GetRandomPlayerPositionInRange()
+glm::vec2 game::EnemyMovementComponent::GetRandomPlayerPositionInRange()
 {
 	std::vector<glm::vec3> playersPositions;
 		
-	for (GameObject* player : m_pPlayers)
+	for (RamCoreEngine::GameObject* player : m_pPlayers)
 	{
 		glm::vec3 playerPos = player->GetWorldPosition();
 		if (glm::distance(playerPos, GetTransform()->GetWorldPosition()) <= m_TriggerDistance)

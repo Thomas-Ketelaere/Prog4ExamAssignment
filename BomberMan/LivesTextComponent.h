@@ -1,19 +1,25 @@
 #pragma once
 #include "Component.h"
 #include "Observer.h"
-namespace dae
+
+namespace RamCoreEngine
 {
 	class TextComponent;
-	class LivesTextComponent final: public Component, public Observer
+}
+
+namespace game
+{
+	
+	class LivesTextComponent final: public RamCoreEngine::Component, public RamCoreEngine::Observer
 	{
 	public:
-		LivesTextComponent(GameObject* gameObject);
+		LivesTextComponent(RamCoreEngine::GameObject* gameObject);
 
 		virtual void Start() override;
-		virtual void Notify(Event event, GameObject* gameObject) override;
+		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;
 
 	private:
-		TextComponent* m_TextComponent = nullptr;
+		RamCoreEngine::TextComponent* m_TextComponent = nullptr;
 	};
 }
 

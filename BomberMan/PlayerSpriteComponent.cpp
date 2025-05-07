@@ -5,25 +5,25 @@
 #include "Renderer.h" //TODO: remove after testing
 #include "LivesComponent.h"
 
-dae::PlayerSpriteComponent::PlayerSpriteComponent(GameObject* gameObject):
+game::PlayerSpriteComponent::PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
 
 }
 
-void dae::PlayerSpriteComponent::Start()
+void game::PlayerSpriteComponent::Start()
 {
-	m_pSpriteSheetComponent = GetGameObject()->GetComponent<SpriteSheetComponent>();
+	m_pSpriteSheetComponent = GetGameObject()->GetComponent<RamCoreEngine::SpriteSheetComponent>();
 }
 
-void dae::PlayerSpriteComponent::Render() const//TODO: remove after testing
+void game::PlayerSpriteComponent::Render() const//TODO: remove after testing
 {
 	//glm::vec3 pos = GetTransform()->GetWorldPosition();
 	//SDL_Color color = { 0, 0, 255, 255 };
 	//Renderer::GetInstance().DrawRectangle(pos.x, pos.y, 32, 32, color);
 }
 
-void dae::PlayerSpriteComponent::Update()
+void game::PlayerSpriteComponent::Update()
 {
 	if (m_Move)
 	{
@@ -38,17 +38,17 @@ void dae::PlayerSpriteComponent::Update()
 	}
 }
 
-int dae::PlayerSpriteComponent::GetWidthSprite() const
+int game::PlayerSpriteComponent::GetWidthSprite() const
 {
 	return m_pSpriteSheetComponent->GetWidthSprite();
 }
 
-int dae::PlayerSpriteComponent::GetHeightSprite() const
+int game::PlayerSpriteComponent::GetHeightSprite() const
 {
 	return m_pSpriteSheetComponent->GetHeightSprite();
 }
 
-void dae::PlayerSpriteComponent::SetDirectionSprite(glm::vec2 direction)
+void game::PlayerSpriteComponent::SetDirectionSprite(glm::vec2 direction)
 {
 	if (direction.y > 0)
 	{
@@ -73,7 +73,7 @@ void dae::PlayerSpriteComponent::SetDirectionSprite(glm::vec2 direction)
 	m_Move = true;
 }
 
-void dae::PlayerSpriteComponent::StartDying()
+void game::PlayerSpriteComponent::StartDying()
 {
 	if (!m_IsDying)
 	{

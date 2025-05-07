@@ -1,12 +1,12 @@
 #pragma once
 #include "GameActorCommand.h"
-namespace dae
+namespace game
 {
 	class LivesComponent;
-	class LoseLiveCommand: public GameActorCommand
+	class LoseLiveCommand: public RamCoreEngine::GameActorCommand
 	{
 	public:
-		LoseLiveCommand(GameObject* actor);
+		LoseLiveCommand(RamCoreEngine::GameObject* actor);
 		virtual void Execute() override;
 
 		void Start() override {}

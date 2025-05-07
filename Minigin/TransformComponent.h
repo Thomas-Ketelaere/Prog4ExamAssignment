@@ -2,7 +2,7 @@
 #include <glm.hpp>
 #include "Component.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	class TransformComponent final : public Component
 	{

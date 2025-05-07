@@ -4,19 +4,19 @@
 #include "SceneManager.h"
 #include "Hash.h"
 
-dae::SpawnBombCommand::SpawnBombCommand(GameObject* actor):
+game::SpawnBombCommand::SpawnBombCommand(RamCoreEngine::GameObject* actor):
 	GameActorCommand(actor)
 {
 	
 }
 
-void dae::SpawnBombCommand::Execute()
+void game::SpawnBombCommand::Execute()
 {
 	m_pGridComponent->SpawnBomb(GetGameActor()->GetWorldPosition());
 }
 
-void dae::SpawnBombCommand::Start()
+void game::SpawnBombCommand::Start()
 {
-	GameObject* gridObject = SceneManager::GetInstance().GetCurrentScene()->GetFirstObjectWithTag(make_sdbm_hash("Grid"));
+	RamCoreEngine::GameObject* gridObject = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetFirstObjectWithTag(make_sdbm_hash("Grid"));
 	m_pGridComponent = gridObject->GetComponent<GridComponent>();
 }

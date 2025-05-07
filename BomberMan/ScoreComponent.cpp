@@ -1,20 +1,20 @@
 #include "ScoreComponent.h"
 #include "Subject.h"
 
-dae::ScoreComponent::ScoreComponent(GameObject* gameObject):
+game::ScoreComponent::ScoreComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
-	m_pActorScoreEvent = std::make_unique<Subject>();
+	m_pActorScoreEvent = std::make_unique<RamCoreEngine::Subject>();
 }
 
-void dae::ScoreComponent::GainScore(int amount)
+void game::ScoreComponent::GainScore(int amount)
 {
 	m_CurrentScore += amount;
 	Event e(make_sdbm_hash("PlayerGainedScore"));
 	m_pActorScoreEvent->NotifyObservers(e, GetGameObject());
 }
 
-void dae::ScoreComponent::Notify(Event event, GameObject* )
+void game::ScoreComponent::Notify(Event event, RamCoreEngine::GameObject* )
 {
 	if (event.id == make_sdbm_hash("KilledBalloom"))
 	{

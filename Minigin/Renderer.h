@@ -3,7 +3,7 @@
 #include "Singleton.h"
 #include "Texture2D.h"
 
-namespace dae
+namespace RamCoreEngine
 {
 	/**
 	 * Simple RAII wrapper for the SDL renderer
