@@ -3,14 +3,14 @@
 #include "TextComponent.h"
 #include "SceneManager.h"
 
-game::HandleUIComponent::HandleUIComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, int startIndex, std::vector<std::string> sceneNamesToLoad):
+game::HandleUIComponent::HandleUIComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad):
 	Component(gameObject),
 	m_SmallFontSize{smallFontSize},
 	m_BigFontSize{bigFontSize},
 	m_Index{startIndex}
 {
 	auto textComps = GetGameObject()->GetAllComponents<RamCoreEngine::TextComponent>();
-	for (int compCounter{}; compCounter < textComps.size(); ++compCounter)
+	for (unsigned int compCounter{}; compCounter < textComps.size(); ++compCounter)
 	{
 		m_pTextComponents.emplace_back(std::make_pair(textComps[compCounter], sceneNamesToLoad[compCounter]));
 	}
