@@ -91,7 +91,12 @@ void RamCoreEngine::Scene::LateUpdate()
 	}
 	std::erase_if(m_Objects, [](const std::unique_ptr<GameObject>& object)
 		{
-			return object->IsMarkedDestroy();
+			if (object->IsMarkedDestroy())
+			{
+				object->OnDestroy();
+				return true;
+			}
+			return false;
 		});
 }
 

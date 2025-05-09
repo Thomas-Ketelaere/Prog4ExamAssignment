@@ -58,6 +58,14 @@ void RamCoreEngine::GameObject::Render() const
 	}
 }
 
+void RamCoreEngine::GameObject::OnDestroy()
+{
+	for (const std::unique_ptr<Component>& component : m_ComponentsVector)
+	{
+		component->OnDestroy();
+	}
+}
+
 void RamCoreEngine::GameObject::AddComponent(std::unique_ptr<Component> newComponent)
 {
 	m_ComponentsVector.emplace_back(std::move(newComponent));

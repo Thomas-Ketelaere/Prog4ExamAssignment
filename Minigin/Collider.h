@@ -10,6 +10,7 @@ namespace RamCoreEngine
 	{
 	public:
 		Collider(GameObject* gameObject, const float width, const float height, bool isTrigger);
+		~Collider();
 
 		virtual void OnTriggerOverlap(Collider* other) = 0;
 
@@ -22,6 +23,7 @@ namespace RamCoreEngine
 		unsigned int GetTag();
 
 		bool IsTrigger() { return m_Trigger; }
+
 
 	private:
 		TransformComponent* m_pTransformComponent;

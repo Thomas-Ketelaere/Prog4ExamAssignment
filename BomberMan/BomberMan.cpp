@@ -352,28 +352,28 @@ void LoadGameScene()
 	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
 	// --------ENEMIES----------
-	auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
-	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyBalloomOne->SetParent(gridObject.get(), true);
-	enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
-	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 30.f, 100);
-	enemyBalloomOneMovement->SetDebugRendering(true);
-	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
-	auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
-	auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
-
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
-
-	scene->Add(std::move(enemyBalloomOne));
+	//auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
+	//enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
+	//enemyBalloomOne->SetParent(gridObject.get(), true);
+	//enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
+	//auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 30.f, 100);
+	//enemyBalloomOneMovement->SetDebugRendering(true);
+	//enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+	//auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
+	//auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
+	//
+	//enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
+	//enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
+	//enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
+	//
+	//scene->Add(std::move(enemyBalloomOne));
 
 
 	auto enemyOnealOne = std::make_unique<RamCoreEngine::GameObject>();
 	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
 	enemyOnealOne->SetParent(gridObject.get(), true);
 	enemyOnealOne->SetLocalPosition(glm::vec3(48, 336, 0));
-	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 50.f, 200, true, 100.f);
+	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 5.f, 200, true, 100.f);
 	enemyOnealOneMovement->SetDebugRendering(true);
 	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
@@ -402,8 +402,6 @@ void load()
 	// ------------ FileReading (TODO: IMPLEMENT) --------------
 	game::GameManager::GetInstance().SetLives(3);
 
-
-	
 	//auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
 	//sceneStart.SetLoadingFunction(LoadStartScene);
 	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Game", true);

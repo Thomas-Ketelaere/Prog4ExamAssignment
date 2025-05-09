@@ -58,3 +58,15 @@ void RamCoreEngine::ColliderManager::UpdateColliders()
 		}
 	}
 }
+
+void RamCoreEngine::ColliderManager::RemoveCollider(Collider* colliderToRemove)
+{
+	if (m_pColliderCompVct.size()== 0) //TODO: bug when on destroy that colliderVct is already empty somehow and this is cheap fix
+	{
+		return;
+	}
+	std::erase_if(m_pColliderCompVct, [colliderToRemove](Collider* collider)
+		{
+			return colliderToRemove == collider;
+		});
+}

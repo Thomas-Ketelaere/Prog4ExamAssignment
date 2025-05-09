@@ -14,6 +14,8 @@ namespace RamCoreEngine
 
 		void UpdateColliders();
 
+		void RemoveCollider(Collider* collider);
+
 	private:
 
 		std::vector<Collider*> m_pColliderCompVct{};

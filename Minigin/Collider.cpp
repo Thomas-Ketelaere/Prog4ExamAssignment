@@ -13,6 +13,11 @@ RamCoreEngine::Collider::Collider(GameObject* gameObject, const float width, con
 	m_pTransformComponent = gameObject->GetTransform(); //all gameobjects have a transform
 }
 
+RamCoreEngine::Collider::~Collider()
+{
+	ColliderManager::GetInstance().RemoveCollider(this);
+}
+
 bool RamCoreEngine::Collider::IsColliding(const glm::vec2& objectPos, const float width, const float height)
 {
 	glm::vec2 colliderPos = glm::vec2(m_pTransformComponent->GetWorldPosition());

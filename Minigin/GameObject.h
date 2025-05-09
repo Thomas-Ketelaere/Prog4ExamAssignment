@@ -22,6 +22,7 @@ namespace RamCoreEngine
 		void Update();
 		void LateUpdate();
 		void Render() const;
+		void OnDestroy();
 
 		bool IsMarkedDestroy() { return m_Destroy; }
 

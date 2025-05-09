@@ -20,6 +20,7 @@ namespace RamCoreEngine
 		virtual void LateUpdate() {}
 		virtual void FixedUpdate() {}
 		virtual void Render() const {}
+		virtual void OnDestroy() {}
 
 		bool IsMarkedDestroy() { return m_Destroy; }
 
