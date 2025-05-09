@@ -124,4 +124,5 @@ void RamCoreEngine::InputManager::AddBinding(std::unique_ptr<Command> binding, K
 void RamCoreEngine::InputManager::ClearBindings()
 {
 	m_GameBindingVct.clear();
+	m_ControllerVct.clear();
 }

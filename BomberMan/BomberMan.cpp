@@ -44,6 +44,8 @@
 #include "GameManager.h"
 #include "LoadingScreenComponent.h"
 #include "Renderer.h"
+#include "HandleUIComponent.h"
+#include "HandleUICommand.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -166,78 +168,125 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
 	
 }
 
-
 void LoadStartScene()
 {
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
 
 	auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
-	backgroundObject->SetLocalPosition(glm::vec3(100, 300, 0.f));
+	backgroundObject->SetLocalPosition(glm::vec3(256, 238, 0.f));
 	auto background = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga");
-	auto backgroundTwo = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga", true);
-	backgroundTwo->SetCustomPosition(glm::vec2(740, 300));
 	backgroundObject->AddComponent(std::move(background));
-	backgroundObject->AddComponent(std::move(backgroundTwo));
 	scene->Add(std::move(backgroundObject));
 
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
-	auto startButtonTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	startButtonTextObject->SetLocalPosition(glm::vec3(500, 275, 0.f));
-	auto startButtonText = std::make_unique<RamCoreEngine::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? (gamepad start not working yet) on gamepad to start game", font);
-	startButtonText->ChangeFontSize(20);
-	startButtonTextObject->AddComponent(std::move(startButtonText));
-	scene->Add(std::move(startButtonTextObject));
+	//auto startButtonTextObject = std::make_unique<RamCoreEngine::GameObject>();
+	//startButtonTextObject->SetLocalPosition(glm::vec3(500, 275, 0.f));
+	//auto startButtonText = std::make_unique<RamCoreEngine::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? (gamepad start not working yet) on gamepad to start game", font);
+	//startButtonText->ChangeFontSize(20);
+	//startButtonTextObject->AddComponent(std::move(startButtonText));
+	//scene->Add(std::move(startButtonTextObject));
+	
+	//UI Buttons
+	auto startButtonsObject = std::make_unique<RamCoreEngine::GameObject>();
+	//startButtonsObject->SetLocalPosition(glm::vec3(256, 360, 0.f))
+	auto buttonOne = std::make_unique<RamCoreEngine::TextComponent>(startButtonsObject.get(), "Start Game (Single Player)", font, true);
+	buttonOne->SetCustomPosition(glm::vec2(256, 100));
+	startButtonsObject->AddComponent(std::move(buttonOne));
+	auto buttonTwo = std::make_unique<RamCoreEngine::TextComponent>(startButtonsObject.get(), "Start Game (Co-op)", font, true);
+	buttonTwo->SetCustomPosition(glm::vec2(256, 150));
+	startButtonsObject->AddComponent(std::move(buttonTwo));
+	auto buttonThree = std::make_unique<RamCoreEngine::TextComponent>(startButtonsObject.get(), "Start Game (Versus)", font, true);
+	buttonThree->SetCustomPosition(glm::vec2(256, 200));
+	startButtonsObject->AddComponent(std::move(buttonThree));
+	auto buttonFour = std::make_unique<RamCoreEngine::TextComponent>(startButtonsObject.get(), "Look at High Scores", font, true);
+	buttonFour->SetCustomPosition(glm::vec2(256, 250));
+	startButtonsObject->AddComponent(std::move(buttonFour));
+	std::vector<std::string> scenesToLoad{}; //TODO: make hash maps
+	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
+	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
+	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
+	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
+	auto uiHandler = std::make_unique<game::HandleUIComponent>(startButtonsObject.get(), uint8_t(18), uint8_t(25), 0, scenesToLoad);
+	startButtonsObject->AddComponent(std::move(uiHandler));
 
 	auto logoObject = std::make_unique<RamCoreEngine::GameObject>();
 	auto logo = std::make_unique<RamCoreEngine::TextureComponent>(logoObject.get(), "logo.tga");
-	logoObject->SetLocalPosition(glm::vec3(500, 180, 0.f));
+	logoObject->SetLocalPosition(glm::vec3(256, 50, 0));
 	logoObject->AddComponent(std::move(logo));
 
 	scene->Add(std::move(logoObject));
 
-	auto playerStartButtonObjectKeyboard = std::make_unique<RamCoreEngine::GameObject>();
-	auto startGameCommandKeyboard = std::make_unique<game::StartGameCommand>(playerStartButtonObjectKeyboard.get());
+	//auto playerStartButtonObjectKeyboard = std::make_unique<RamCoreEngine::GameObject>();
+	//auto startGameCommandKeyboard = std::make_unique<game::StartGameCommand>(playerStartButtonObjectKeyboard.get());
 
-	auto playerStartButtonObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
-	auto startGameCommandGamepad = std::make_unique<game::StartGameCommand>(playerStartButtonObjectGamepad.get());
+	//auto playerStartButtonObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
+	//auto startGameCommandGamepad = std::make_unique<game::StartGameCommand>(playerStartButtonObjectGamepad.get());
 
+	//
+	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandGamepad), RamCoreEngine::KeyState::Up, 0x8000, 0); 
 	
-	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandGamepad), RamCoreEngine::KeyState::Up, 0x8000, 0); //TODO: Issues with input that keeps going after game start
+
+	//scene->Add(std::move(playerStartButtonObjectKeyboard));
+	//scene->Add(std::move(playerStartButtonObjectGamepad));
+
+	//KEYBOARD
+	auto moveDownKeyboard = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	moveDownKeyboard->SetGoesDown(true);
+
+	auto moveUpKeyboard = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	moveUpKeyboard->SetGoesDown(false);
+
+	auto startGameCommandKeyboard = std::make_unique<game::StartGameCommand>(startButtonsObject.get());
+
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownKeyboard), RamCoreEngine::KeyState::Up, SDLK_s, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpKeyboard), RamCoreEngine::KeyState::Up, SDLK_w, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
 
-	scene->Add(std::move(playerStartButtonObjectKeyboard));
-	scene->Add(std::move(playerStartButtonObjectGamepad));
+	//GAMEPAD
+	auto moveDownGamepad = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	moveDownGamepad->SetGoesDown(true);
+
+	auto moveUpGamepad = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	moveUpGamepad->SetGoesDown(false);
+
+	auto startGameCommandGamepad = std::make_unique<game::StartGameCommand>(startButtonsObject.get());
+
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownGamepad), RamCoreEngine::KeyState::Up, 0x0002, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpGamepad), RamCoreEngine::KeyState::Up, 0x0001, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandGamepad), RamCoreEngine::KeyState::Up, 0x8000, 0);
+
+	scene->Add(std::move(startButtonsObject));
 
 	// --------TUTORIAL TEXT----------
 	auto tutorialControls = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialControls->SetLocalPosition(glm::vec3(500, 360, 0.f));
+	tutorialControls->SetLocalPosition(glm::vec3(256, 360, 0.f));
 	auto tutorialText = std::make_unique<RamCoreEngine::TextComponent>(tutorialControls.get(), "Controls", font);
 	tutorialControls->AddComponent(std::move(tutorialText));
 	scene->Add(std::move(tutorialControls));
 
 	auto tutorialObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialObjectGamepad->SetLocalPosition(glm::vec3(500, 400, 0.f));
+	tutorialObjectGamepad->SetLocalPosition(glm::vec3(256, 400, 0.f));
 	auto tutorialTextGamepad = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectGamepad.get(), "Use D-Pad to move, Y to place bomb, kill Balloom to get score", font);
 	tutorialTextGamepad->ChangeFontSize(15);
 	tutorialObjectGamepad->AddComponent(std::move(tutorialTextGamepad));
 	scene->Add(std::move(tutorialObjectGamepad));
 
 	auto tutorialObjectKeyboard = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialObjectKeyboard->SetLocalPosition(glm::vec3(500, 420, 0.f));
+	tutorialObjectKeyboard->SetLocalPosition(glm::vec3(256, 420, 0.f));
 	auto tutorialTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectKeyboard.get(), "Use WASD to move, F to place bomb, kill Balloom to get score", font);
 	tutorialTextKeyboard->ChangeFontSize(15);
 	tutorialObjectKeyboard->AddComponent(std::move(tutorialTextKeyboard));
 	scene->Add(std::move(tutorialObjectKeyboard));
 
 	auto tutorialNotes = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialNotes->SetLocalPosition(glm::vec3(500, 450, 0.f));
+	tutorialNotes->SetLocalPosition(glm::vec3(256, 450, 0.f));
 	auto tutorialNotesText = std::make_unique<RamCoreEngine::TextComponent>(tutorialNotes.get(), "only keyboard player can get killed by balloom for now", font);
 	tutorialNotesText->ChangeFontSize(20);
 	tutorialNotes->AddComponent(std::move(tutorialNotesText));
 	scene->Add(std::move(tutorialNotes));
 
-	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 30, -1);//50 volume
+	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 0, -1);//30 volume
 }
 
 void LoadGameScene()
@@ -427,9 +476,9 @@ void load()
 	// ------------ FileReading (TODO: IMPLEMENT) --------------
 	game::GameManager::GetInstance().SetLives(3);
 
-	//auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
-	//sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", true);
+	auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
+	sceneStart.SetLoadingFunction(LoadStartScene);
+	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
 	sceneLoading.SetLoadingFunction(LoadLoadingScene);
 	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
 	sceneGame.SetLoadingFunction(LoadGameScene);

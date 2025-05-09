@@ -179,6 +179,8 @@
     <ClCompile Include="BombComponent.cpp" />
     <ClCompile Include="BomberMan.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="HandleUICommand.cpp" />
+    <ClCompile Include="HandleUIComponent.cpp" />
     <ClCompile Include="LoadingScreenComponent.cpp" />
     <ClCompile Include="PlayerCollider.cpp" />
     <ClCompile Include="EnemyMovementComponent.cpp" />
@@ -201,6 +203,8 @@
     <ClInclude Include="Achievements.h" />
     <ClInclude Include="BombComponent.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="HandleUICommand.h" />
+    <ClInclude Include="HandleUIComponent.h" />
     <ClInclude Include="LoadingScreenComponent.h" />
     <ClInclude Include="PlayerCollider.h" />
     <ClInclude Include="EnemyMovementComponent.h" />

@@ -6,12 +6,13 @@
 #include "TransformComponent.h"
 #include "ResourceManager.h"
 
-RamCoreEngine::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font):
+RamCoreEngine::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font, bool useCustomPosition):
 	Component(gameObject),
 	m_Text{ text },
 	m_Font{ std::move(font) },
 	m_NeedsUpdate{ true },
-	m_TextTexture(nullptr)
+	m_TextTexture{nullptr},
+	m_UseCustomPosition{useCustomPosition}
 {
 }
 
@@ -40,8 +41,19 @@ void RamCoreEngine::TextComponent::Render() const
 {
 	if (m_TextTexture != nullptr)
 	{
-		const auto& pos = GetTransform()->GetWorldPosition();
-		Renderer::GetInstance().RenderTexture(*m_TextTexture, pos.x, pos.y);
+		if (m_UseCustomPosition)
+		{
+			const auto& worldPos = GetTransform()->GetWorldPosition();
+			glm::vec2 pos{};
+			pos.x = m_CustomPosition.x + worldPos.x;
+			pos.y = m_CustomPosition.y + worldPos.y;
+			Renderer::GetInstance().RenderTexture(*m_TextTexture, pos.x, pos.y);
+		}
+		else
+		{
+			const auto& pos = GetTransform()->GetWorldPosition();
+			Renderer::GetInstance().RenderTexture(*m_TextTexture, pos.x, pos.y);
+		}
 	}
 }
 
@@ -55,4 +67,5 @@ void RamCoreEngine::TextComponent::ChangeText(const std::string& newText)
 void RamCoreEngine::TextComponent::ChangeFontSize(uint8_t newSize)
 {
 	m_Font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", newSize);
+	m_NeedsUpdate = true;
 }

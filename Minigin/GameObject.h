@@ -50,6 +50,9 @@ namespace RamCoreEngine
 		template <typename T>
 		T* GetComponent() const;
 
+		template <typename T>
+		std::vector<T*> GetAllComponents() const;
+
 	private:
 		void RemoveChild(GameObject* child);
 		void AddChild(GameObject* child);
@@ -77,5 +80,20 @@ namespace RamCoreEngine
 			}
 		}
 		return nullptr;
+	}
+
+	template<typename T>
+	inline std::vector<T*> GameObject::GetAllComponents() const
+	{
+		std::vector<T*> components{};
+		for (auto& component : m_ComponentsVector)
+		{
+			T* tempComponnent = dynamic_cast<T*>(component.get()); //does the same as "is valid" in unreal
+			if (tempComponnent != nullptr)
+			{
+				components.emplace_back(tempComponnent);
+			}
+		}
+		return components;
 	}
 }
