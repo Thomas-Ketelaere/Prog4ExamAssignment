@@ -13,12 +13,14 @@ namespace game
 
 		const int GetTotalLives() { return m_TotalLives; }
 		const int GetTotalScore() { return m_TotalScore; }
+		const int GetCurrentLevel() { return m_CurrentLevel; }
 
 	private:
 		friend class Singleton<GameManager>;
 
 		int m_TotalLives{};
 		int m_TotalScore{};
+		int m_CurrentLevel{ 1 };
 	};
 
 }

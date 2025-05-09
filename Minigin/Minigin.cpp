@@ -56,7 +56,7 @@ RamCoreEngine::Minigin::Minigin(const std::string &dataPath)
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		500, //992 
+		512, //992 
 		476,
 		SDL_WINDOW_OPENGL
 	);

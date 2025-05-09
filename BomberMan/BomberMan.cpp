@@ -42,6 +42,8 @@
 #include "PlayerCollider.h"
 #include "Hash.h"
 #include "GameManager.h"
+#include "LoadingScreenComponent.h"
+#include "Renderer.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -324,7 +326,7 @@ void LoadGameScene()
 	auto gridObject = std::make_unique<RamCoreEngine::GameObject>();
 	gridObject->SetTag(make_sdbm_hash("Grid"));
 	gridObject->SetLocalPosition(glm::vec3(0, 0, 0.f));
-	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f, 500);
+	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f, 512);
 	gridObject->AddComponent(std::move(gridView));
 
 	auto playerLivesTextObject = std::make_unique<RamCoreEngine::GameObject>();
@@ -373,7 +375,7 @@ void LoadGameScene()
 	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
 	enemyOnealOne->SetParent(gridObject.get(), true);
 	enemyOnealOne->SetLocalPosition(glm::vec3(48, 336, 0));
-	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 5.f, 200, true, 100.f);
+	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 25.f, 200, true, 100.f);
 	enemyOnealOneMovement->SetDebugRendering(true);
 	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
@@ -389,12 +391,35 @@ void LoadGameScene()
 	playerScoreTextObject->AddComponent(std::move(playerScoreTextChange)); // moves after observer is set
 
 	scene->Add(std::move(gridObject));
-	
 	scene->Add(std::move(playerScoreTextObject));
+
+	SDL_Color color = { 56, 135, 0, 255 };
+	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 
 	// --------SOUND----------
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 0, -1); //50 volume
+}
+
+void LoadLoadingScene()
+{
+	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
+
+	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 32);
+
+	auto levelTextObject = std::make_unique<RamCoreEngine::GameObject>();
+	levelTextObject->SetLocalPosition(glm::vec3(256, 238, 0.f));
+	std::string level = "Level: " + std::to_string(game::GameManager::GetInstance().GetCurrentLevel());
+	auto levelText = std::make_unique<RamCoreEngine::TextComponent>(levelTextObject.get(), level, font);
+	levelText->ChangeFontSize(50);
+	levelTextObject->AddComponent(std::move(levelText));
+	auto loadScreen = std::make_unique<game::LoadingScreenComponent>(levelTextObject.get(), 3.f);
+	levelTextObject->AddComponent(std::move(loadScreen));
+
+	scene->Add(std::move(levelTextObject));
+
+	SDL_Color color = { 0, 0, 0, 255 };
+	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 }
 
 void load()
@@ -404,7 +429,9 @@ void load()
 
 	//auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
 	//sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Game", true);
+	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", true);
+	sceneLoading.SetLoadingFunction(LoadLoadingScene);
+	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
 	sceneGame.SetLoadingFunction(LoadGameScene);
 
 	// ------------ SOUND --------------

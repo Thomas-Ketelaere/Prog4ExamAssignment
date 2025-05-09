@@ -16,7 +16,7 @@ Scene::Scene(const std::string& name) :
 
 void RamCoreEngine::Scene::ReloadScene()
 {
-	m_Objects.clear();
+	RemoveAll();
 	m_LoadingFunction();
 	m_ShouldReload = false;
 }
@@ -65,6 +65,7 @@ void Scene::Remove(std::unique_ptr<GameObject> object)
 void Scene::RemoveAll()
 {
 	m_Objects.clear();
+	m_Destroy = false;
 }
 
 void RamCoreEngine::Scene::Start()

@@ -78,7 +78,7 @@ void game::EnemyMovementComponent::Update()
 
 	//		if (m_PathIndex == m_Path.size() || !m_pGridComponent->IsCellWalkable(movedPath[m_PathIndex], false))// if player reached final cell or check if cell is walkable (if e.g. bomb has been placed after path calculation)
 	//		{
-	//			m_PathIndex = 1;
+	//			m_PathIndex = 0;
 	//			auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
 	//			m_Path = m_pGridComponent->GetPath(worldPos, randomTarget);
 	//		}
@@ -210,6 +210,7 @@ glm::vec2 game::EnemyMovementComponent::GetRandomPlayerPositionInRange()
 void game::WanderingState::OnEnter()
 {
 	m_Path = GetComponent()->GetGridComponent()->GetPath(GetComponent()->GetGameObject()->GetLocalPosition(), glm::vec2(848, 48));
+	m_PathIndex = 1;
 }
 
 std::unique_ptr<game::EnemyState> game::WanderingState::Update()

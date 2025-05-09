@@ -45,10 +45,14 @@ void RamCoreEngine::SceneManager::LateUpdate()
 		m_pCurrentScene->Start();
 		InputManager::GetInstance().Start();
 	}
-	std::erase_if(m_Scenes, [](const std::unique_ptr<Scene>& scene)
+	
+	for (auto& scene : m_Scenes)
+	{
+		if (scene->IsMarkedDestroy())
 		{
-			return scene->IsMarkedDestroy();
-		});
+			scene->RemoveAll();
+		}
+	}
 }
 
 void RamCoreEngine::SceneManager::Render()
@@ -82,8 +86,11 @@ void RamCoreEngine::SceneManager::LoadScene(const std::string& sceneToLoadName)
 			scene->Start();
 			InputManager::GetInstance().Start();
 			previousScene->Destroy();
+			return;
 		}
 	}
+
+	throw std::runtime_error("Scene not found");
 }
 
 void RamCoreEngine::SceneManager::ReloadScene()

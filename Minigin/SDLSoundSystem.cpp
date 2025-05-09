@@ -22,9 +22,12 @@ public:
 		m_CondVar.notify_one();
 		m_SoundQueueThread.request_stop();
 		Mix_FreeMusic(m_pMusic);
-		for (auto& pair : m_Samples)
+		if (m_Samples.size() > 0)
 		{
-			Mix_FreeChunk(pair.second);
+			for (auto& pair : m_Samples)
+			{
+				Mix_FreeChunk(pair.second);
+			}
 		}
 	}
 
@@ -154,11 +157,18 @@ private:
 				break;
 
 			case SoundRequest::UnloadSound:
-				Mix_FreeChunk(pair.second);
+				if (pair.second != nullptr)
+				{
+					Mix_FreeChunk(pair.second);
+				}
 				break;
 
 			case SoundRequest::UnloadMusic:
-				Mix_FreeMusic(m_pMusic);
+				if (m_pMusic != nullptr)
+				{
+					Mix_FreeMusic(m_pMusic);
+					m_pMusic = nullptr;
+				}
 				break;
 			}
 		}

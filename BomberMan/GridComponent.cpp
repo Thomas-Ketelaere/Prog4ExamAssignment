@@ -72,10 +72,6 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 			GetGameObject()->AddComponent(std::move(spriteSheetWall));
 		}
 	}
-
-
-	SDL_Color color = { 56, 135, 0, 255 };
-	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 }
 
 game::GridComponent::~GridComponent()
