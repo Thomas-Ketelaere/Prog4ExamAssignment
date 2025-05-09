@@ -15,12 +15,16 @@ void RamCoreEngine::TextureComponent::Render() const
 {
 	if (m_UseCustomPosition)
 	{
-		Renderer::GetInstance().RenderTexture(*m_Texture, m_CustomPosition.x, m_CustomPosition.y);
+		const auto& worldPos = GetTransform()->GetWorldPosition();
+		glm::vec2 pos{};
+		pos.x = m_CustomPosition.x + worldPos.x;
+		pos.y = m_CustomPosition.y + worldPos.y;
+		Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y);
 	}
 	else
 	{
-		const auto& transform = GetTransform()->GetWorldPosition();
-		Renderer::GetInstance().RenderTexture(*m_Texture, transform.x, transform.y);
+		const auto& worldPos = GetTransform()->GetWorldPosition();
+		Renderer::GetInstance().RenderTexture(*m_Texture, worldPos.x, worldPos.y);
 	}
 	
 }

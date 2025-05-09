@@ -44,7 +44,7 @@ namespace game
 		const float m_DistanceToReachPoint{ 2.f };
 		const float m_TriggerDistance{};
 
-		unsigned int m_PathIndex{};
+		unsigned int m_PathIndex{1};
 
 		bool m_DebugRender{};
 		bool m_IsDying{};

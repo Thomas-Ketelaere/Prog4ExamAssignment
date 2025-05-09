@@ -56,7 +56,7 @@ RamCoreEngine::Minigin::Minigin(const std::string &dataPath)
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		992,
+		500, //992 
 		476,
 		SDL_WINDOW_OPENGL
 	);
@@ -117,6 +117,7 @@ void RamCoreEngine::Minigin::Run(const std::function<void()>& load)
 		sceneManager.Update();
 		sceneManager.LateUpdate();
 		renderer.Render();
+		Renderer::GetInstance().DrawRectangle(245, 0, 10, 500, SDL_Color(1, 1, 0, 1));
 		const auto sleepTime = currentTime + std::chrono::milliseconds(m_MsPerFrame) - std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_for(sleepTime);
 	}

@@ -38,6 +38,7 @@ namespace RamCoreEngine
 		unsigned int GetTag() const { return m_Tag; }
 
 		const glm::vec3& GetWorldPosition();
+		const glm::vec3& GetLocalPosition();
 
 		const std::vector<GameObject*>& GetChildren() { return m_Children; }
 		GameObject* GetParent() const { return m_Parent; }

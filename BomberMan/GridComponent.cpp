@@ -10,17 +10,18 @@
 #include "EnemyMovementComponent.h"
 
 #include "PlayerSpriteComponent.h"
-game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int screenWidth, int screenHeight, float cellSize, float offsetY):
+game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int gridWidth, int gridHeight, float cellSize, float offsetY, int screenWidth):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
 	m_AmountRows{amountRows},
-	m_ScreenWidth{screenWidth},
-	m_ScreenHeight{screenHeight},
+	m_GridWidth{gridWidth},
+	m_GridHeight{gridHeight},
 	m_CellWidth{cellSize},
 	m_CellHeight{cellSize},
 	m_CanSpawnBomb{true},
 	m_BombExploded{},
-	m_OffsetY{offsetY}
+	m_OffsetY{offsetY},
+	m_ScreenWidth{screenWidth}
 {
 	std::vector<Cell*> emptyCells;
 	for (int rowCounter{}; rowCounter < amountRows; ++rowCounter)
@@ -127,14 +128,18 @@ void game::GridComponent::SpawnBomb(glm::vec2 position)
 		int index = GetIndexFromPosition(position);
 		if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
 		{
-			glm::vec2 spawnPosition = GetCellPositionFromIndex(index);
+			glm::vec2 spawnPosition = GetCellPositionFromIndexWorld(index);
+			glm::vec3 gridPos = GetTransform()->GetWorldPosition();
+			glm::vec2 spawnPosMoved{};
+			spawnPosMoved.x = spawnPosition.x - gridPos.x;
+			spawnPosMoved.y = spawnPosition.y - gridPos.y;
 			auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
+			bombObject->SetParent(GetGameObject(), true);
 			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f);
 			auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
-			bombObject->SetWorldPosition(spawnPosition.x, spawnPosition.y);
+			bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
 			bombObject->AddComponent(std::move(bombComponent));
 			bombObject->AddComponent(std::move(bombSpriteComponent));
-			//bombObject->SetParent(GetGameObject(), true);
 			RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
 			m_pCells[index]->m_CellState = CellState::Bomb;
 			m_CanSpawnBomb = false;
@@ -152,6 +157,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
+	
 	cellCenter->m_CellState = CellState::Empty;
 	auto spriteSheetExplosionCenter = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
@@ -281,7 +287,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant
 {
-	if (position.x < 0 || position.x > m_ScreenWidth || position.y < 0 || position.y > m_ScreenHeight)
+	if (position.x < 0 || position.x > m_GridWidth || position.y < 0 || position.y > m_GridHeight)
 	{
 		return false;
 	}
@@ -370,7 +376,7 @@ const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& start
 	
 	for (int index : indices)
 	{
-		pathPositions.emplace_back(GetCellPositionFromIndex(index));
+		pathPositions.emplace_back(GetCellPositionFromIndexLocal(index));
 	}
 
 	if (indices.size() == 1) // didn't find a path, so locked in, but did already add first index in for loop above
@@ -378,11 +384,45 @@ const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& start
 		std::vector<int> neighborIndices = GetConnectionIndexFromCellIndex(startIndex);
 		if (neighborIndices.size() > 0) //locked in more than one cell
 		{
-			pathPositions.emplace_back(GetCellPositionFromIndex(neighborIndices[0])); // just add first neighbor to wander between the two
+			pathPositions.emplace_back(GetCellPositionFromIndexLocal(neighborIndices[0])); // just add first neighbor to wander between the two
 		}
 	}
 
 	return pathPositions;
+}
+
+bool game::GridComponent::ShouldGridMove(glm::vec2& playerPos, float moveDirection)
+{
+
+	const float centerMargin = 5.f;
+	float centerX = m_ScreenWidth / 2.f;
+
+	if (playerPos.x < centerX - centerMargin || playerPos.x > centerX + centerMargin)
+	{
+		return false;
+	}
+		
+	const glm::vec3& gridPos = GetGameObject()->GetWorldPosition();
+
+	if (moveDirection > 0.f)
+	{
+		if (m_ScreenWidth - gridPos.x < m_GridWidth)
+		{
+			return true;
+		}
+			
+	}
+
+	else if (moveDirection < 0.f)
+	{
+		if (gridPos.x < 0.f)
+		{
+			return true;
+		}
+			
+	}
+
+	return false;
 }
 
 
@@ -426,17 +466,30 @@ void game::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const s
 
 int game::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const
 {
-	int column = int(pos.x / m_CellWidth);
-	int row = int((pos.y - m_OffsetY) / m_CellHeight);
+	glm::vec3 gridPos = GetTransform()->GetWorldPosition();
+	glm::vec2 movedPos{};
+	movedPos.x = pos.x - gridPos.x;
+	movedPos.y = pos.y - gridPos.y;
+	int column = int(movedPos.x / m_CellWidth);
+	int row = int((movedPos.y - m_OffsetY) / m_CellHeight);
 
 	int index = row * m_AmountColumns + column;
 
 	return index;
 }
 
-glm::vec2 game::GridComponent::GetCellPositionFromIndex(const int index) const
+glm::vec2 game::GridComponent::GetCellPositionFromIndexLocal(const int index) const
 {
 	return m_pCells[index]->m_Position;
+}
+
+glm::vec2 game::GridComponent::GetCellPositionFromIndexWorld(const int index) const
+{
+	glm::vec2 cellPos = m_pCells[index]->m_Position;
+	glm::vec2 gridPos = GetGameObject()->GetWorldPosition();
+	cellPos.x += gridPos.x;
+	cellPos.y += gridPos.y;
+	return cellPos;
 }
 
 //returns -1 if not valid
@@ -484,7 +537,7 @@ std::vector<int> game::GridComponent::FindPath(int startIndex, int endIndex)
 	Node startNodeRecord{};
 	startNodeRecord.index = startIndex;
 	startNodeRecord.connectionIndex = -1;
-	startNodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndex(startIndex), GetCellPositionFromIndex(endIndex));
+	startNodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndexWorld(startIndex), GetCellPositionFromIndexWorld(endIndex));
 
 	openList.push_back(startNodeRecord);
 
@@ -531,7 +584,7 @@ std::vector<int> game::GridComponent::FindPath(int startIndex, int endIndex)
 			nodeRecord.index = connectionIndex;
 			nodeRecord.costSoFar = cost;
 			nodeRecord.connectionIndex = currentNodeRecord.index;
-			nodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndex(connectionIndex), GetCellPositionFromIndex(endIndex)) + cost;
+			nodeRecord.estimatedTotalCost = GetHeuristicCost(GetCellPositionFromIndexWorld(connectionIndex), GetCellPositionFromIndexWorld(endIndex)) + cost;
 			openList.push_back(nodeRecord);
 		}
 

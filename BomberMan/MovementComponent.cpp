@@ -67,7 +67,7 @@ void game::MovementComponent::InputMovement(float horizontal, float vertical)
 	yPos += m_SpeedY * deltaTime * vertical;
 	m_RotationPoint.x += m_SpeedX * deltaTime;
 	m_RotationPoint.y += m_SpeedY * deltaTime;
-	GetGameObject()->SetWorldPosition(xPos, yPos);
+	GetGameObject()->SetLocalPosition(glm::vec3(xPos, yPos, 0.f));
 }
 
 void game::MovementComponent::UpdatePosition()
@@ -80,7 +80,7 @@ void game::MovementComponent::UpdatePosition()
 	yPos += m_SpeedY * deltaTime;
 	m_RotationPoint.x += m_SpeedX * deltaTime;
 	m_RotationPoint.y += m_SpeedY * deltaTime;
-	GetGameObject()->SetWorldPosition(xPos, yPos);
+	GetGameObject()->SetLocalPosition(glm::vec3(xPos, yPos, 0.f));
 
 }
 
@@ -94,5 +94,5 @@ void game::MovementComponent::UpdateRotation()
 	}
 
 	const glm::vec3 newPosition {m_RotationPoint.x + m_Radius * cos(m_Angle), m_RotationPoint.y + m_Radius * sin(m_Angle), 0};
-	GetGameObject()->SetWorldPosition(newPosition.x, newPosition.y);
+	GetGameObject()->SetLocalPosition(glm::vec3(newPosition.x, newPosition.y, 0.f));
 }

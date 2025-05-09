@@ -23,7 +23,12 @@ void RamCoreEngine::SpriteSheetComponent::Render() const
 {
 	if (m_UseCustomPosition)
 	{
-		Renderer::GetInstance().RenderTexture(*m_Texture, m_CustomPosition.x, m_CustomPosition.y, m_Width, m_Height, m_CurrentColumn * m_Width, m_CurrentRow * m_Height);
+		const auto& worldPos = GetTransform()->GetWorldPosition();
+		glm::vec2 pos{};
+		pos.x = m_CustomPosition.x + worldPos.x;
+		pos.y = m_CustomPosition.y + worldPos.y;
+
+		Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y, m_Width, m_Height, m_CurrentColumn * m_Width, m_CurrentRow * m_Height);
 	}
 	else
 	{

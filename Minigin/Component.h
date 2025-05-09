@@ -30,12 +30,11 @@ namespace RamCoreEngine
 	
 
 		GameObject* GetGameObject() const { return m_pGameObject; }
-		TransformComponent* GetTransform() const { return m_pTransform; }
+		TransformComponent* GetTransform() const;
 
 	private:
 
 		GameObject* m_pGameObject = nullptr; 
-		TransformComponent* m_pTransform = nullptr; //pointer to one transform from GameObject
 
 		bool m_Destroy{};
 	};

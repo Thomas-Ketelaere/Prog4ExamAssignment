@@ -60,7 +60,21 @@ void game::MoveCommand::Execute()
 	
 	if (canMove)
 	{
-		GetGameActor()->SetWorldPosition(pos.x, pos.y);
+		glm::vec2 posToCheck2 = { GetGameActor()->GetWorldPosition().x, GetGameActor()->GetWorldPosition().y };
+		if (m_pGridComponent->ShouldGridMove(posToCheck2, m_Speed.x))
+		{
+			glm::vec3 gridPos = m_pGridComponent->GetGameObject()->GetWorldPosition();
+			glm::vec2 gridMovement = -m_Speed * RamCoreEngine::Time::GetInstance().m_DeltaTime;
+
+			gridPos.x += gridMovement.x;
+			//gridPos.y += gridMovement.y;
+
+			m_pGridComponent->GetGameObject()->SetLocalPosition(gridPos);
+		}
+		else
+		{
+			GetGameActor()->SetLocalPosition(glm::vec3(pos.x, pos.y, 0.f));
+		}
 		m_pPlayerSpriteComponent->SetDirectionSprite(m_Speed);
 	}
 }

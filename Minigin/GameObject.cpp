@@ -67,6 +67,7 @@ void RamCoreEngine::GameObject::AddComponent(std::unique_ptr<Component> newCompo
 void RamCoreEngine::GameObject::SetWorldPosition(float x, float y)
 {
 	m_Transform->SetWorldPosition(x, y, 0.0f);
+	SetPositionDirty();
 }
 
 void RamCoreEngine::GameObject::SetParent(GameObject* parent, bool keepWorldPosition)
@@ -146,6 +147,12 @@ const glm::vec3& RamCoreEngine::GameObject::GetWorldPosition()
 {
 	UpdateWorldPosition();
 	return m_Transform->GetWorldPosition();
+}
+
+const glm::vec3& RamCoreEngine::GameObject::GetLocalPosition()
+{
+	UpdateWorldPosition();
+	return m_Transform->GetLocalPosition();
 }
 
 RamCoreEngine::TransformComponent* RamCoreEngine::GameObject::GetTransform()

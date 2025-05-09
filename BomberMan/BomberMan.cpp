@@ -51,7 +51,7 @@ void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 	auto playerInputGamepadSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObjectGamepad.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputGamepadSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObjectGamepad.get());
 	auto playerInputGamepadCollider = std::make_unique<game::PlayerCollider>(playerInputObjectGamepad.get(), 28.f, 28.f, true);
-	playerInputObjectGamepad->SetWorldPosition(48, 144);
+	playerInputObjectGamepad->SetLocalPosition(glm::vec3(48, 144, 0.f));
 	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSheet));
 	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSetter));
 	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadCollider));
@@ -103,7 +103,7 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
 
 	//display Player
 	//auto playerKeyboardTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	//playerKeyboardTextObject->SetWorldPosition(50, 275);
+	//playerKeyboardTextObject->SetLocalPosition(50, 275);
 	//auto playerTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(playerKeyboardTextObject.get(), "Player Two:", font);
 	//playerTextKeyboard->ChangeFontSize(20);
 	//playerKeyboardTextObject->AddComponent(std::move(playerTextKeyboard));
@@ -120,7 +120,7 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
 	auto playerInputKeyboardSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
 	auto playerInputKeyboardCollider = std::make_unique<game::PlayerCollider>(playerInputObjectKeyboard.get(), 28.f, 28.f, true);
 	playerInputKeyboardCollider->SetDebugRendering(true);
-	playerInputObjectKeyboard->SetWorldPosition(48, 112);
+	playerInputObjectKeyboard->SetLocalPosition(glm::vec3(48, 112, 0.f));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSetter));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardCollider));
@@ -132,13 +132,13 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
 
 
 	auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveLeftCommandKeyboard->SetSpeed({ -50.f, 0.f });
+	moveLeftCommandKeyboard->SetSpeed({ -100.f, 0.f });
 	auto moveRightCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveRightCommandKeyboard->SetSpeed({ 50.f, 0.f });
+	moveRightCommandKeyboard->SetSpeed({ 100.f, 0.f });
 	auto moveUpCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveUpCommandKeyboard->SetSpeed({ 0.f, -50.f });
+	moveUpCommandKeyboard->SetSpeed({ 0.f, -100.f });
 	auto moveDownCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveDownCommandKeyboard->SetSpeed({ 0.f, 50.f });
+	moveDownCommandKeyboard->SetSpeed({ 0.f, 100.f });
 
 	auto loseLivesCommandKeyboard = std::make_unique<game::LoseLiveCommand>(playerInputObjectKeyboard.get());
 	auto gainSmallScoreCommandKeyboard = std::make_unique<game::GainPointsCommand>(playerInputObjectKeyboard.get());
@@ -170,7 +170,7 @@ void LoadStartScene()
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
 
 	auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
-	backgroundObject->SetWorldPosition(100, 300);
+	backgroundObject->SetLocalPosition(glm::vec3(100, 300, 0.f));
 	auto background = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga");
 	auto backgroundTwo = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga", true);
 	backgroundTwo->SetCustomPosition(glm::vec2(740, 300));
@@ -181,7 +181,7 @@ void LoadStartScene()
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
 	auto startButtonTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	startButtonTextObject->SetWorldPosition(500, 275);
+	startButtonTextObject->SetLocalPosition(glm::vec3(500, 275, 0.f));
 	auto startButtonText = std::make_unique<RamCoreEngine::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? (gamepad start not working yet) on gamepad to start game", font);
 	startButtonText->ChangeFontSize(20);
 	startButtonTextObject->AddComponent(std::move(startButtonText));
@@ -189,7 +189,7 @@ void LoadStartScene()
 
 	auto logoObject = std::make_unique<RamCoreEngine::GameObject>();
 	auto logo = std::make_unique<RamCoreEngine::TextureComponent>(logoObject.get(), "logo.tga");
-	logoObject->SetWorldPosition(500, 180);
+	logoObject->SetLocalPosition(glm::vec3(500, 180, 0.f));
 	logoObject->AddComponent(std::move(logo));
 
 	scene->Add(std::move(logoObject));
@@ -209,27 +209,27 @@ void LoadStartScene()
 
 	// --------TUTORIAL TEXT----------
 	auto tutorialControls = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialControls->SetWorldPosition(500, 360);
+	tutorialControls->SetLocalPosition(glm::vec3(500, 360, 0.f));
 	auto tutorialText = std::make_unique<RamCoreEngine::TextComponent>(tutorialControls.get(), "Controls", font);
 	tutorialControls->AddComponent(std::move(tutorialText));
 	scene->Add(std::move(tutorialControls));
 
 	auto tutorialObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialObjectGamepad->SetWorldPosition(500, 400);
+	tutorialObjectGamepad->SetLocalPosition(glm::vec3(500, 400, 0.f));
 	auto tutorialTextGamepad = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectGamepad.get(), "Use D-Pad to move, Y to place bomb, kill Balloom to get score", font);
 	tutorialTextGamepad->ChangeFontSize(15);
 	tutorialObjectGamepad->AddComponent(std::move(tutorialTextGamepad));
 	scene->Add(std::move(tutorialObjectGamepad));
 
 	auto tutorialObjectKeyboard = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialObjectKeyboard->SetWorldPosition(500, 420);
+	tutorialObjectKeyboard->SetLocalPosition(glm::vec3(500, 420, 0.f));
 	auto tutorialTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectKeyboard.get(), "Use WASD to move, F to place bomb, kill Balloom to get score", font);
 	tutorialTextKeyboard->ChangeFontSize(15);
 	tutorialObjectKeyboard->AddComponent(std::move(tutorialTextKeyboard));
 	scene->Add(std::move(tutorialObjectKeyboard));
 
 	auto tutorialNotes = std::make_unique<RamCoreEngine::GameObject>();
-	tutorialNotes->SetWorldPosition(500, 450);
+	tutorialNotes->SetLocalPosition(glm::vec3(500, 450, 0.f));
 	auto tutorialNotesText = std::make_unique<RamCoreEngine::TextComponent>(tutorialNotes.get(), "only keyboard player can get killed by balloom for now", font);
 	tutorialNotesText->ChangeFontSize(20);
 	tutorialNotes->AddComponent(std::move(tutorialNotesText));
@@ -244,14 +244,14 @@ void LoadGameScene()
 
 	//auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
 	//auto background = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga");
-	//backgroundObject->SetWorldPosition(0, 0);
+	//backgroundObject->SetLocalPosition(0, 0);
 	//backgroundObject->AddComponent(std::move(background));
 	//
 	//scene->Add(std::move(backgroundObject));
 
 	//auto logoObject = std::make_unique<RamCoreEngine::GameObject>();
 	//auto logo = std::make_unique<RamCoreEngine::TextureComponent>(logoObject.get(), "logo.tga");
-	//logoObject->SetWorldPosition(216, 180);
+	//logoObject->SetLocalPosition(216, 180);
 	//logoObject->AddComponent(std::move(logo));
 	//
 	//scene->Add(std::move(logoObject));
@@ -260,13 +260,13 @@ void LoadGameScene()
 	//auto assignmentTextObject = std::make_unique<RamCoreEngine::GameObject>();
 	//
 	//auto assignmentText = std::make_unique<RamCoreEngine::TextComponent>(assignmentTextObject.get(), "Programming 4 Assignment", font);
-	//assignmentTextObject->SetWorldPosition(80, 50);
+	//assignmentTextObject->SetLocalPosition(80, 50);
 	//assignmentTextObject->AddComponent(std::move(assignmentText));
 	//scene->Add(std::move(assignmentTextObject));
 
 	auto fpsObject = std::make_unique<RamCoreEngine::GameObject>();
 	auto fpsText = std::make_unique<RamCoreEngine::TextComponent>(fpsObject.get(), "FPS:", font);
-	fpsObject->SetWorldPosition(80, 32);
+	fpsObject->SetLocalPosition(glm::vec3(80, 32, 0.f));
 	fpsObject->AddComponent(std::move(fpsText));
 
 	auto fpsCounter = std::make_unique<game::FpsComponent>(fpsObject.get());
@@ -284,7 +284,7 @@ void LoadGameScene()
 	//PLAYER SINGLE SPRITE
 	// auto playerObject = std::make_unique<RamCoreEngine::GameObject>();
 	// auto player = std::make_unique<RamCoreEngine::TextureComponent>(playerObject.get(), "Bomberman.png");
-	// playerObject->SetWorldPosition(120, 300);
+	// playerObject->SetLocalPosition(120, 300);
 	// playerObject->AddComponent(std::move(player));
 	// 
 	// auto playerMovement = std::make_unique<game::MovementComponent>(playerObject.get());
@@ -298,7 +298,7 @@ void LoadGameScene()
 	// auto secondPlayerObject = std::make_unique<RamCoreEngine::GameObject>();
 	// secondPlayerObject->SetParent(playerObject.get(), false);
 	// auto secondPlayer = std::make_unique<RamCoreEngine::TextureComponent>(secondPlayerObject.get(), "Bomberman.png");
-	// secondPlayerObject->SetWorldPosition(100, 300);
+	// secondPlayerObject->SetLocalPosition(100, 300);
 	// glm::vec3 secondPlayerLocPos = { 40, 0, 0 };
 	// secondPlayerObject->SetLocalPosition(secondPlayerLocPos);
 	// secondPlayerObject->AddComponent(std::move(secondPlayer));
@@ -323,12 +323,12 @@ void LoadGameScene()
 	//Input
 	auto gridObject = std::make_unique<RamCoreEngine::GameObject>();
 	gridObject->SetTag(make_sdbm_hash("Grid"));
-	gridObject->SetWorldPosition(0, 0);
-	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f);
+	gridObject->SetLocalPosition(glm::vec3(0, 0, 0.f));
+	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f, 500);
 	gridObject->AddComponent(std::move(gridView));
 
 	auto playerLivesTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	playerLivesTextObject->SetWorldPosition(700, 30);
+	playerLivesTextObject->SetLocalPosition(glm::vec3(700, 30, 0.f));
 	std::string lives = "Lives: " + std::to_string(game::GameManager::GetInstance().GetTotalLives());
 	auto playerLivesText = std::make_unique<RamCoreEngine::TextComponent>(playerLivesTextObject.get(), lives, font);
 	//playerLivesText->ChangeFontSize(18);
@@ -339,7 +339,7 @@ void LoadGameScene()
 
 	//display score
 	auto playerScoreTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	playerScoreTextObject->SetWorldPosition(500, 32);
+	playerScoreTextObject->SetLocalPosition(glm::vec3(500, 32, 0.f));
 	std::string score = "Current score: " + std::to_string(game::GameManager::GetInstance().GetTotalScore());
 	auto playerScoreText = std::make_unique<RamCoreEngine::TextComponent>(playerScoreTextObject.get(), score, font);
 	playerScoreText->ChangeFontSize(32);
@@ -354,9 +354,9 @@ void LoadGameScene()
 	// --------ENEMIES----------
 	auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
 	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyBalloomOne->SetWorldPosition(48, 304);
 	enemyBalloomOne->SetParent(gridObject.get(), true);
-	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 15.f, 100);
+	enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
+	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 30.f, 100);
 	enemyBalloomOneMovement->SetDebugRendering(true);
 	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 	auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
@@ -371,9 +371,9 @@ void LoadGameScene()
 
 	auto enemyOnealOne = std::make_unique<RamCoreEngine::GameObject>();
 	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyOnealOne->SetWorldPosition(48, 336);
 	enemyOnealOne->SetParent(gridObject.get(), true);
-	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 15.f, 200, true, 100.f);
+	enemyOnealOne->SetLocalPosition(glm::vec3(48, 336, 0));
+	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 50.f, 200, true, 100.f);
 	enemyOnealOneMovement->SetDebugRendering(true);
 	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
