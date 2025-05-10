@@ -135,6 +135,7 @@ void game::EnemyMovementComponent::Render() const
 void game::EnemyMovementComponent::OnDestroy()
 {
 	GameManager::GetInstance().GainScore(m_ScoreWhenDead);
+	game::GameManager().GetInstance().EnemyKilled();
 
 	Event e(make_sdbm_hash("EnemyDied"));
 	m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
@@ -210,7 +211,7 @@ glm::vec2 game::EnemyMovementComponent::GetRandomPlayerPositionInRange()
 void game::WanderingState::OnEnter()
 {
 	m_Path = GetComponent()->GetGridComponent()->GetPath(GetComponent()->GetGameObject()->GetLocalPosition(), glm::vec2(848, 48));
-	m_PathIndex = 1;
+	m_PathIndex = 0;
 }
 
 std::unique_ptr<game::EnemyState> game::WanderingState::Update()
@@ -295,7 +296,7 @@ void game::ChaseState::OnEnter()
 	if (playerPos.x != 0 && playerPos.y != 0)
 	{
 		m_Path = GetComponent()->GetGridComponent()->GetPath(worldPos, playerPos);
-		m_PathIndex = 1;
+		m_PathIndex = 0;
 	}
 }
 

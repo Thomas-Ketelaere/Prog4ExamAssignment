@@ -10,6 +10,7 @@
 #include "EnemyMovementComponent.h"
 
 #include "PlayerSpriteComponent.h"
+#include "GameManager.h"
 game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int gridWidth, int gridHeight, float cellSize, float offsetY, int screenWidth):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
@@ -18,7 +19,6 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 	m_GridHeight{gridHeight},
 	m_CellWidth{cellSize},
 	m_CellHeight{cellSize},
-	m_CanSpawnBomb{true},
 	m_BombExploded{},
 	m_OffsetY{offsetY},
 	m_ScreenWidth{screenWidth}
@@ -119,34 +119,29 @@ void game::GridComponent::LateUpdate()
 
 void game::GridComponent::SpawnBomb(glm::vec2 position)
 {
-	if (m_CanSpawnBomb)
+	int index = GetIndexFromPosition(position);
+	if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
 	{
-		int index = GetIndexFromPosition(position);
-		if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
-		{
-			glm::vec2 spawnPosition = GetCellPositionFromIndexWorld(index);
-			glm::vec3 gridPos = GetTransform()->GetWorldPosition();
-			glm::vec2 spawnPosMoved{};
-			spawnPosMoved.x = spawnPosition.x - gridPos.x;
-			spawnPosMoved.y = spawnPosition.y - gridPos.y;
-			auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
-			bombObject->SetParent(GetGameObject(), true);
-			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f);
-			auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
-			bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
-			bombObject->AddComponent(std::move(bombComponent));
-			bombObject->AddComponent(std::move(bombSpriteComponent));
-			RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
-			m_pCells[index]->m_CellState = CellState::Bomb;
-			m_CanSpawnBomb = false;
-		}
+		glm::vec2 spawnPosition = GetCellPositionFromIndexWorld(index);
+		glm::vec3 gridPos = GetTransform()->GetWorldPosition();
+		glm::vec2 spawnPosMoved{};
+		spawnPosMoved.x = spawnPosition.x - gridPos.x;
+		spawnPosMoved.y = spawnPosition.y - gridPos.y;
+		auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
+		bombObject->SetParent(GetGameObject(), true);
+		auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f);
+		auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
+		bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
+		bombObject->AddComponent(std::move(bombComponent));
+		bombObject->AddComponent(std::move(bombSpriteComponent));
+		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
+		m_pCells[index]->m_CellState = CellState::Bomb;
 	}
 }
 
 void game::GridComponent::ExplodeBomb(int index, int range)
 {
 	//TODO : CLEAN UP AND MAKE MORE EFFICIENT
-	m_CanSpawnBomb = true;
 	m_BombExploded = true;
 	m_ExplodedCellIndices.clear();
 	m_ExplodedCellIndices.emplace_back(index);
@@ -158,8 +153,6 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 	auto spriteSheetExplosionCenter = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
 	GetGameObject()->AddComponent(std::move(spriteSheetExplosionCenter));
-	
-	
 
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
 	{
@@ -281,7 +274,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 	}
 }
 
-bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant
+bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant (TODO: check if player can walk over bomb)
 {
 	if (position.x < 0 || position.x > m_GridWidth || position.y < 0 || position.y > m_GridHeight)
 	{
@@ -297,9 +290,13 @@ bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlaye
 			{
 			case CellItem::Exit:
 				//Check enemies (from game manager?)
-				//Level completed
-				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
-				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
+				if (game::GameManager::GetInstance().CanPlayerExit())
+				{
+					//Level completed
+					m_pCells[indexCell]->m_CellItem = CellItem::Empty;
+					m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
+					game::GameManager::GetInstance().AdvanceLevel();
+				}
 				break;
 			case CellItem::DetonatorPU:
 				//gain ability

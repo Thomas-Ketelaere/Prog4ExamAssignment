@@ -84,11 +84,23 @@
     <ClCompile Include="LoadingScreenComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="HandleUICommand.cpp">
+    <ClCompile Include="ButtonsCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="HandleUIComponent.cpp">
+    <ClCompile Include="ButtonsComponent.cpp">
       <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="OnScreenKeyboardComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="NameTextComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="OnScreenKeyboardCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="PressScreenKeyboardCommand.cpp">
+      <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,11 +164,23 @@
     <ClInclude Include="LoadingScreenComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="HandleUICommand.h">
+    <ClInclude Include="ButtonsCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="HandleUIComponent.h">
+    <ClInclude Include="ButtonsComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="OnScreenKeyboardComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="NameTextComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="OnScreenKeyboardCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="PressScreenKeyboardCommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
-#include "HandleUIComponent.h"
+#include "ButtonsComponent.h"
 #include "GameObject.h"
 #include "TextComponent.h"
 #include "SceneManager.h"
 
-game::HandleUIComponent::HandleUIComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad):
+game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad):
 	Component(gameObject),
 	m_SmallFontSize{smallFontSize},
 	m_BigFontSize{bigFontSize},
@@ -16,7 +16,7 @@ game::HandleUIComponent::HandleUIComponent(RamCoreEngine::GameObject* gameObject
 	}
 }
 
-void game::HandleUIComponent::Start()
+void game::ButtonsComponent::Start()
 {
 	for (auto& textComp : m_pTextComponents)
 	{
@@ -26,7 +26,7 @@ void game::HandleUIComponent::Start()
 	m_pTextComponents[m_Index].first->ChangeFontSize(m_BigFontSize);
 }
 
-void game::HandleUIComponent::ChangeIndex(bool up)
+void game::ButtonsComponent::ChangeIndex(bool up)
 {
 	if (up)
 	{
@@ -54,7 +54,7 @@ void game::HandleUIComponent::ChangeIndex(bool up)
 	m_pTextComponents[m_Index].first->ChangeFontSize(m_BigFontSize);
 }
 
-void game::HandleUIComponent::ButtonPressed()
+void game::ButtonsComponent::ButtonPressed()
 {
 	std::string& sceneNameToLoad = m_pTextComponents[m_Index].second;
 	RamCoreEngine::SceneManager::GetInstance().LoadScene(sceneNameToLoad);

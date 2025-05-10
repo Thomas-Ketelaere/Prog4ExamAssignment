@@ -93,7 +93,6 @@ namespace game
 		const int m_GridHeight;
 		const int m_ScreenWidth;
 
-		bool m_CanSpawnBomb;
 		bool m_BombExploded;
 	};
 }

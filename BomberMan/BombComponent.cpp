@@ -3,6 +3,7 @@
 #include "GridComponent.h"
 #include "GameObject.h"
 #include "ServiceLocator.h"
+#include "GameManager.h"
 
 
 game::BombComponent::BombComponent(RamCoreEngine::GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode) :
@@ -22,6 +23,7 @@ void game::BombComponent::Update()
 	{
 		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("ExplodeBombSFX"), 100);
 		m_pGridComponent->ExplodeBomb(m_CellIndex, 1);
+		game::GameManager().GetInstance().BombExploded();
 		GetGameObject()->Destroy(); //destroy bomb after explosion
 	}
 }

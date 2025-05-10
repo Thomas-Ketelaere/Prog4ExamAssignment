@@ -45,6 +45,35 @@ void RamCoreEngine::SceneManager::LateUpdate()
 		m_pCurrentScene->Start();
 		InputManager::GetInstance().Start();
 	}
+
+	else if (m_ShouldLoadScene)
+	{
+		for (auto& scene : m_Scenes)
+		{
+			if (scene->GetName() == m_LoadSceneName) //TODO: make with hash
+			{
+				if (m_pCurrentScene->GetName() == scene->GetName())
+				{
+					throw std::runtime_error("trying to load and destroy already existing/current scene. Use 'ReloadScene' instead.");
+				}
+				auto* previousScene = m_pCurrentScene;
+				//TODO: dont destroy on load (if necessary)
+				InputManager::GetInstance().ClearBindings();
+				RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadAllSound();
+				RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadMusic();
+				ColliderManager::GetInstance().ClearColliders();
+				m_pCurrentScene = scene.get();
+				scene->LoadScene();
+				scene->Start();
+				InputManager::GetInstance().Start();
+				previousScene->Destroy();
+				m_ShouldLoadScene = false;
+				return;
+			}
+		}
+
+		throw std::runtime_error("Scene not found");
+	}
 	
 	for (auto& scene : m_Scenes)
 	{
@@ -67,30 +96,9 @@ void RamCoreEngine::SceneManager::Render()
 void RamCoreEngine::SceneManager::LoadScene(const std::string& sceneToLoadName)
 {
 	//TODO: IMPROVE
-	for (auto& scene : m_Scenes)
-	{
-		if (scene->GetName() == sceneToLoadName)
-		{
-			if (m_pCurrentScene->GetName() == scene->GetName())
-			{
-				throw std::runtime_error("trying to load and destroy already existing/current scene. Use 'ReloadScene' instead.");
-			}
-			auto* previousScene = m_pCurrentScene;
-			//TODO: dont destroy on load (if necessary)
-			InputManager::GetInstance().ClearBindings();
-			RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadAllSound();
-			RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadMusic();
-			ColliderManager::GetInstance().ClearColliders();
-			m_pCurrentScene = scene.get();
-			scene->LoadScene();
-			scene->Start();
-			InputManager::GetInstance().Start();
-			previousScene->Destroy();
-			return;
-		}
-	}
-
-	throw std::runtime_error("Scene not found");
+	m_ShouldLoadScene = true;
+	m_LoadSceneName = sceneToLoadName;
+	
 }
 
 void RamCoreEngine::SceneManager::ReloadScene()

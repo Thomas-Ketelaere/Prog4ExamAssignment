@@ -12,7 +12,7 @@ namespace game
 
 
 	private:
-		GridComponent* m_pGridComponent;
+		GridComponent* m_pGridComponent{};
 	};
 }
 

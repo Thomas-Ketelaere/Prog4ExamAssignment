@@ -22,12 +22,13 @@ namespace RamCoreEngine
 		void LoadScene(const std::string& sceneToLoadName);
 		void ReloadScene();
 
-
-
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 		std::vector<std::unique_ptr<Scene>> m_Scenes;
+
+		bool m_ShouldLoadScene{};
+		std::string m_LoadSceneName{}; //TODO: make with hash
 
 		Scene* m_pCurrentScene = nullptr;
 	};

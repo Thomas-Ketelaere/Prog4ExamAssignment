@@ -2,7 +2,7 @@
 #include "GameActorCommand.h"
 namespace game
 {
-	class HandleUIComponent;
+	class ButtonsComponent;
 	class StartGameCommand : public RamCoreEngine::GameActorCommand
 	{
 	public:
@@ -12,7 +12,7 @@ namespace game
 		void Start() override {}
 
 	private:
-		HandleUIComponent* m_pHandleUIComp{};
+		ButtonsComponent* m_pButtonComp{};
 	};
 }
 

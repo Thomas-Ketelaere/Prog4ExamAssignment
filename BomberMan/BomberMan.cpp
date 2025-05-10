@@ -44,8 +44,12 @@
 #include "GameManager.h"
 #include "LoadingScreenComponent.h"
 #include "Renderer.h"
-#include "HandleUIComponent.h"
-#include "HandleUICommand.h"
+#include "ButtonsComponent.h"
+#include "ButtonsCommand.h"
+#include "OnScreenKeyboardComponent.h"
+#include "OnScreenKeyboardCommand.h"
+#include "NameTextComponent.h"
+#include "PressScreenKeyboardCommand.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -207,7 +211,7 @@ void LoadStartScene()
 	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
 	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
 	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
-	auto uiHandler = std::make_unique<game::HandleUIComponent>(startButtonsObject.get(), uint8_t(18), uint8_t(25), 0, scenesToLoad);
+	auto uiHandler = std::make_unique<game::ButtonsComponent>(startButtonsObject.get(), uint8_t(18), uint8_t(25), 0, scenesToLoad);
 	startButtonsObject->AddComponent(std::move(uiHandler));
 
 	auto logoObject = std::make_unique<RamCoreEngine::GameObject>();
@@ -231,10 +235,10 @@ void LoadStartScene()
 	//scene->Add(std::move(playerStartButtonObjectGamepad));
 
 	//KEYBOARD
-	auto moveDownKeyboard = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	auto moveDownKeyboard = std::make_unique<game::ButtonsCommand>(startButtonsObject.get());
 	moveDownKeyboard->SetGoesDown(true);
 
-	auto moveUpKeyboard = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	auto moveUpKeyboard = std::make_unique<game::ButtonsCommand>(startButtonsObject.get());
 	moveUpKeyboard->SetGoesDown(false);
 
 	auto startGameCommandKeyboard = std::make_unique<game::StartGameCommand>(startButtonsObject.get());
@@ -244,10 +248,10 @@ void LoadStartScene()
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
 
 	//GAMEPAD
-	auto moveDownGamepad = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	auto moveDownGamepad = std::make_unique<game::ButtonsCommand>(startButtonsObject.get());
 	moveDownGamepad->SetGoesDown(true);
 
-	auto moveUpGamepad = std::make_unique<game::HandleUICommand>(startButtonsObject.get());
+	auto moveUpGamepad = std::make_unique<game::ButtonsCommand>(startButtonsObject.get());
 	moveUpGamepad->SetGoesDown(false);
 
 	auto startGameCommandGamepad = std::make_unique<game::StartGameCommand>(startButtonsObject.get());
@@ -287,6 +291,7 @@ void LoadStartScene()
 	scene->Add(std::move(tutorialNotes));
 
 	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 0, -1);//30 volume
+	game::GameManager::GetInstance().ResetStats(); //every time going to menu stops game so need to reset
 }
 
 void LoadGameScene()
@@ -403,28 +408,28 @@ void LoadGameScene()
 	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
 	// --------ENEMIES----------
-	//auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
-	//enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
-	//enemyBalloomOne->SetParent(gridObject.get(), true);
-	//enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
-	//auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 30.f, 100);
-	//enemyBalloomOneMovement->SetDebugRendering(true);
-	//enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
-	//auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
-	//auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
-	//
-	//enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
-	//enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
-	//enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
-	//
-	//scene->Add(std::move(enemyBalloomOne));
+	auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
+	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
+	enemyBalloomOne->SetParent(gridObject.get(), true);
+	enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
+	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 15.f, 100);
+	enemyBalloomOneMovement->SetDebugRendering(true);
+	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+	auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
+	auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
+	
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
+	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
+	
+	scene->Add(std::move(enemyBalloomOne));
 
 
 	auto enemyOnealOne = std::make_unique<RamCoreEngine::GameObject>();
 	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
 	enemyOnealOne->SetParent(gridObject.get(), true);
 	enemyOnealOne->SetLocalPosition(glm::vec3(48, 336, 0));
-	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 25.f, 200, true, 100.f);
+	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 10.f, 200, true, 100.f);
 	enemyOnealOneMovement->SetDebugRendering(true);
 	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
@@ -444,6 +449,8 @@ void LoadGameScene()
 
 	SDL_Color color = { 56, 135, 0, 255 };
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
+
+	game::GameManager::GetInstance().CountEnemies();
 
 	// --------SOUND----------
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
@@ -471,17 +478,86 @@ void LoadLoadingScene()
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 }
 
+void LoadEndScene()
+{
+	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
+	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 50);
+
+	auto onScreenKeyboardObject = std::make_unique<RamCoreEngine::GameObject>();
+	onScreenKeyboardObject->SetLocalPosition(glm::vec3(256, 238, 0));
+	auto nameTextComp = std::make_unique<RamCoreEngine::TextComponent>(onScreenKeyboardObject.get(), " ", font, true);
+	nameTextComp->SetCustomPosition(glm::vec2(0, -150));
+	auto nameTextChangeComp = std::make_unique<game::NameTextComponent>(onScreenKeyboardObject.get());
+	auto onScreenKeyboardComp = std::make_unique<game::OnScreenKeyboardComponent>(onScreenKeyboardObject.get(), 13, 2, 20, 40, uint8_t(30), uint8_t(40));
+	onScreenKeyboardComp->GetNameChangedEventSubject()->AddObserver(nameTextChangeComp.get());
+	onScreenKeyboardObject->AddComponent(std::move(nameTextComp));
+	onScreenKeyboardObject->AddComponent(std::move(nameTextChangeComp));
+	onScreenKeyboardObject->AddComponent(std::move(onScreenKeyboardComp));
+
+	//------------KEYBOARD------------
+	auto keyboardLeft = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	keyboardLeft->SetDirection(glm::vec2(-1, 0));
+	auto keyboardRight = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	keyboardRight->SetDirection(glm::vec2(1, 0));
+	auto keyboardUp = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	keyboardUp->SetDirection(glm::vec2(0, -1));
+	auto keyboardDown = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	keyboardDown->SetDirection(glm::vec2(0, 1));
+
+	auto keyboardClickAdd = std::make_unique<game::PressScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	auto keyboardClickRemove = std::make_unique<game::PressScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	keyboardClickRemove->SetShouldRemove(true);
+
+
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardLeft), RamCoreEngine::KeyState::Up, SDLK_a, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardRight), RamCoreEngine::KeyState::Up, SDLK_d, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardUp), RamCoreEngine::KeyState::Up, SDLK_w, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardDown), RamCoreEngine::KeyState::Up, SDLK_s, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardClickAdd), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardClickRemove), RamCoreEngine::KeyState::Up, SDLK_q, -1);
+	
+	//------------GAMEPAD------------
+	auto gamepadLeft = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	gamepadLeft->SetDirection(glm::vec2(-1, 0));
+	auto gamepadRight = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	gamepadRight->SetDirection(glm::vec2(1, 0));
+	auto gamepadUp = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	gamepadUp->SetDirection(glm::vec2(0, -1));
+	auto gamepadDown = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	gamepadDown->SetDirection(glm::vec2(0, 1));
+
+	auto gamepadClickAdd = std::make_unique<game::PressScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	auto gamepadClickRemove = std::make_unique<game::PressScreenKeyboardCommand>(onScreenKeyboardObject.get());
+	gamepadClickRemove->SetShouldRemove(true);
+
+
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadLeft), RamCoreEngine::KeyState::Up, 0x0004, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadRight), RamCoreEngine::KeyState::Up, 0x0008, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadUp), RamCoreEngine::KeyState::Up, 0x0001, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadDown), RamCoreEngine::KeyState::Up, 0x0002, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadClickAdd), RamCoreEngine::KeyState::Up, 0x8000, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadClickRemove), RamCoreEngine::KeyState::Up, 0x2000, 0);
+
+	scene->Add(std::move(onScreenKeyboardObject));
+
+
+	
+}
+
 void load()
 {
 	// ------------ FileReading (TODO: IMPLEMENT) --------------
-	game::GameManager::GetInstance().SetLives(3);
+	game::GameManager::GetInstance().SetMaxLives(3);
 
-	auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
-	sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
-	sceneLoading.SetLoadingFunction(LoadLoadingScene);
-	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
-	sceneGame.SetLoadingFunction(LoadGameScene);
+	//auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
+	//sceneStart.SetLoadingFunction(LoadStartScene);
+	//auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
+	//sceneLoading.SetLoadingFunction(LoadLoadingScene);
+	//auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
+	//sceneGame.SetLoadingFunction(LoadGameScene);
+
+	auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", true);
+	sceneEnd.SetLoadingFunction(LoadEndScene);
 
 	// ------------ SOUND --------------
 

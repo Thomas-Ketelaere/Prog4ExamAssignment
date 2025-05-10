@@ -10,10 +10,10 @@ namespace RamCoreEngine
 
 namespace game
 {
-	class HandleUIComponent final : public RamCoreEngine::Component
+	class ButtonsComponent final : public RamCoreEngine::Component
 	{
 	public:
-		HandleUIComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad); //TODO: make hash map for scenes
+		ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad); //TODO: make hash map for scenes
 
 		void Start() override;
 

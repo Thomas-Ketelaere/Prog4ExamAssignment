@@ -1,14 +1,14 @@
 #include "StartGameCommand.h"
-#include "HandleUIComponent.h"
+#include "ButtonsComponent.h"
 #include "GameObject.h"
 
 game::StartGameCommand::StartGameCommand(RamCoreEngine::GameObject* actor) :
 	GameActorCommand(actor)
 {
-	m_pHandleUIComp = actor->GetComponent<HandleUIComponent>();
+	m_pButtonComp = actor->GetComponent<ButtonsComponent>();
 }
 
 void game::StartGameCommand::Execute()
 {
-	m_pHandleUIComp->ButtonPressed();
+	m_pButtonComp->ButtonPressed();
 }
