@@ -38,7 +38,6 @@ namespace game
 		std::unique_ptr<EnemyState> Update() override;
 
 	private:
-		void SetSpriteDirection();
 		std::vector<glm::vec2> m_Path;
 		unsigned int m_PathIndex{ 1 };
 		const float m_DistanceToReachPoint{ 2.f };
@@ -56,7 +55,6 @@ namespace game
 
 	private:
 		glm::vec2 GetRandomPlayerPositionInRange();
-		void SetSpriteDirection();
 		std::vector<glm::vec2> m_Path;
 		unsigned int m_PathIndex{ 1 };
 		const float m_DistanceToReachPoint{ 2.f };
@@ -89,7 +87,7 @@ namespace game
 		void Update() override;
 		void Render() const override;
 		void OnDestroy() override;
-
+		void SetSpriteDirection(glm::vec2 direction);
 
 		void StartDying();
 		void SetDebugRendering(bool shouldDebugRender) { m_DebugRender = shouldDebugRender; }
@@ -101,7 +99,7 @@ namespace game
 		RamCoreEngine::Subject* GetEnemyDiedSubject() const { return m_pEnemyDiedEvent.get(); }
 
 	private:
-		void SetSpriteDirection();
+		
 		glm::vec2 GetRandomPlayerPositionInRange();
 		std::unique_ptr<RamCoreEngine::Subject> m_pEnemyDiedEvent;
 		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;

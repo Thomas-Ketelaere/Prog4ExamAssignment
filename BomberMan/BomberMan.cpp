@@ -549,15 +549,15 @@ void load()
 	// ------------ FileReading (TODO: IMPLEMENT) --------------
 	game::GameManager::GetInstance().SetMaxLives(3);
 
-	//auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
-	//sceneStart.SetLoadingFunction(LoadStartScene);
-	//auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
-	//sceneLoading.SetLoadingFunction(LoadLoadingScene);
-	//auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
-	//sceneGame.SetLoadingFunction(LoadGameScene);
+	auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
+	sceneStart.SetLoadingFunction(LoadStartScene);
+	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
+	sceneLoading.SetLoadingFunction(LoadLoadingScene);
+	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
+	sceneGame.SetLoadingFunction(LoadGameScene);
 
-	auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", true);
-	sceneEnd.SetLoadingFunction(LoadEndScene);
+	//auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", true);
+	//sceneEnd.SetLoadingFunction(LoadEndScene);
 
 	// ------------ SOUND --------------
 
