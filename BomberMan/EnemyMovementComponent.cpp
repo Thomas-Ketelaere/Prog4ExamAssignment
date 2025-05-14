@@ -235,7 +235,7 @@ std::unique_ptr<game::EnemyState> game::WanderingState::Update()
 		if (m_PathIndex == movedPath.size() || !GetComponent()->GetGridComponent()->IsCellWalkable(movedPath[m_PathIndex], false))
 		{
 			m_PathIndex = 1;
-			auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCell();
+			auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCellPosition();
 			m_Path = GetComponent()->GetGridComponent()->GetPath(worldPos, randomTarget);
 		}
 		glm::vec2 direction = movedPath[m_PathIndex] - worldPos;

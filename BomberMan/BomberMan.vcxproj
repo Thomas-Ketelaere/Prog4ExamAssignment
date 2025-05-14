@@ -181,6 +181,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="ButtonsCommand.cpp" />
     <ClCompile Include="ButtonsComponent.cpp" />
+    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="LoadingScreenComponent.cpp" />
     <ClCompile Include="NameTextComponent.cpp" />
     <ClCompile Include="OnScreenKeyboardCommand.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="ButtonsCommand.h" />
     <ClInclude Include="ButtonsComponent.h" />
+    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LoadingScreenComponent.h" />
     <ClInclude Include="NameTextComponent.h" />
     <ClInclude Include="OnScreenKeyboardCommand.h" />

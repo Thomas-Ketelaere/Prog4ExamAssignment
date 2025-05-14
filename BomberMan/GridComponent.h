@@ -59,7 +59,7 @@ namespace game
 		bool IsCellWalkable(const glm::vec2& position, bool isPlayer);
 		Cell* GetCellFromPosition(const glm::vec2& position);
 
-		const glm::vec2& GetRandomEmptyCell();
+		const glm::vec2& GetRandomEmptyCellPosition();
 
 		// TODO: RETURNS COPY NOW
 		const std::vector<glm::vec2> GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition);
@@ -75,6 +75,7 @@ namespace game
 		glm::vec2 GetCellPositionFromIndexWorld(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
 		bool IsObjectInCell(const glm::vec2& position, const int cellIndex);
+		Cell* GetRandomEmptyCell();
 
 		//A*
 		std::vector<int> FindPath(int startIndex, int endIndex);

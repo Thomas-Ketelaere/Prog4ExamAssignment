@@ -8,6 +8,7 @@
 #include "ServiceLocator.h"
 #include <memory>
 #include "EnemyMovementComponent.h"
+#include "LevelLoader.h"
 
 #include "PlayerSpriteComponent.h"
 #include "GameManager.h"
@@ -30,44 +31,59 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 		{
 			glm::vec2 position = { colCounter * m_CellWidth + m_CellWidth / 2, rowCounter * m_CellHeight + m_CellHeight / 2 + offsetY};
 			Cell* cell = new Cell(position);
-			if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
-			{
-				cell->m_CellState = CellState::HardWall;
-				auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
-				spriteSheetWall->SetCustomPosition(position);
-				GetGameObject()->AddComponent(std::move(spriteSheetWall));
-			}
-			else if (rowCounter % 2 == 0 && colCounter % 2 == 0)
-			{
-				cell->m_CellState = CellState::HardWall;
-				auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
-				spriteSheetWall->SetCustomPosition(position);
-				GetGameObject()->AddComponent(std::move(spriteSheetWall));
-			}
-			else
-			{
-				cell->m_CellState = CellState::Empty;
-				emptyCells.emplace_back(cell);
-			}
+			//if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
+			//{
+			//	cell->m_CellState = CellState::HardWall;
+			//	auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
+			//	spriteSheetWall->SetCustomPosition(position);
+			//	GetGameObject()->AddComponent(std::move(spriteSheetWall));
+			//}
+			//else if (rowCounter % 2 == 0 && colCounter % 2 == 0)
+			//{
+			//	cell->m_CellState = CellState::HardWall;
+			//	auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
+			//	spriteSheetWall->SetCustomPosition(position);
+			//	GetGameObject()->AddComponent(std::move(spriteSheetWall));
+			//}
+			//else
+			//{
+			//	cell->m_CellState = CellState::Empty;
+			//	emptyCells.emplace_back(cell);
+			//}
 
+			cell->m_CellState = CellState::Empty;
+			emptyCells.emplace_back(cell);
 			m_pCells.emplace_back(cell);
 		}
 	}
 
-	//TODO : MAKE READ FROM FILE
-	const int tempAmountOfBreakableWalls{ 10 };
-	for (int emptyCounter{}; emptyCounter < tempAmountOfBreakableWalls; ++emptyCounter)
+	std::vector<int> hardWalls = game::LevelLoader::GetInstance().GetHardWallIndices();
+	for (size_t hardWallcounter{}; hardWallcounter < hardWalls.size(); ++hardWallcounter)
 	{
+		int index = hardWalls[hardWallcounter];
+		m_pCells[index]->m_CellState = CellState::HardWall;
+		auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
+		spriteSheetWall->SetCustomPosition(m_pCells[index]->m_Position);
+		GetGameObject()->AddComponent(std::move(spriteSheetWall));
+	}
+
+	const int amountOfBreakableWalls{ game::LevelLoader::GetInstance().GetAmountBreakableWalls()};
+	for (int emptyCounter{}; emptyCounter < amountOfBreakableWalls; ++emptyCounter)
+	{
+		Cell* cell = GetRandomEmptyCell();
 		int index = std::rand() % emptyCells.size();
-		Cell* cell = emptyCells[index];
-		if (cell->m_CellState == CellState::Empty) // make sure that it doesnt set the same cell twice
+		if (index == 33 || index == 34 || index == 63 || index == 94)
+		{
+			--emptyCounter; //sort of recursive, these spots should stay free for player spawn
+		}
+		else
 		{
 			cell->m_CellState = CellState::BreakableWall;
 			cell->m_CellItem = CellItem::Exit; //TODO: obviously not all breakable walls are Exits, this is just for testing purposes
 			auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
 			spriteSheetWall->SetCustomPosition(cell->m_Position);
 			spriteSheetWall->ShouldAnimate(false);
-			cell->m_pSpriteSheetWall = spriteSheetWall.get(); 
+			cell->m_pSpriteSheetWall = spriteSheetWall.get();
 			emptyCells.erase(emptyCells.begin() + index);
 			GetGameObject()->AddComponent(std::move(spriteSheetWall));
 		}
@@ -342,19 +358,9 @@ game::Cell* game::GridComponent::GetCellFromPosition(const glm::vec2& position)
 	return m_pCells[index];
 }
 
-const glm::vec2& game::GridComponent::GetRandomEmptyCell()
+const glm::vec2& game::GridComponent::GetRandomEmptyCellPosition()
 {
-	std::vector<Cell*> emptyCells;
-	for (Cell* cell : m_pCells)
-	{
-		if (cell->m_CellState == CellState::Empty)
-		{
-			emptyCells.emplace_back(cell);
-		}
-	}
-
-	int index = std::rand() % emptyCells.size();
-	return emptyCells[index]->m_Position;
+	return GetRandomEmptyCell()->m_Position;
 }
 
 const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
@@ -511,6 +517,20 @@ bool game::GridComponent::IsObjectInCell(const glm::vec2& position, const int ce
 		return true;
 	}
 	return false;
+}
+
+game::Cell* game::GridComponent::GetRandomEmptyCell()
+{
+	std::vector<Cell*> emptyCells;
+	for (Cell* cell : m_pCells)
+	{
+		if (cell->m_CellState == CellState::Empty)
+		{
+			emptyCells.emplace_back(cell);
+		}
+	}
+	
+	return emptyCells[std::rand() % emptyCells.size()];
 }
 
 std::vector<int> game::GridComponent::FindPath(int startIndex, int endIndex)

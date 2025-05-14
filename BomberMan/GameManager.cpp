@@ -17,12 +17,6 @@ void game::GameManager::ResetStats()
 	m_MaxBombs = 1;
 }
 
-void game::GameManager::CountEnemies()
-{
-	m_AmountEnemies = (int)RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Enemy")).size();
-	std::cout << "amount enemies: " << m_AmountEnemies << std::endl;
-}
-
 void game::GameManager::NewLevelLoaded()
 {
 	m_CurrentAmountBombs = 0; //if bomb was still on grid while level change, it wouldn't reset

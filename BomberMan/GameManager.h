@@ -24,7 +24,7 @@ namespace game
 
 		//Enemies
 		void EnemyKilled();
-		void CountEnemies();
+		void SetAmountEnemies(int amount) { m_AmountEnemies = amount; }
 
 		//Bomb
 		bool CanSpawnBomb() { return m_CurrentAmountBombs < m_MaxBombs; }

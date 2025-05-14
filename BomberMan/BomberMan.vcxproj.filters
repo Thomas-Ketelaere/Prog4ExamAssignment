@@ -102,6 +102,9 @@
     <ClCompile Include="PressScreenKeyboardCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="LevelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="PressScreenKeyboardCommand.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelLoader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

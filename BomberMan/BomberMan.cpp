@@ -50,6 +50,7 @@
 #include "OnScreenKeyboardCommand.h"
 #include "NameTextComponent.h"
 #include "PressScreenKeyboardCommand.h"
+#include "LevelLoader.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -298,6 +299,7 @@ void LoadGameScene()
 {
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
 
+	
 	//auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
 	//auto background = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga");
 	//backgroundObject->SetLocalPosition(0, 0);
@@ -408,7 +410,47 @@ void LoadGameScene()
 	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
 	// --------ENEMIES----------
-	auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
+	const std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
+	game::GameManager::GetInstance().SetAmountEnemies(int(enemies.size()));
+
+	for (size_t enemyCounter{}; enemyCounter < enemies.size(); ++enemyCounter)
+	{
+		glm::vec2 enemyPos = enemies[enemyCounter].first;
+		auto enemy = std::make_unique<RamCoreEngine::GameObject>();
+		enemy->SetTag(make_sdbm_hash("Enemy"));
+		enemy->SetParent(gridObject.get(), true);
+		enemy->SetLocalPosition(glm::vec3(enemyPos.x, enemyPos.y, 0));
+		auto enemyCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
+		enemy->AddComponent(std::move(enemyCollider));
+
+		int enemyType = enemies[enemyCounter].second;
+		if (enemyType == 0)
+		{
+			auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100);
+			enemyMovement->SetDebugRendering(true);
+			enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+
+			auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
+			enemy->AddComponent(std::move(enemyMovement));
+			enemy->AddComponent(std::move(enemySprite));
+		}
+
+		else if (enemyType == 1)
+		{
+			auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 10.f, 200, true, 100.f);
+			enemyMovement->SetDebugRendering(true);
+			enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+
+			auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Oneal.png", 4, 3, 0.2f, false);
+			enemy->AddComponent(std::move(enemyMovement));
+			enemy->AddComponent(std::move(enemySprite));
+		}
+
+		scene->Add(std::move(enemy));
+	}
+
+
+	/*auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
 	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
 	enemyBalloomOne->SetParent(gridObject.get(), true);
 	enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
@@ -439,7 +481,7 @@ void LoadGameScene()
 	enemyOnealOne->AddComponent(std::move(enemyOnealOneCollider));
 	enemyOnealOne->AddComponent(std::move(enemyOnealOneSprite));
 
-	scene->Add(std::move(enemyOnealOne));
+	scene->Add(std::move(enemyOnealOne));*/
 
 	
 	playerScoreTextObject->AddComponent(std::move(playerScoreTextChange)); // moves after observer is set
@@ -450,7 +492,7 @@ void LoadGameScene()
 	SDL_Color color = { 56, 135, 0, 255 };
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 
-	game::GameManager::GetInstance().CountEnemies();
+	//game::GameManager::GetInstance().CountEnemies();
 
 	// --------SOUND----------
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
@@ -460,6 +502,9 @@ void LoadGameScene()
 void LoadLoadingScene()
 {
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
+
+	std::string levelRead = "../Data/Levels/Level" + std::to_string(game::GameManager::GetInstance().GetCurrentLevel()) + ".txt";
+	game::LevelLoader::GetInstance().ReadFile(levelRead); //gonna load the level here, doesnt need to be done when level starts
 
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 32);
 
