@@ -20,7 +20,7 @@ namespace game
 
 		std::vector<std::pair<glm::vec2, int>> m_Enemies;
 		std::vector<int> m_HardWallIndices;
-		int m_AmountBreakableWalls;
+		int m_AmountBreakableWalls{};
 	};
 }
 

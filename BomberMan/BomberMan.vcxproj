@@ -199,6 +199,9 @@
     <ClCompile Include="PlayerSpriteComponent.cpp" />
     <ClCompile Include="PressScreenKeyboardCommand.cpp" />
     <ClCompile Include="RotatingMovingPointComponent.cpp" />
+    <ClCompile Include="SaveScoreHoldCommand.cpp" />
+    <ClCompile Include="SaveScoreComponent.cpp" />
+    <ClCompile Include="SaveScoreReleaseCommand.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreTextComponent.cpp" />
     <ClCompile Include="SpawnBombCommand.cpp" />
@@ -228,6 +231,9 @@
     <ClInclude Include="PlayerSpriteComponent.h" />
     <ClInclude Include="PressScreenKeyboardCommand.h" />
     <ClInclude Include="RotatingMovingPointComponent.h" />
+    <ClInclude Include="SaveScoreHoldCommand.h" />
+    <ClInclude Include="SaveScoreComponent.h" />
+    <ClInclude Include="SaveScoreReleaseCommand.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreTextComponent.h" />
     <ClInclude Include="SpawnBombCommand.h" />

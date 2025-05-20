@@ -7,7 +7,15 @@ void game::GameManager::LoseLive()
 {
 	--m_TotalLives;
 	//TODO: check if it is < 0 or not
-	RamCoreEngine::SceneManager::GetInstance().LoadScene("LoadingScreen");
+	if (m_TotalLives <= -1)
+	{
+		RamCoreEngine::SceneManager::GetInstance().LoadScene("EndScreen");
+	}
+	else
+	{
+		RamCoreEngine::SceneManager::GetInstance().LoadScene("LoadingScreen");
+	}
+	
 }
 
 void game::GameManager::ResetStats()
@@ -15,6 +23,8 @@ void game::GameManager::ResetStats()
 	m_TotalLives = m_MaxLives;
 	m_CurrentAmountBombs = 0;
 	m_MaxBombs = 1;
+	m_CurrentLevel = 1;
+	m_Name = " ";
 }
 
 void game::GameManager::NewLevelLoaded()
@@ -26,7 +36,14 @@ void game::GameManager::AdvanceLevel()
 {
 	++m_CurrentLevel;
 	//TODO: check if it is max level or not, if so => endscreen with high score
-	RamCoreEngine::SceneManager::GetInstance().LoadScene("LoadingScreen");
+	if (m_CurrentLevel >= m_MaxLevels)
+	{
+		RamCoreEngine::SceneManager::GetInstance().LoadScene("EndScreen");
+	}
+	else
+	{
+		RamCoreEngine::SceneManager::GetInstance().LoadScene("LoadingScreen");
+	}
 }
 
 void game::GameManager::AddLetterToName(char letter)
@@ -45,7 +62,6 @@ void game::GameManager::RemoveLetterFromName()
 	{
 		m_Name = " ";
 	}
-	
 }
 
 void game::GameManager::EnemyKilled()

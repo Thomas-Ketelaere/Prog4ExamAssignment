@@ -51,6 +51,9 @@
 #include "NameTextComponent.h"
 #include "PressScreenKeyboardCommand.h"
 #include "LevelLoader.h"
+#include "SaveScoreReleaseCommand.h"
+#include "SaveScoreHoldCommand.h"
+#include "SaveScoreComponent.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -313,7 +316,7 @@ void LoadGameScene()
 	//logoObject->AddComponent(std::move(logo));
 	//
 	//scene->Add(std::move(logoObject));
-	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 32);
+	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
 
 	//auto assignmentTextObject = std::make_unique<RamCoreEngine::GameObject>();
 	//
@@ -324,7 +327,7 @@ void LoadGameScene()
 
 	auto fpsObject = std::make_unique<RamCoreEngine::GameObject>();
 	auto fpsText = std::make_unique<RamCoreEngine::TextComponent>(fpsObject.get(), "FPS:", font);
-	fpsObject->SetLocalPosition(glm::vec3(80, 32, 0.f));
+	fpsObject->SetLocalPosition(glm::vec3(40, 32, 0.f));
 	fpsObject->AddComponent(std::move(fpsText));
 
 	auto fpsCounter = std::make_unique<game::FpsComponent>(fpsObject.get());
@@ -386,10 +389,10 @@ void LoadGameScene()
 	gridObject->AddComponent(std::move(gridView));
 
 	auto playerLivesTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	playerLivesTextObject->SetLocalPosition(glm::vec3(700, 30, 0.f));
+	playerLivesTextObject->SetLocalPosition(glm::vec3(420, 30, 0.f));
 	std::string lives = "Lives: " + std::to_string(game::GameManager::GetInstance().GetTotalLives());
 	auto playerLivesText = std::make_unique<RamCoreEngine::TextComponent>(playerLivesTextObject.get(), lives, font);
-	//playerLivesText->ChangeFontSize(18);
+	playerLivesText->ChangeFontSize(28);
 	playerLivesTextObject->AddComponent(std::move(playerLivesText));
 	//auto playerLivesTextChange = std::make_unique<game::LivesTextComponent>(playerLivesTextObject.get());
 	//playerLivesTextObject->AddComponent(std::move(playerLivesTextChange)); // moves after observer is set
@@ -397,10 +400,10 @@ void LoadGameScene()
 
 	//display score
 	auto playerScoreTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	playerScoreTextObject->SetLocalPosition(glm::vec3(500, 32, 0.f));
+	playerScoreTextObject->SetLocalPosition(glm::vec3(230, 30, 0.f));
 	std::string score = "Current score: " + std::to_string(game::GameManager::GetInstance().GetTotalScore());
 	auto playerScoreText = std::make_unique<RamCoreEngine::TextComponent>(playerScoreTextObject.get(), score, font);
-	playerScoreText->ChangeFontSize(32);
+	playerScoreText->ChangeFontSize(28);
 	playerScoreTextObject->AddComponent(std::move(playerScoreText));
 	auto playerScoreTextChange = std::make_unique<game::ScoreTextComponent>(playerScoreTextObject.get());
 
@@ -528,16 +531,31 @@ void LoadEndScene()
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 50);
 
+	auto playerScoreTextObject = std::make_unique<RamCoreEngine::GameObject>();
+	playerScoreTextObject->SetLocalPosition(glm::vec3(256, 50, 0.f));
+	std::string score = "Your score: " + std::to_string(game::GameManager::GetInstance().GetTotalScore());
+	auto playerScoreText = std::make_unique<RamCoreEngine::TextComponent>(playerScoreTextObject.get(), score, font);
+	playerScoreText->ChangeFontSize(30);
+	playerScoreTextObject->AddComponent(std::move(playerScoreText));
+	auto playerScoreTextChange = std::make_unique<game::ScoreTextComponent>(playerScoreTextObject.get());
+	scene->Add(std::move(playerScoreTextObject));
+
 	auto onScreenKeyboardObject = std::make_unique<RamCoreEngine::GameObject>();
 	onScreenKeyboardObject->SetLocalPosition(glm::vec3(256, 238, 0));
 	auto nameTextComp = std::make_unique<RamCoreEngine::TextComponent>(onScreenKeyboardObject.get(), " ", font, true);
-	nameTextComp->SetCustomPosition(glm::vec2(0, -150));
+	nameTextComp->SetCustomPosition(glm::vec2(0, -120));
 	auto nameTextChangeComp = std::make_unique<game::NameTextComponent>(onScreenKeyboardObject.get());
 	auto onScreenKeyboardComp = std::make_unique<game::OnScreenKeyboardComponent>(onScreenKeyboardObject.get(), 13, 2, 20, 40, uint8_t(30), uint8_t(40));
 	onScreenKeyboardComp->GetNameChangedEventSubject()->AddObserver(nameTextChangeComp.get());
 	onScreenKeyboardObject->AddComponent(std::move(nameTextComp));
 	onScreenKeyboardObject->AddComponent(std::move(nameTextChangeComp));
 	onScreenKeyboardObject->AddComponent(std::move(onScreenKeyboardComp));
+
+	auto saveBarObject = std::make_unique<RamCoreEngine::GameObject>();
+	saveBarObject->SetLocalPosition(glm::vec3(256, 400, 0));
+	auto saveBar = std::make_unique<game::SaveScoreComponent>(saveBarObject.get(), 100.f, 20.f, 50.f, "../Data/HighScores/highScores.txt");
+	saveBarObject->AddComponent(std::move(saveBar));
+	
 
 	//------------KEYBOARD------------
 	auto keyboardLeft = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
@@ -553,6 +571,8 @@ void LoadEndScene()
 	auto keyboardClickRemove = std::make_unique<game::PressScreenKeyboardCommand>(onScreenKeyboardObject.get());
 	keyboardClickRemove->SetShouldRemove(true);
 
+	auto keyboardHoldSave = std::make_unique<game::SaveScoreHoldCommand>(saveBarObject.get());
+	auto keyboardReleaseSave = std::make_unique<game::SaveScoreReleaseCommand>(saveBarObject.get());
 
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardLeft), RamCoreEngine::KeyState::Up, SDLK_a, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardRight), RamCoreEngine::KeyState::Up, SDLK_d, -1);
@@ -560,7 +580,9 @@ void LoadEndScene()
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardDown), RamCoreEngine::KeyState::Up, SDLK_s, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardClickAdd), RamCoreEngine::KeyState::Up, SDLK_e, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardClickRemove), RamCoreEngine::KeyState::Up, SDLK_q, -1);
-	
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardHoldSave), RamCoreEngine::KeyState::Pressed, SDLK_f, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(keyboardReleaseSave), RamCoreEngine::KeyState::Up, SDLK_f, -1);
+
 	//------------GAMEPAD------------
 	auto gamepadLeft = std::make_unique<game::OnScreenKeyboardCommand>(onScreenKeyboardObject.get());
 	gamepadLeft->SetDirection(glm::vec2(-1, 0));
@@ -575,6 +597,8 @@ void LoadEndScene()
 	auto gamepadClickRemove = std::make_unique<game::PressScreenKeyboardCommand>(onScreenKeyboardObject.get());
 	gamepadClickRemove->SetShouldRemove(true);
 
+	auto gamepadHoldSave = std::make_unique<game::SaveScoreHoldCommand>(saveBarObject.get());
+	auto gamepadReleaseSave = std::make_unique<game::SaveScoreReleaseCommand>(saveBarObject.get());
 
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadLeft), RamCoreEngine::KeyState::Up, 0x0004, 0);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadRight), RamCoreEngine::KeyState::Up, 0x0008, 0);
@@ -582,10 +606,11 @@ void LoadEndScene()
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadDown), RamCoreEngine::KeyState::Up, 0x0002, 0);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadClickAdd), RamCoreEngine::KeyState::Up, 0x8000, 0);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadClickRemove), RamCoreEngine::KeyState::Up, 0x2000, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadHoldSave), RamCoreEngine::KeyState::Pressed, 0x4000, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gamepadReleaseSave), RamCoreEngine::KeyState::Up, 0x4000, 0);
 
 	scene->Add(std::move(onScreenKeyboardObject));
-
-
+	scene->Add(std::move(saveBarObject));
 	
 }
 
@@ -600,9 +625,8 @@ void load()
 	sceneLoading.SetLoadingFunction(LoadLoadingScene);
 	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
 	sceneGame.SetLoadingFunction(LoadGameScene);
-
-	//auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", true);
-	//sceneEnd.SetLoadingFunction(LoadEndScene);
+	auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", false);
+	sceneEnd.SetLoadingFunction(LoadEndScene);
 
 	// ------------ SOUND --------------
 

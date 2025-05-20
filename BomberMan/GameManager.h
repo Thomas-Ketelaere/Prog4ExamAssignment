@@ -13,7 +13,6 @@ namespace game
 		void ResetStats();
 
 		//Lives
-		
 		void LoseLive();
 		void SetMaxLives(int lives) { m_MaxLives = lives; m_TotalLives = m_MaxLives; }
 		int GetTotalLives() const { return m_TotalLives; }
@@ -54,6 +53,8 @@ namespace game
 		int m_CurrentAmountBombs{};
 		int m_MaxBombs{ 1 };
 		int m_AmountEnemies{};
+		const int m_MaxLevels{ 1 }; //should be three but for testing one now
+
 	};
 
 }
