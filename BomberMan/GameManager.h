@@ -7,6 +7,7 @@ namespace game
 	//IF TIME LEFT: (change these into events)
 	// - check if possible count enemies in Grid?
 	// - check if possible Lose Live in live component for both players?
+	// - check if possible do bombs spawning different (same with range)
 	class GameManager : public RamCoreEngine::Singleton<GameManager>
 	{
 	public:
@@ -27,8 +28,11 @@ namespace game
 
 		//Bomb
 		bool CanSpawnBomb() { return m_CurrentAmountBombs < m_MaxBombs; }
+		int GetBombRange() { return m_BombRange; }
 		void SpawnedBomb() { ++m_CurrentAmountBombs; }
 		void BombExploded() { --m_CurrentAmountBombs; }
+		void ExtraBombPU() { ++m_MaxBombs; }
+		void FlamesPU() { ++m_BombRange; }
 		
 		//Level
 		const int GetCurrentLevel() { return m_CurrentLevel; }
@@ -54,7 +58,7 @@ namespace game
 		int m_MaxBombs{ 1 };
 		int m_AmountEnemies{};
 		const int m_MaxLevels{ 1 }; //should be three but for testing one now
-
+		int m_BombRange{ 1 };
 	};
 
 }

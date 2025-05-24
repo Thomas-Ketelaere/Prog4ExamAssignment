@@ -20,7 +20,7 @@ void game::SpawnBombCommand::Execute()
 {
 	if (game::GameManager::GetInstance().CanSpawnBomb())
 	{
-		m_pGridComponent->SpawnBomb(GetGameActor()->GetWorldPosition());
+		m_pGridComponent->SpawnBomb(GetGameActor()->GetWorldPosition(), game::GameManager::GetInstance().GetBombRange());
 		game::GameManager::GetInstance().SpawnedBomb();
 	}
 }

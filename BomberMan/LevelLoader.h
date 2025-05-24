@@ -13,6 +13,7 @@ namespace game
 
 		const std::vector<std::pair<glm::vec2, int>>& GetEnemies() { return m_Enemies; }
 		const std::vector<int>& GetHardWallIndices() { return m_HardWallIndices; }
+		const std::vector<int>& GetPickUpIndices() { return m_PickUpIndices; }
 		int GetAmountBreakableWalls() { return m_AmountBreakableWalls; }
 
 	private:
@@ -20,6 +21,7 @@ namespace game
 
 		std::vector<std::pair<glm::vec2, int>> m_Enemies;
 		std::vector<int> m_HardWallIndices;
+		std::vector<int> m_PickUpIndices;
 		int m_AmountBreakableWalls{};
 	};
 }

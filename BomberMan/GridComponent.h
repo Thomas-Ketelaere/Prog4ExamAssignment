@@ -11,10 +11,10 @@ namespace RamCoreEngine
 
 namespace game
 {
-	
+	class BombComponent;
 	enum class CellState
 	{
-		Empty, HardWall, BreakableWall, Bomb
+		Empty, HardWall, BreakableWall
 	};
 
 	// PU = power up
@@ -29,6 +29,7 @@ namespace game
 		CellState m_CellState{};
 		CellItem m_CellItem{CellItem::Empty};
 		glm::vec2 m_Position{};
+		BombComponent* m_pBombComponent = nullptr;
 		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetWall = nullptr;
 	};
 
@@ -53,7 +54,7 @@ namespace game
 
 		virtual void LateUpdate() override;
 
-		void SpawnBomb(glm::vec2 position);
+		void SpawnBomb(glm::vec2 position, int range);
 		void ExplodeBomb(int index, int range);
 
 		bool IsCellWalkable(const glm::vec2& position, bool isPlayer);
@@ -75,7 +76,7 @@ namespace game
 		glm::vec2 GetCellPositionFromIndexWorld(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
 		bool IsObjectInCell(const glm::vec2& position, const int cellIndex);
-		Cell* GetRandomEmptyCell();
+		Cell* GetRandomCell(CellState cellState);
 
 		//A*
 		std::vector<int> FindPath(int startIndex, int endIndex);

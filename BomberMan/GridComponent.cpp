@@ -52,7 +52,6 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 			//}
 
 			cell->m_CellState = CellState::Empty;
-			emptyCells.emplace_back(cell);
 			m_pCells.emplace_back(cell);
 		}
 	}
@@ -70,8 +69,8 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 	const int amountOfBreakableWalls{ game::LevelLoader::GetInstance().GetAmountBreakableWalls()};
 	for (int emptyCounter{}; emptyCounter < amountOfBreakableWalls; ++emptyCounter)
 	{
-		Cell* cell = GetRandomEmptyCell();
-		int index = std::rand() % emptyCells.size();
+		Cell* cell = GetRandomCell(CellState::Empty);
+		int index = GetIndexFromPosition(cell->m_Position); //TODO: get index from cell
 		if (index == 33 || index == 34 || index == 63 || index == 94)
 		{
 			--emptyCounter; //sort of recursive, these spots should stay free for player spawn
@@ -79,13 +78,40 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 		else
 		{
 			cell->m_CellState = CellState::BreakableWall;
-			cell->m_CellItem = CellItem::Exit; //TODO: obviously not all breakable walls are Exits, this is just for testing purposes
 			auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "BreakableWall.png", 7, 1, 0.1f, true, true);
 			spriteSheetWall->SetCustomPosition(cell->m_Position);
 			spriteSheetWall->ShouldAnimate(false);
 			cell->m_pSpriteSheetWall = spriteSheetWall.get();
-			emptyCells.erase(emptyCells.begin() + index);
 			GetGameObject()->AddComponent(std::move(spriteSheetWall));
+		}
+	}
+
+	std::vector<int> pickUpsIndices = LevelLoader::GetInstance().GetPickUpIndices();
+	for (size_t pickUpCounter{}; pickUpCounter <= pickUpsIndices.size(); ++pickUpCounter)//0 = extra bomb, 1 = detonator, 2 = flames
+	{
+		Cell* randBreakableWall = GetRandomCell(CellState::BreakableWall);
+		if (randBreakableWall->m_CellItem != CellItem::Empty)
+		{
+			--pickUpCounter;
+		}
+		else
+		{ 
+			if (pickUpCounter == pickUpsIndices.size()) //last one always exit
+			{
+				randBreakableWall->m_CellItem = CellItem::Exit;
+			}
+			else if (pickUpsIndices[pickUpCounter] == 0)
+			{
+				randBreakableWall->m_CellItem = CellItem::ExtraBombPU;
+			}
+			else if (pickUpsIndices[pickUpCounter] == 1)
+			{
+				randBreakableWall->m_CellItem = CellItem::DetonatorPU;
+			}
+			else if (pickUpsIndices[pickUpCounter] == 2)
+			{
+				randBreakableWall->m_CellItem = CellItem::FlamesPU;
+			}
 		}
 	}
 }
@@ -128,12 +154,13 @@ void game::GridComponent::LateUpdate()
 			}
 		}
 		m_BombExploded = false; // this should be after some time
+		m_ExplodedCellIndices.clear();
 	}
 	
 }
 
 
-void game::GridComponent::SpawnBomb(glm::vec2 position)
+void game::GridComponent::SpawnBomb(glm::vec2 position, int range)
 {
 	int index = GetIndexFromPosition(position);
 	if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
@@ -145,13 +172,13 @@ void game::GridComponent::SpawnBomb(glm::vec2 position)
 		spawnPosMoved.y = spawnPosition.y - gridPos.y;
 		auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
 		bombObject->SetParent(GetGameObject(), true);
-		auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f);
+		auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f, range);
 		auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
+		m_pCells[index]->m_pBombComponent = bombComponent.get();
 		bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
 		bombObject->AddComponent(std::move(bombComponent));
 		bombObject->AddComponent(std::move(bombSpriteComponent));
 		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
-		m_pCells[index]->m_CellState = CellState::Bomb;
 	}
 }
 
@@ -159,12 +186,12 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 {
 	//TODO : CLEAN UP AND MAKE MORE EFFICIENT
 	m_BombExploded = true;
-	m_ExplodedCellIndices.clear();
+	
 	m_ExplodedCellIndices.emplace_back(index);
 
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
-	
+	cellCenter->m_pBombComponent = nullptr;
 	cellCenter->m_CellState = CellState::Empty;
 	auto spriteSheetExplosionCenter = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
@@ -187,6 +214,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		}
 		else // empty cell
 		{
+			if (cell->m_pBombComponent != nullptr)
+			{
+				cell->m_pBombComponent->Explode();
+				cell->m_pBombComponent = nullptr;
+			}
 			if (rangeCounter != range)
 			{
 				SpawnExplodeTexture(cell->m_Position, "ExplosionSide.png");
@@ -217,6 +249,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 		else // empty cell
 		{
+			if (cell->m_pBombComponent != nullptr)
+			{
+				cell->m_pBombComponent->Explode();
+				cell->m_pBombComponent = nullptr;
+			}
 			if (rangeCounter != range)
 			{
 				SpawnExplodeTexture(cell->m_Position, "ExplosionSide.png");
@@ -247,6 +284,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 		else // empty cell
 		{
+			if (cell->m_pBombComponent != nullptr)
+			{
+				cell->m_pBombComponent->Explode();
+				cell->m_pBombComponent = nullptr;
+			}
 			if (rangeCounter != range)
 			{
 				SpawnExplodeTexture(cell->m_Position, "ExplosionDown.png");
@@ -278,6 +320,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 		else // empty cell
 		{
+			if (cell->m_pBombComponent != nullptr)
+			{
+				cell->m_pBombComponent->Explode();
+				cell->m_pBombComponent = nullptr;
+			}
 			if (rangeCounter != range)
 			{
 				SpawnExplodeTexture(cell->m_Position, "ExplosionUp.png");
@@ -288,6 +335,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 			}
 		}
 	}
+	
 }
 
 bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant (TODO: check if player can walk over bomb)
@@ -314,18 +362,18 @@ bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlaye
 					game::GameManager::GetInstance().AdvanceLevel();
 				}
 				break;
-			case CellItem::DetonatorPU:
+			case CellItem::DetonatorPU: //TODO: do events here in a spawnBombComponent or sum
 				//gain ability
 				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
 				break;
-			case CellItem::FlamesPU:
-				//gain ability
+			case CellItem::FlamesPU: //TODO: do events here in a spawnBombComponent or sum
+				game::GameManager::GetInstance().FlamesPU();
 				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
 				break;
-			case CellItem::ExtraBombPU:
-				//gain ability
+			case CellItem::ExtraBombPU: //TODO: do events here in a spawnBombComponent or sum
+				game::GameManager::GetInstance().ExtraBombPU();
 				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
 				break;
@@ -333,17 +381,11 @@ bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlaye
 
 			return true; //is still possible to reach empty layer so return here
 		}
-
-
-		else if (m_pCells[indexCell]->m_CellState == CellState::Bomb)
-		{
-			return true;
-		}
 	}
 
 	else
 	{
-		if (m_pCells[indexCell]->m_CellState == CellState::Empty)
+		if (m_pCells[indexCell]->m_CellState == CellState::Empty && m_pCells[indexCell]->m_pBombComponent == nullptr)
 		{
 			return true;
 		}
@@ -360,8 +402,9 @@ game::Cell* game::GridComponent::GetCellFromPosition(const glm::vec2& position)
 
 const glm::vec2& game::GridComponent::GetRandomEmptyCellPosition()
 {
-	return GetRandomEmptyCell()->m_Position;
+	return GetRandomCell(CellState::Empty)->m_Position;
 }
+
 
 const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
 {
@@ -445,15 +488,35 @@ void game::GridComponent::HandleBreakableWall(Cell* cell)
 	}
 
 	//TODO: do this for all power ups
-	/*else if (cell->m_CellItem == CellItem::ExtraBombPU)
+	else if (cell->m_CellItem == CellItem::ExtraBombPU)
 	{
 		cell->m_pSpriteSheetWall->Destroy();
-		auto spriteSheetWall = std::make_unique<SpriteSheetComponent>(GetGameObject(), "Exit.png", 1, 1, 0.1f, false, true);
+		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExtraBomb.png", 1, 1, 0.1f, false, true);
 		spriteSheetWall->SetCustomPosition(cell->m_Position);
 		spriteSheetWall->ShouldAnimate(false);
 		cell->m_pSpriteSheetWall = spriteSheetWall.get();
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
-	}*/
+	}
+
+	else if (cell->m_CellItem == CellItem::DetonatorPU)
+	{
+		cell->m_pSpriteSheetWall->Destroy();
+		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "RemoteControl.png", 1, 1, 0.1f, false, true);
+		spriteSheetWall->SetCustomPosition(cell->m_Position);
+		spriteSheetWall->ShouldAnimate(false);
+		cell->m_pSpriteSheetWall = spriteSheetWall.get();
+		GetGameObject()->AddComponent(std::move(spriteSheetWall));
+	}
+
+	else if (cell->m_CellItem == CellItem::FlamesPU)
+	{
+		cell->m_pSpriteSheetWall->Destroy();
+		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "FireUp.png", 1, 1, 0.1f, false, true);
+		spriteSheetWall->SetCustomPosition(cell->m_Position);
+		spriteSheetWall->ShouldAnimate(false);
+		cell->m_pSpriteSheetWall = spriteSheetWall.get();
+		GetGameObject()->AddComponent(std::move(spriteSheetWall));
+	}
 }
 
 void game::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
@@ -519,18 +582,18 @@ bool game::GridComponent::IsObjectInCell(const glm::vec2& position, const int ce
 	return false;
 }
 
-game::Cell* game::GridComponent::GetRandomEmptyCell()
+game::Cell* game::GridComponent::GetRandomCell(CellState cellState)
 {
-	std::vector<Cell*> emptyCells;
+	std::vector<Cell*> cells;
 	for (Cell* cell : m_pCells)
 	{
-		if (cell->m_CellState == CellState::Empty)
+		if (cell->m_CellState == cellState)
 		{
-			emptyCells.emplace_back(cell);
+			cells.emplace_back(cell);
 		}
 	}
 	
-	return emptyCells[std::rand() % emptyCells.size()];
+	return cells[std::rand() % cells.size()];
 }
 
 std::vector<int> game::GridComponent::FindPath(int startIndex, int endIndex)

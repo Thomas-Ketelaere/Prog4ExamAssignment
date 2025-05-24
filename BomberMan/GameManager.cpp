@@ -24,6 +24,7 @@ void game::GameManager::ResetStats()
 	m_CurrentAmountBombs = 0;
 	m_MaxBombs = 1;
 	m_CurrentLevel = 1;
+	m_BombRange = 1;
 	m_Name = " ";
 }
 
