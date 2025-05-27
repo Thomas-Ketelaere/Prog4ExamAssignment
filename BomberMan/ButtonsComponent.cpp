@@ -3,7 +3,7 @@
 #include "TextComponent.h"
 #include "SceneManager.h"
 
-game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad):
+game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, int startIndex, std::vector<std::string> sceneNamesToLoad):
 	Component(gameObject),
 	m_SmallFontSize{smallFontSize},
 	m_BigFontSize{bigFontSize},
