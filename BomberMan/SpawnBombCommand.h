@@ -3,6 +3,7 @@
 namespace game
 {
 	class GridComponent;
+	class SpawnBombComponent;
 	class SpawnBombCommand : public RamCoreEngine::GameActorCommand
 	{
 	public:
@@ -10,9 +11,9 @@ namespace game
 		void Execute() override;
 		void Start() override;
 
-
 	private:
 		GridComponent* m_pGridComponent{};
+		SpawnBombComponent* m_pSpawnBombComponent;
 	};
 }
 

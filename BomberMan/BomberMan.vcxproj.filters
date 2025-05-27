@@ -114,6 +114,9 @@
     <ClCompile Include="SaveScoreReleaseCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="SpawnBombComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="SaveScoreReleaseCommand.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnBombComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

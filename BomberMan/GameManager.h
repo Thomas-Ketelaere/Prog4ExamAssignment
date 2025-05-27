@@ -27,16 +27,16 @@ namespace game
 		void SetAmountEnemies(int amount) { m_AmountEnemies = amount; }
 
 		//Bomb
-		bool CanSpawnBomb() { return m_CurrentAmountBombs < m_MaxBombs; }
+		
+		bool RemoteExplodeActive() { return m_RemoteExplode; }
 		int GetBombRange() { return m_BombRange; }
-		void SpawnedBomb() { ++m_CurrentAmountBombs; }
-		void BombExploded() { --m_CurrentAmountBombs; }
-		void ExtraBombPU() { ++m_MaxBombs; }
-		void FlamesPU() { ++m_BombRange; }
+		int GetMaxBombs() { return m_MaxBombs; }
+		void SaveBombRange(int newRange) { m_BombRange = newRange; }
+		void SaveRemoteExplode(bool remoteExplode) { m_RemoteExplode = remoteExplode; }
+		void SaveMaxBombs(int newMaxBombs) { m_MaxBombs = newMaxBombs; }
 		
 		//Level
 		const int GetCurrentLevel() { return m_CurrentLevel; }
-		void NewLevelLoaded();
 		bool CanPlayerExit() { return m_AmountEnemies == 0; }
 		void AdvanceLevel();
 
@@ -54,11 +54,11 @@ namespace game
 		int m_MaxLives{};
 		int m_TotalScore{};
 		int m_CurrentLevel{ 1 };
-		int m_CurrentAmountBombs{};
 		int m_MaxBombs{ 1 };
 		int m_AmountEnemies{};
 		const int m_MaxLevels{ 1 }; //should be three but for testing one now
 		int m_BombRange{ 1 };
+		bool m_RemoteExplode{};
 	};
 
 }

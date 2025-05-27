@@ -21,17 +21,12 @@ void game::GameManager::LoseLive()
 void game::GameManager::ResetStats()
 {
 	m_TotalLives = m_MaxLives;
-	m_CurrentAmountBombs = 0;
 	m_MaxBombs = 1;
 	m_CurrentLevel = 1;
 	m_BombRange = 1;
 	m_Name = " ";
 }
 
-void game::GameManager::NewLevelLoaded()
-{
-	m_CurrentAmountBombs = 0; //if bomb was still on grid while level change, it wouldn't reset
-}
 
 void game::GameManager::AdvanceLevel()
 {

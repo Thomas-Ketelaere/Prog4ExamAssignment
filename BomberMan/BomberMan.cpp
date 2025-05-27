@@ -54,6 +54,7 @@
 #include "SaveScoreReleaseCommand.h"
 #include "SaveScoreHoldCommand.h"
 #include "SaveScoreComponent.h"
+#include "SpawnBombComponent.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -107,7 +108,7 @@ void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 	// --------END GAMEPAD-----------
 }
 
-void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
+void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, game::GridComponent* gridComp)
 {
 	// --------KEYBOARD-----------
 	//display lives
@@ -131,11 +132,16 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene)
 	auto playerInputKeyboardSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
 	auto playerInputKeyboardSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
 	auto playerInputKeyboardCollider = std::make_unique<game::PlayerCollider>(playerInputObjectKeyboard.get(), 28.f, 28.f, true);
+	auto playerInputKeyboardSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObjectKeyboard.get());
+
+	gridComp->GetGridSubject()->AddObserver(playerInputKeyboardSpawnBombComponent.get());
+
 	playerInputKeyboardCollider->SetDebugRendering(true);
 	playerInputObjectKeyboard->SetLocalPosition(glm::vec3(48, 112, 0.f));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSetter));
 	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardCollider));
+	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpawnBombComponent));
 
 	//lives
 	//auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectKeyboard.get(), 3);
@@ -386,7 +392,7 @@ void LoadGameScene()
 	gridObject->SetTag(make_sdbm_hash("Grid"));
 	gridObject->SetLocalPosition(glm::vec3(0, 0, 0.f));
 	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f, 512);
-	gridObject->AddComponent(std::move(gridView));
+	
 
 	auto playerLivesTextObject = std::make_unique<RamCoreEngine::GameObject>();
 	playerLivesTextObject->SetLocalPosition(glm::vec3(420, 30, 0.f));
@@ -409,8 +415,10 @@ void LoadGameScene()
 
 	//please do smth about not passing a lot of pointers in functions
 	LoadPlayerGamePad(scene);
-	LoadPlayerKeyboard(scene);
+	LoadPlayerKeyboard(scene, gridView.get());
 	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
+
+	gridObject->AddComponent(std::move(gridView));
 
 	// --------ENEMIES----------
 	const std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
@@ -486,7 +494,6 @@ void LoadGameScene()
 
 	scene->Add(std::move(enemyOnealOne));*/
 
-	
 	playerScoreTextObject->AddComponent(std::move(playerScoreTextChange)); // moves after observer is set
 
 	scene->Add(std::move(gridObject));

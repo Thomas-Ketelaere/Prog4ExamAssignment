@@ -6,12 +6,13 @@
 #include "TextureComponent.h"
 #include "SceneManager.h"
 #include "ServiceLocator.h"
-#include <memory>
 #include "EnemyMovementComponent.h"
 #include "LevelLoader.h"
-
 #include "PlayerSpriteComponent.h"
 #include "GameManager.h"
+#include "Subject.h"
+
+
 game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int gridWidth, int gridHeight, float cellSize, float offsetY, int screenWidth):
 	Component(gameObject),
 	m_AmountColumns{amountColumns},
@@ -31,25 +32,6 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 		{
 			glm::vec2 position = { colCounter * m_CellWidth + m_CellWidth / 2, rowCounter * m_CellHeight + m_CellHeight / 2 + offsetY};
 			Cell* cell = new Cell(position);
-			//if (rowCounter == 0 || colCounter == 0 || rowCounter == amountRows - 1 || colCounter == amountColumns - 1)
-			//{
-			//	cell->m_CellState = CellState::HardWall;
-			//	auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
-			//	spriteSheetWall->SetCustomPosition(position);
-			//	GetGameObject()->AddComponent(std::move(spriteSheetWall));
-			//}
-			//else if (rowCounter % 2 == 0 && colCounter % 2 == 0)
-			//{
-			//	cell->m_CellState = CellState::HardWall;
-			//	auto spriteSheetWall = std::make_unique<RamCoreEngine::TextureComponent>(GetGameObject(), "HardWall.png", true);
-			//	spriteSheetWall->SetCustomPosition(position);
-			//	GetGameObject()->AddComponent(std::move(spriteSheetWall));
-			//}
-			//else
-			//{
-			//	cell->m_CellState = CellState::Empty;
-			//	emptyCells.emplace_back(cell);
-			//}
 
 			cell->m_CellState = CellState::Empty;
 			m_pCells.emplace_back(cell);
@@ -114,6 +96,8 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 			}
 		}
 	}
+
+	m_pGridEvent = std::make_unique<RamCoreEngine::Subject>();
 }
 
 game::GridComponent::~GridComponent()
@@ -157,29 +141,6 @@ void game::GridComponent::LateUpdate()
 		m_ExplodedCellIndices.clear();
 	}
 	
-}
-
-
-void game::GridComponent::SpawnBomb(glm::vec2 position, int range)
-{
-	int index = GetIndexFromPosition(position);
-	if (m_pCells[index]->m_CellState == CellState::Empty) // extra check since position can be off by a bit
-	{
-		glm::vec2 spawnPosition = GetCellPositionFromIndexWorld(index);
-		glm::vec3 gridPos = GetTransform()->GetWorldPosition();
-		glm::vec2 spawnPosMoved{};
-		spawnPosMoved.x = spawnPosition.x - gridPos.x;
-		spawnPosMoved.y = spawnPosition.y - gridPos.y;
-		auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
-		bombObject->SetParent(GetGameObject(), true);
-		auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), this, index, 2.f, range);
-		auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
-		m_pCells[index]->m_pBombComponent = bombComponent.get();
-		bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
-		bombObject->AddComponent(std::move(bombComponent));
-		bombObject->AddComponent(std::move(bombSpriteComponent));
-		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
-	}
 }
 
 void game::GridComponent::ExplodeBomb(int index, int range)
@@ -335,7 +296,8 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 			}
 		}
 	}
-	
+	Event e(make_sdbm_hash("BombExploded"));
+	m_pGridEvent->NotifyObservers(e, GetGameObject());
 }
 
 bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant (TODO: check if player can walk over bomb)
@@ -362,18 +324,31 @@ bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlaye
 					game::GameManager::GetInstance().AdvanceLevel();
 				}
 				break;
-			case CellItem::DetonatorPU: //TODO: do events here in a spawnBombComponent or sum
+			case CellItem::DetonatorPU: 
 				//gain ability
+				{ //fix for C2360 https://learn.microsoft.com/en-us/cpp/error-messages/compiler-errors-1/compiler-error-c2360?view=msvc-170
+					Event eventDetonatorPU(make_sdbm_hash("CollectedDetonatorPU"));
+					m_pGridEvent->NotifyObservers(eventDetonatorPU, GetGameObject());
+				}
+
 				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
 				break;
-			case CellItem::FlamesPU: //TODO: do events here in a spawnBombComponent or sum
-				game::GameManager::GetInstance().FlamesPU();
+			case CellItem::FlamesPU: 
+				{ //fix for C2360
+					Event eventFlamesPU(make_sdbm_hash("CollectedFlamesPU"));
+					m_pGridEvent->NotifyObservers(eventFlamesPU, GetGameObject());
+				}
+
 				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
 				break;
-			case CellItem::ExtraBombPU: //TODO: do events here in a spawnBombComponent or sum
-				game::GameManager::GetInstance().ExtraBombPU();
+			case CellItem::ExtraBombPU:
+				{ //fix for C2360
+					Event eventExtraBombPU(make_sdbm_hash("CollectedExtraBombPU"));
+					m_pGridEvent->NotifyObservers(eventExtraBombPU, GetGameObject());
+				}
+				
 				m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 				m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
 				break;

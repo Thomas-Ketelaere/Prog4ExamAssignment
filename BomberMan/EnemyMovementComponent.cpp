@@ -52,58 +52,6 @@ void game::EnemyMovementComponent::Update()
 		m_pEnemyState = std::move(newEnemyState);
 		m_pEnemyState->OnEnter();
 	}
-	
-
-	//if (!m_IsDying)
-	//{
-
-
-	//	glm::vec2 worldPos = GetGameObject()->GetWorldPosition();
-	//	glm::vec2 localPos = GetGameObject()->GetLocalPosition();
-
-	//	glm::vec3 gridPos = m_pGridComponent->GetGameObject()->GetWorldPosition();
-
-	//	// Convert path points to world space
-	//	std::vector<glm::vec2> movedPath(m_Path.size());
-	//	std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
-	//		{
-	//			point += glm::vec2(gridPos.x, gridPos.y);
-	//			return point;
-	//		});
-
-
-	//	if (glm::distance(worldPos, movedPath[m_PathIndex]) <= m_DistanceToReachPoint)
-	//	{
-	//		++m_PathIndex;
-
-	//		if (m_PathIndex == m_Path.size() || !m_pGridComponent->IsCellWalkable(movedPath[m_PathIndex], false))// if player reached final cell or check if cell is walkable (if e.g. bomb has been placed after path calculation)
-	//		{
-	//			m_PathIndex = 0;
-	//			auto randomTarget = m_pGridComponent->GetRandomEmptyCell();
-	//			m_Path = m_pGridComponent->GetPath(worldPos, randomTarget);
-	//		}
-
-	//		if (m_ShouldTrackPlayer)
-	//		{
-	//			glm::vec2 playerPos = GetRandomPlayerPositionInRange();
-	//			if (playerPos.x != 0 && playerPos.y != 0)
-	//			{
-	//				m_Path = m_pGridComponent->GetPath(worldPos, playerPos);
-	//				m_PathIndex = 1;
-	//			}
-	//		}
-
-	//		SetSpriteDirection();
-	//	}
-	//	else
-	//	{
-	//		glm::vec2 direction = movedPath[m_PathIndex] - worldPos;
-	//		glm::vec2 dirNorm = glm::normalize(direction);
-
-	//		localPos += m_Speed * dirNorm * RamCoreEngine::Time::GetInstance().m_DeltaTime;
-	//		GetGameObject()->SetLocalPosition(glm::vec3(localPos.x, localPos.y, 0.f));
-	//	}
-	//}
 }
 
 void game::EnemyMovementComponent::Render() const

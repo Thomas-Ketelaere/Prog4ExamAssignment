@@ -3,10 +3,13 @@
 #include <vector>
 #include <glm.hpp>
 #include <string>
+#include <memory>
+
 
 namespace RamCoreEngine
 {
 	class SpriteSheetComponent;
+	class Subject;
 }
 
 namespace game
@@ -54,30 +57,32 @@ namespace game
 
 		virtual void LateUpdate() override;
 
-		void SpawnBomb(glm::vec2 position, int range);
 		void ExplodeBomb(int index, int range);
 
 		bool IsCellWalkable(const glm::vec2& position, bool isPlayer);
 		Cell* GetCellFromPosition(const glm::vec2& position);
+		int GetIndexFromPosition(const glm::vec2& position) const;
+		glm::vec2 GetCellPositionFromIndexWorld(const int index) const;
 
 		const glm::vec2& GetRandomEmptyCellPosition();
 
 		// TODO: RETURNS COPY NOW
 		const std::vector<glm::vec2> GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition);
-
 		
 		bool ShouldGridMove(glm::vec2& playerPos, float moveDirection);
+
+		RamCoreEngine::Subject* GetGridSubject() const { return m_pGridEvent.get(); }
 		
 	private:
 		void HandleBreakableWall(Cell* cell);
 		void SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath);
-		int GetIndexFromPosition(const glm::vec2& position) const;
 		glm::vec2 GetCellPositionFromIndexLocal(const int index) const;
-		glm::vec2 GetCellPositionFromIndexWorld(const int index) const;
 		int GetIndexWithCellOffset(int columnOffset, int rowOffset, int currentIndex);
 		bool IsObjectInCell(const glm::vec2& position, const int cellIndex);
 		Cell* GetRandomCell(CellState cellState);
 
+
+		std::unique_ptr<RamCoreEngine::Subject> m_pGridEvent;
 		//A*
 		std::vector<int> FindPath(int startIndex, int endIndex);
 		float GetHeuristicCost(glm::vec2 a, glm::vec2 b);
