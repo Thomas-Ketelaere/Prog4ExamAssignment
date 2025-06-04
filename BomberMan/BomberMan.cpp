@@ -56,6 +56,8 @@
 #include "SaveScoreComponent.h"
 #include "SpawnBombComponent.h"
 #include "ExplodeBombCommand.h"
+#include "HighScoresTextComponent.h"
+#include "ReturnToStartCommand.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -223,7 +225,7 @@ void LoadStartScene()
 	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
 	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
 	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
-	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
+	scenesToLoad.emplace_back("HighScoreScreen"); //for this maybe set enum in game manager??
 	auto uiHandler = std::make_unique<game::ButtonsComponent>(startButtonsObject.get(), uint8_t(18), uint8_t(25), 0, scenesToLoad);
 	startButtonsObject->AddComponent(std::move(uiHandler));
 
@@ -624,6 +626,27 @@ void LoadEndScene()
 	
 }
 
+void LoadHighScoreScene()
+{
+	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
+
+	auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
+	backgroundObject->SetLocalPosition(glm::vec3(256, 238, 0.f));
+	auto background = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga");
+	backgroundObject->AddComponent(std::move(background));
+	scene->Add(std::move(backgroundObject));
+
+	auto highScores = std::make_unique<RamCoreEngine::GameObject>();
+	highScores->SetLocalPosition(glm::vec3(256, 100, 0.f));
+	auto highScoresText = std::make_unique<game::HighScoresTextComponent>(highScores.get(), "../Data/HighScores/highScores.txt", 50.f);
+	highScores->AddComponent(std::move(highScoresText));
+
+	scene->Add(std::move(highScores));
+
+	auto returnToStartKeyboard = std::make_unique<game::ReturnToStartCommand>();
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(returnToStartKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+}
+
 void load()
 {
 	// ------------ FileReading (TODO: IMPLEMENT) --------------
@@ -633,13 +656,14 @@ void load()
 	sceneStart.SetLoadingFunction(LoadStartScene);
 	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
 	sceneLoading.SetLoadingFunction(LoadLoadingScene);
-	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level1", false);
+	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level", false);
 	sceneGame.SetLoadingFunction(LoadGameScene);
 	auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", false);
 	sceneEnd.SetLoadingFunction(LoadEndScene);
+	auto& sceneHighScore = RamCoreEngine::SceneManager::GetInstance().CreateScene("HighScoreScreen", false);
+	sceneHighScore.SetLoadingFunction(LoadHighScoreScene);
 
 	// ------------ SOUND --------------
-
 #if _DEBUG
 
 	RamCoreEngine::ServiceLocator::RegisterSoundSystem(std::make_unique<RamCoreEngine::LoggingSoundSystem>(std::make_unique<RamCoreEngine::SDLSoundSystem>()));

@@ -12,9 +12,6 @@ game::SpawnBombComponent::SpawnBombComponent(RamCoreEngine::GameObject* gameObje
 {
 	m_Range = game::GameManager::GetInstance().GetBombRange();
 	m_RemoteExplode = game::GameManager::GetInstance().RemoteExplodeActive();
-
-	//testing
-	m_RemoteExplode = true;
 	m_MaxAmountBombs = game::GameManager::GetInstance().GetMaxBombs();
 }
 
@@ -29,7 +26,10 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 	if (event.id == make_sdbm_hash("BombExploded"))
 	{
 		--m_CurrentAmountBombs;
-		m_Bombs.pop();
+		if (m_RemoteExplode)
+		{
+			m_Bombs.pop();
+		}
 	}
 
 	else if (event.id == make_sdbm_hash("CollectedFlamesPU"))

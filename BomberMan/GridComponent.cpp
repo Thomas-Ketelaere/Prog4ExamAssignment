@@ -52,10 +52,10 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 	for (int emptyCounter{}; emptyCounter < amountOfBreakableWalls; ++emptyCounter)
 	{
 		Cell* cell = GetRandomCell(CellState::Empty);
-		int index = GetIndexFromPosition(cell->m_Position); //TODO: get index from cell
-		if (index == 33 || index == 34 || index == 63 || index == 94)
+		int index = GetIndexFromPosition(cell->m_Position);
+		if (index == 32 || index == 33 || index == 62 || index == 93)
 		{
-			--emptyCounter; //sort of recursive, these spots should stay free for player spawn
+			--emptyCounter; //these spots should stay free for player spawn
 		}
 		else
 		{
@@ -145,7 +145,6 @@ void game::GridComponent::LateUpdate()
 
 void game::GridComponent::ExplodeBomb(int index, int range)
 {
-	//TODO : CLEAN UP AND MAKE MORE EFFICIENT
 	m_BombExploded = true;
 	
 	m_ExplodedCellIndices.emplace_back(index);

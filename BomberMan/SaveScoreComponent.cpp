@@ -85,5 +85,5 @@ void game::SaveScoreComponent::SaveScore()
 		}
 	}
 
-	RamCoreEngine::SceneManager::GetInstance().LoadScene("Start"); 
+	RamCoreEngine::SceneManager::GetInstance().LoadScene("HighScoreScreen"); 
 }

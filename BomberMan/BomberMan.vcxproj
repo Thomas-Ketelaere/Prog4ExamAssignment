@@ -183,6 +183,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="ButtonsCommand.cpp" />
     <ClCompile Include="ButtonsComponent.cpp" />
+    <ClCompile Include="HighScoresTextComponent.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="LoadingScreenComponent.cpp" />
     <ClCompile Include="NameTextComponent.cpp" />
@@ -200,6 +201,7 @@
     <ClCompile Include="MovementComponent.cpp" />
     <ClCompile Include="PlayerSpriteComponent.cpp" />
     <ClCompile Include="PressScreenKeyboardCommand.cpp" />
+    <ClCompile Include="ReturnToStartCommand.cpp" />
     <ClCompile Include="RotatingMovingPointComponent.cpp" />
     <ClCompile Include="SaveScoreHoldCommand.cpp" />
     <ClCompile Include="SaveScoreComponent.cpp" />
@@ -218,6 +220,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="ButtonsCommand.h" />
     <ClInclude Include="ButtonsComponent.h" />
+    <ClInclude Include="HighScoresTextComponent.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LoadingScreenComponent.h" />
     <ClInclude Include="NameTextComponent.h" />
@@ -235,6 +238,7 @@
     <ClInclude Include="MovementComponent.h" />
     <ClInclude Include="PlayerSpriteComponent.h" />
     <ClInclude Include="PressScreenKeyboardCommand.h" />
+    <ClInclude Include="ReturnToStartCommand.h" />
     <ClInclude Include="RotatingMovingPointComponent.h" />
     <ClInclude Include="SaveScoreHoldCommand.h" />
     <ClInclude Include="SaveScoreComponent.h" />

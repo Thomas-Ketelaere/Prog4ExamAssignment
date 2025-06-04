@@ -15,7 +15,6 @@ void game::LoadingScreenComponent::Update()
 	if (m_AccumulatedTime >= m_TimeToLoadLevel)
 	{
 		//load level
-		std::string level = "Level" + std::to_string(game::GameManager::GetInstance().GetCurrentLevel());
-		RamCoreEngine::SceneManager::GetInstance().LoadScene(level);
+		RamCoreEngine::SceneManager::GetInstance().LoadScene("Level");
 	}
 }
