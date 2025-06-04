@@ -15,11 +15,6 @@ void game::SpawnBombCommand::Start()
 void game::SpawnBombCommand::Execute()
 {
 	m_pSpawnBombComponent->SpawnBomb(GetGameActor()->GetWorldPosition());
-	//if (game::GameManager::GetInstance().CanSpawnBomb())
-	//{
-	//	m_pGridComponent->SpawnBomb(GetGameActor()->GetWorldPosition(), game::GameManager::GetInstance().GetBombRange());
-	//	game::GameManager::GetInstance().SpawnedBomb();
-	//}
 }
 
 

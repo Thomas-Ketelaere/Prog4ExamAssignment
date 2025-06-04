@@ -55,6 +55,7 @@
 #include "SaveScoreHoldCommand.h"
 #include "SaveScoreComponent.h"
 #include "SpawnBombComponent.h"
+#include "ExplodeBombCommand.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 {
@@ -165,15 +166,17 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, game::GridComponent* gridCo
 	gainBigScoreCommandKeyboard->SetGainScore(100);
 
 	auto spawnBombCommandKeyboard = std::make_unique<game::SpawnBombCommand>(playerInputObjectKeyboard.get());
+	auto explodeBombCommandKeyboard = std::make_unique<game::ExplodeBombCommand>(playerInputObjectKeyboard.get());
 
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_a, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_d, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_w, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_s, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_q, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_r, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_f, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(explodeBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
 
 	scene->Add(std::move(playerInputObjectKeyboard));
 

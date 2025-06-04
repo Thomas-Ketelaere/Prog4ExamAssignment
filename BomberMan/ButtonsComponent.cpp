@@ -3,7 +3,7 @@
 #include "TextComponent.h"
 #include "SceneManager.h"
 
-game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, size_t startIndex, std::vector<std::string> sceneNamesToLoad):
+game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad):
 	Component(gameObject),
 	m_SmallFontSize{smallFontSize},
 	m_BigFontSize{bigFontSize},
@@ -34,14 +34,18 @@ void game::ButtonsComponent::ChangeIndex(bool up)
 	}
 	else
 	{
-		--m_Index;
+		if (m_Index == 0)
+		{
+			m_Index = int(m_pTextComponents.size() - 1);
+		}
+		else
+		{
+			--m_Index;
+		}
+		
 	}
 
-	if (m_Index < 0)
-	{
-		m_Index = int(m_pTextComponents.size() - 1);
-	}
-	else if (m_Index == m_pTextComponents.size())
+	if (m_Index == m_pTextComponents.size())
 	{
 		m_Index = 0;
 	}

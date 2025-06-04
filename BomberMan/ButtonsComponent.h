@@ -13,7 +13,7 @@ namespace game
 	class ButtonsComponent final : public RamCoreEngine::Component
 	{
 	public:
-		ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, size_t startIndex, std::vector<std::string> sceneNamesToLoad); //TODO: make hash map for scenes
+		ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad); //TODO: make hash map for scenes
 
 		void Start() override;
 
@@ -23,7 +23,7 @@ namespace game
 		std::vector < std::pair< RamCoreEngine::TextComponent*, std::string>> m_pTextComponents;
 		uint8_t m_SmallFontSize;
 		uint8_t m_BigFontSize;
-		size_t m_Index;
+		unsigned int m_Index;
 	};
 }
 

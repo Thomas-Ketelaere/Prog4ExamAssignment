@@ -5,12 +5,16 @@
 #include "GameManager.h"
 #include "BombComponent.h"
 #include "SpriteSheetComponent.h"
+#include "BombTimerComponent.h"
 
 game::SpawnBombComponent::SpawnBombComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
 {
 	m_Range = game::GameManager::GetInstance().GetBombRange();
 	m_RemoteExplode = game::GameManager::GetInstance().RemoteExplodeActive();
+
+	//testing
+	m_RemoteExplode = true;
 	m_MaxAmountBombs = game::GameManager::GetInstance().GetMaxBombs();
 }
 
@@ -25,6 +29,7 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 	if (event.id == make_sdbm_hash("BombExploded"))
 	{
 		--m_CurrentAmountBombs;
+		m_Bombs.pop();
 	}
 
 	else if (event.id == make_sdbm_hash("CollectedFlamesPU"))
@@ -41,7 +46,6 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 	}
 
 }
-
 
 game::SpawnBombComponent::~SpawnBombComponent()
 {
@@ -64,16 +68,34 @@ void game::SpawnBombComponent::SpawnBomb(const glm::vec2 position)
 			spawnPosMoved.y = spawnPosition.y - gridPos.y;
 			auto bombObject = std::make_unique<RamCoreEngine::GameObject>();
 			bombObject->SetParent(m_pGridComponent->GetGameObject(), true);
-			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), m_pGridComponent, index, 2.f, m_Range);
-			auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
-			m_pGridComponent->GetCellFromPosition(position)->m_pBombComponent = bombComponent.get();
-			bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
+			auto bombComponent = std::make_unique<BombComponent>(bombObject.get(), m_pGridComponent, index, m_Range);
+			BombComponent* bombCompPtr = bombComponent.get(); //getting component in BombTimer but still need it for grid and queue
 			bombObject->AddComponent(std::move(bombComponent));
+			if (!m_RemoteExplode) //if not yet have ability, add timer so explodes after some time
+			{
+				auto bombTimerComponent = std::make_unique<BombTimerComponent>(bombObject.get(), m_TimeToExplode);
+				bombObject->AddComponent(std::move(bombTimerComponent));
+			}
+			else
+			{
+				m_Bombs.push(bombCompPtr);
+			}
+			auto bombSpriteComponent = std::make_unique<RamCoreEngine::SpriteSheetComponent>(bombObject.get(), "Bomb.png", 3, 1, 0.2f, false);
+			m_pGridComponent->GetCellFromPosition(position)->m_pBombComponent = bombCompPtr;
+			bombObject->SetLocalPosition(glm::vec3(spawnPosMoved.x, spawnPosMoved.y, 0.f));
 			bombObject->AddComponent(std::move(bombSpriteComponent));
 			RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
 			++m_CurrentAmountBombs;
 		}
 	}
-	
+}
 
+void game::SpawnBombComponent::RemoteExplodeBomb()
+{
+	if (m_Bombs.size() > 0)
+	{
+		BombComponent* bombComponent = m_Bombs.front();
+		bombComponent->Explode();
+		//not poping here, bomb can trigger other bomb, but here wouldnt get popped, so done in BombExploded event
+	}
 }

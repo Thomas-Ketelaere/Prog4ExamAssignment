@@ -117,6 +117,12 @@
     <ClCompile Include="SpawnBombComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="ExplodeBombCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="BombTimerComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -210,6 +216,12 @@
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="SpawnBombComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplodeBombCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="BombTimerComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>

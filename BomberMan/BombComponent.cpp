@@ -1,27 +1,14 @@
 #include "BombComponent.h"
-#include "Timer.h"
 #include "GridComponent.h"
 #include "GameObject.h"
 #include "ServiceLocator.h"
 
-game::BombComponent::BombComponent(RamCoreEngine::GameObject* gameObject, GridComponent* gridComponent, int cellIndex, float timeToExplode, int range) :
+game::BombComponent::BombComponent(RamCoreEngine::GameObject* gameObject, GridComponent* gridComponent, int cellIndex, int range) :
 	Component(gameObject),
 	m_pGridComponent{gridComponent},
 	m_CellIndex{cellIndex},
-	m_TimeToExplode{timeToExplode},
-	m_AccumulatedTime{},
 	m_Range{range}
 {
-	
-}
-
-void game::BombComponent::Update()
-{
-	m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
-	if (m_AccumulatedTime >= m_TimeToExplode)
-	{
-		Explode();
-	}
 }
 
 void game::BombComponent::Explode()

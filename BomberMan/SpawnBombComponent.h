@@ -2,6 +2,8 @@
 #include "Component.h"
 #include "Observer.h"
 #include <glm.hpp>
+#include <queue>
+#include "BombComponent.h"
 
 namespace game
 {
@@ -19,7 +21,9 @@ namespace game
 		void RemoteExplodeBomb();
 
 	private:
+		std::queue<BombComponent*> m_Bombs{};
 		GridComponent* m_pGridComponent{};
+		const float m_TimeToExplode{ 2.f };
 		int m_Range;
 		int m_MaxAmountBombs;
 		int m_CurrentAmountBombs{};

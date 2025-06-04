@@ -3,10 +3,10 @@
 namespace game
 {
 	class SpawnBombComponent;
-	class SpawnBombCommand : public RamCoreEngine::GameActorCommand
+	class ExplodeBombCommand : public RamCoreEngine::GameActorCommand
 	{
 	public:
-		SpawnBombCommand(RamCoreEngine::GameObject* actor);
+		ExplodeBombCommand(RamCoreEngine::GameObject* actor);
 		void Execute() override;
 		void Start() override;
 
@@ -14,4 +14,3 @@ namespace game
 		SpawnBombComponent* m_pSpawnBombComponent;
 	};
 }
-

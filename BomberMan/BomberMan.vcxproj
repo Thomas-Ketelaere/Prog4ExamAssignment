@@ -178,6 +178,8 @@
     <ClCompile Include="Achievements.cpp" />
     <ClCompile Include="BombComponent.cpp" />
     <ClCompile Include="BomberMan.cpp" />
+    <ClCompile Include="BombTimerComponent.cpp" />
+    <ClCompile Include="ExplodeBombCommand.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="ButtonsCommand.cpp" />
     <ClCompile Include="ButtonsComponent.cpp" />
@@ -211,6 +213,8 @@
   <ItemGroup>
     <ClInclude Include="Achievements.h" />
     <ClInclude Include="BombComponent.h" />
+    <ClInclude Include="BombTimerComponent.h" />
+    <ClInclude Include="ExplodeBombCommand.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="ButtonsCommand.h" />
     <ClInclude Include="ButtonsComponent.h" />
