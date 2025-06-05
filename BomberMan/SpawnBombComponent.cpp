@@ -6,6 +6,7 @@
 #include "BombComponent.h"
 #include "SpriteSheetComponent.h"
 #include "BombTimerComponent.h"
+#include "PlayerSpriteComponent.h"
 
 game::SpawnBombComponent::SpawnBombComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
@@ -19,6 +20,7 @@ void game::SpawnBombComponent::Start()
 {
 	RamCoreEngine::GameObject* gridObject = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetFirstObjectWithTag(make_sdbm_hash("Grid"));
 	m_pGridComponent = gridObject->GetComponent<GridComponent>();
+	m_pPlayerSpriteComponent = GetGameObject()->GetComponent<PlayerSpriteComponent>();
 }
 
 void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
@@ -59,6 +61,10 @@ game::SpawnBombComponent::~SpawnBombComponent()
 
 void game::SpawnBombComponent::SpawnBomb(const glm::vec2 position)
 {
+	if (m_pPlayerSpriteComponent->IsDying())
+	{
+		return;
+	}
 	if (m_CurrentAmountBombs < m_MaxAmountBombs)
 	{
 		if (m_pGridComponent->IsCellWalkable(position, true)) //checking if cell is empty to spawn
@@ -95,6 +101,10 @@ void game::SpawnBombComponent::SpawnBomb(const glm::vec2 position)
 
 void game::SpawnBombComponent::RemoteExplodeBomb()
 {
+	if (m_pPlayerSpriteComponent->IsDying())
+	{
+		return;
+	}
 	if (m_Bombs.size() > 0)
 	{
 		BombComponent* bombComponent = m_Bombs.front();

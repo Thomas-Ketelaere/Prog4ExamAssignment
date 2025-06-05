@@ -95,7 +95,6 @@ void RamCoreEngine::Minigin::Run(const std::function<void()>& load)
 	sceneManager.Start();
 	input.Start();
 
-	// todo: this update loop could use some work.
 	bool doContinue = true;
 	auto lastTime = std::chrono::high_resolution_clock::now();
 	float lag = 0.0f;

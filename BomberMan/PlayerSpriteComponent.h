@@ -13,10 +13,9 @@ namespace game
 	class PlayerSpriteComponent final : public RamCoreEngine::Component
 	{
 	public:
-		PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject);
+		PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject, float timeToDie);
 
 		virtual void Start() override;
-		virtual void Render() const override;
 		virtual void Update() override;
 
 		int GetWidthSprite() const;
@@ -25,10 +24,14 @@ namespace game
 		void SetDirectionSprite(glm::vec2 direction);
 
 		void StartDying();
+		bool IsDying() const { return m_IsDying; }
 	private:
 		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
+		float m_AccumulatedTime{};
+		const float m_TimeToDie;
 		bool m_Move{};
 		bool m_IsDying{};
+
 	};
 }
 

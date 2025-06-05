@@ -8,7 +8,7 @@ namespace RamCoreEngine
 	class Scene final
 	{
 	public:
-		explicit Scene(const std::string& name);
+		explicit Scene(unsigned int name);
 
 		void LoadScene() { m_LoadingFunction(); }
 		void ReloadScene();
@@ -23,7 +23,7 @@ namespace RamCoreEngine
 		void LateUpdate();
 		void Render() const;
 
-		std::string GetName() { return m_Name; } //TODO: IMPROVE so it doesnt return a plain string
+		unsigned int GetName() { return m_Name; } 
 		bool IsMarkedDestroy() { return m_Destroy; }
 		bool IsMarkedReload() { return m_ShouldReload; }
 
@@ -40,7 +40,7 @@ namespace RamCoreEngine
 		GameObject* GetFirstObjectWithTag(unsigned int tag);
 
 	private: 
-		std::string m_Name;
+		unsigned int m_Name;
 		std::vector < std::unique_ptr<GameObject>> m_Objects{};
 		std::function<void()> m_LoadingFunction;
 

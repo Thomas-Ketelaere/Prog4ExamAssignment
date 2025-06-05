@@ -7,7 +7,6 @@ namespace RamCoreEngine
 {
 	class Texture2D;
 	class Component;
-	// todo: this should become final.
 	class GameObject final
 	{
 	public:
@@ -58,7 +57,6 @@ namespace RamCoreEngine
 		void AddChild(GameObject* child);
 
 		TransformComponent* m_Transform{};
-		// todo: mmm, every gameobject has a texture? Is that correct?
 		std::vector<std::unique_ptr<Component>> m_ComponentsVector;
 		std::vector<GameObject*> m_Children;
 		GameObject* m_Parent{ nullptr };

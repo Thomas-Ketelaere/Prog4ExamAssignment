@@ -51,7 +51,6 @@ void RamCoreEngine::SpriteSheetComponent::Update()
 				if (m_DestroyAfterPlayed)
 				{
 					Destroy();
-					//GetGameObject()->Destroy();
 				}
 				m_CurrentColumn = 0;
 			}

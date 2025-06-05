@@ -7,7 +7,7 @@ using namespace RamCoreEngine;
 
 unsigned int Scene::m_idCounter = 0;
 
-Scene::Scene(const std::string& name) : 
+Scene::Scene(unsigned int name) :
 	m_Name{ name },
 	m_Destroy{},
 	m_ShouldReload{}

@@ -101,6 +101,7 @@ namespace game
 		const RamCoreEngine::BaseColliderComponent* GetColliderComponent() const { return m_pColliderComp; }
 		bool ShouldControlMove() const { return m_ShouldControlledMove; }
 		void ResetShouldControlMove() { m_ShouldControlledMove = false; }
+		int GetScore() const { return m_ScoreWhenDead; }
 
 		RamCoreEngine::Subject* GetEnemyDiedSubject() const { return m_pEnemyDiedEvent.get(); }
 

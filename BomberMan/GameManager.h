@@ -8,10 +8,8 @@ namespace game
 	{
 		Single, Coop, Versus
 	};
-	//IF TIME LEFT: (change these into events)
+	//TODO IF TIME LEFT: (change these into events)
 	// - check if possible count enemies in Grid?
-	// - check if possible Lose Live in live component for both players?
-	// - check if possible do bombs spawning different (same with range)
 	class GameManager : public RamCoreEngine::Singleton<GameManager>
 	{
 	public:

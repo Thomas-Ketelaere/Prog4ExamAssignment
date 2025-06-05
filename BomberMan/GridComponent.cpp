@@ -316,7 +316,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 }
 
-bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant (TODO: check if player can walk over bomb)
+bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) 
 {
 	int indexCell = GetIndexFromPosition(position);
 	if (isPlayer)
@@ -391,19 +391,18 @@ const glm::vec2& game::GridComponent::GetRandomEmptyCellPosition()
 }
 
 
-const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
+const std::vector<glm::vec2>& game::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
 {
-	std::vector<glm::vec2> pathPositions;
 	const int startIndex = GetIndexFromPosition(startPosition); 
 	const int endIndex = GetIndexFromPosition(endPosition);
 
 	const std::vector<int> indices = FindPath(startIndex, endIndex);
 
-	pathPositions.clear();
+	m_Path.clear();
 	
 	for (int index : indices)
 	{
-		pathPositions.emplace_back(GetCellPositionFromIndexLocal(index));
+		m_Path.emplace_back(GetCellPositionFromIndexLocal(index));
 	}
 
 	if (indices.size() == 1) // didn't find a path, so locked in, but did already add first index in for loop above
@@ -411,11 +410,11 @@ const std::vector<glm::vec2> game::GridComponent::GetPath(const glm::vec2& start
 		std::vector<int> neighborIndices = GetConnectionIndexFromCellIndex(startIndex);
 		if (neighborIndices.size() > 0) //locked in more than one cell
 		{
-			pathPositions.emplace_back(GetCellPositionFromIndexLocal(neighborIndices[0])); // just add first neighbor to wander between the two
+			m_Path.emplace_back(GetCellPositionFromIndexLocal(neighborIndices[0])); // just add first neighbor to wander between the two
 		}
 	}
 
-	return pathPositions;
+	return m_Path;
 }
 
 bool game::GridComponent::ShouldGridMove(glm::vec2& playerPos, float moveDirection)

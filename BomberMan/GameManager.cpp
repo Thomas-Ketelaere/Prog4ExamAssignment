@@ -9,11 +9,11 @@ void game::GameManager::LoseLive()
 	m_RemoteExplode = false; //when losing live, only this ability gets removed
 	if (m_TotalLives <= -1)
 	{
-		RamCoreEngine::SceneManager::GetInstance().LoadScene("EndScreen");
+		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("EndScreen"));
 	}
 	else
 	{
-		RamCoreEngine::SceneManager::GetInstance().LoadScene("LoadingScreen");
+		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("LoadingScreen"));
 	}
 	
 }
@@ -35,11 +35,12 @@ void game::GameManager::AdvanceLevel()
 	++m_CurrentLevel;
 	if (m_CurrentLevel >= m_MaxLevels)
 	{
-		RamCoreEngine::SceneManager::GetInstance().LoadScene("EndScreen");
+		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("EndScreen"));
 	}
 	else
 	{
-		RamCoreEngine::SceneManager::GetInstance().LoadScene("LoadingScreen");
+		++m_TotalLives; //gain live after winning level
+		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("LoadingScreen"));
 	}
 }
 

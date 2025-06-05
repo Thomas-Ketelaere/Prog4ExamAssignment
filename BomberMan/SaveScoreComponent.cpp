@@ -8,6 +8,7 @@
 #include "GameManager.h"
 #include "SceneManager.h"
 #include <algorithm>
+#include <Hash.h>
 
 game::SaveScoreComponent::SaveScoreComponent(RamCoreEngine::GameObject* gameObject, float lengthBar, float heightBar, float speed, const std::string& saveFileName):
 	RamCoreEngine::Component(gameObject),
@@ -85,5 +86,5 @@ void game::SaveScoreComponent::SaveScore()
 		}
 	}
 
-	RamCoreEngine::SceneManager::GetInstance().LoadScene("HighScoreScreen"); 
+	RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("HighScoreScreen"));
 }

@@ -2,6 +2,7 @@
 #include "Timer.h"
 #include "SceneManager.h"
 #include "GameManager.h"
+#include <Hash.h>
 
 game::LoadingScreenComponent::LoadingScreenComponent(RamCoreEngine::GameObject* gameObject, float timeToLoadLevel):
 	Component(gameObject),
@@ -15,6 +16,6 @@ void game::LoadingScreenComponent::Update()
 	if (m_AccumulatedTime >= m_TimeToLoadLevel)
 	{
 		//load level
-		RamCoreEngine::SceneManager::GetInstance().LoadScene("Level");
+		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("Level"));
 	}
 }

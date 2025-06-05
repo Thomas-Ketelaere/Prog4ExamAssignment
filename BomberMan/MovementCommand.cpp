@@ -39,6 +39,10 @@ void game::MoveCommand::Start()
 
 void game::MoveCommand::Execute()
 {
+	if (m_pPlayerSpriteComponent->IsDying())
+	{
+		return;
+	}
 	glm::vec3 pos = GetGameActor()->GetLocalPosition();
 	pos.x += m_Speed.x * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	pos.y += m_Speed.y * RamCoreEngine::Time::GetInstance().m_DeltaTime;

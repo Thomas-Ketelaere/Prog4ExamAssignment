@@ -2,11 +2,11 @@
 #include "GameObject.h"
 #include "SpriteSheetComponent.h"
 #include "GameManager.h"
+#include "Timer.h"
 
-#include "LivesComponent.h"
-
-game::PlayerSpriteComponent::PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject):
-	Component(gameObject)
+game::PlayerSpriteComponent::PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject, float timeToDie):
+	Component(gameObject),
+	m_TimeToDie{timeToDie}
 {
 
 }
@@ -15,26 +15,29 @@ void game::PlayerSpriteComponent::Start()
 {
 	m_pSpriteSheetComponent = GetGameObject()->GetComponent<RamCoreEngine::SpriteSheetComponent>();
 }
-
-void game::PlayerSpriteComponent::Render() const
-{
-	//glm::vec3 pos = GetTransform()->GetWorldPosition();
-	//SDL_Color color = { 0, 0, 255, 255 };
-	//Renderer::GetInstance().DrawRectangle(pos.x, pos.y, 32, 32, color);
-}
-
 void game::PlayerSpriteComponent::Update()
 {
-	if (m_Move)
+	if (!m_IsDying)
 	{
-		m_pSpriteSheetComponent->ShouldAnimate(true);
-		m_Move = false; // gets overriden if a button gets pressed and so it will animate again
-	}
+		if (m_Move)
+		{
+			m_pSpriteSheetComponent->ShouldAnimate(true);
+			m_Move = false; // gets overriden if a button gets pressed and so it will animate again
+		}
 
+		else
+		{
+			m_pSpriteSheetComponent->ShouldAnimate(false);
+			m_pSpriteSheetComponent->SetColumn(3);
+		}
+	}
 	else
 	{
-		m_pSpriteSheetComponent->ShouldAnimate(false);
-		m_pSpriteSheetComponent->SetColumn(3);
+		m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
+		if (m_AccumulatedTime >= m_TimeToDie)
+		{
+			game::GameManager::GetInstance().LoseLive();
+		}
 	}
 }
 
@@ -50,6 +53,10 @@ int game::PlayerSpriteComponent::GetHeightSprite() const
 
 void game::PlayerSpriteComponent::SetDirectionSprite(glm::vec2 direction)
 {
+	if (m_IsDying)
+	{
+		return;
+	}
 	if (direction.y > 0)
 	{
 		m_pSpriteSheetComponent->SetRow(2);
@@ -79,7 +86,10 @@ void game::PlayerSpriteComponent::StartDying()
 	{
 		m_IsDying = true;
 		//TODO: play dead animation
-		game::GameManager::GetInstance().LoseLive();
-		//GetGameObject()->GetComponent<LivesComponent>()->LoseLive();
+		m_pSpriteSheetComponent->Destroy();
+		auto dyingSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "PlayerDying.png", 8, 1, 0.3f, true);
+		m_pSpriteSheetComponent = dyingSpriteSheet.get();
+		GetGameObject()->AddComponent(std::move(dyingSpriteSheet));
+		
 	}
 }

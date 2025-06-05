@@ -61,77 +61,14 @@
 #include "EnemyMovementCommand.h"
 #include "EnemyCollider.h"
 
-void LoadPlayerGamePad(RamCoreEngine::Scene* scene, int index)
-{
-	// --------GAMEPAD-----------
-	auto playerInputObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
-	playerInputObjectGamepad->SetTag(make_sdbm_hash("Player"));
-	auto playerInputGamepadSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObjectGamepad.get(), "PlayerMove.png", 4, 4, 0.2f, false);
-	auto playerInputGamepadSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObjectGamepad.get());
-	auto playerInputGamepadCollider = std::make_unique<game::PlayerCollider>(playerInputObjectGamepad.get(), 28.f, 28.f, true);
-	playerInputObjectGamepad->SetLocalPosition(glm::vec3(48, 144, 0.f));
-	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSheet));
-	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadSpriteSetter));
-	playerInputObjectGamepad->AddComponent(std::move(playerInputGamepadCollider));
-
-	//lives
-	/*auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectGamepad.get(), 3);
-	playerLivesKeyboard->GetActorDiedSubject()->AddObserver(playerLivesTextChange);
-	playerInputObjectGamepad->AddComponent(std::move(playerLivesKeyboard));*/
-
-	// ------- INPUT GAMEPAD ---------
-
-	auto moveLeftCommand = std::make_unique<game::MoveCommand>(playerInputObjectGamepad.get());
-	moveLeftCommand->SetSpeed({ -50.f, 0.f });
-	auto moveRightCommand = std::make_unique<game::MoveCommand>(playerInputObjectGamepad.get());
-	moveRightCommand->SetSpeed({ 50.f, 0.f });
-	auto moveUpCommand = std::make_unique<game::MoveCommand>(playerInputObjectGamepad.get());
-	moveUpCommand->SetSpeed({ 0.f, -50.f });
-	auto moveDownCommand = std::make_unique<game::MoveCommand>(playerInputObjectGamepad.get());
-	moveDownCommand->SetSpeed({ 0.f, 50.f });
-
-
-
-	//auto loseLivesCommandGamepad = std::make_unique<game::LoseLiveCommand>(playerInputObjectGamepad.get());
-	//auto gainSmallScoreCommandGamepad = std::make_unique<game::GainPointsCommand>(playerInputObjectGamepad.get());
-	//gainSmallScoreCommandGamepad->SetGainScore(10);
-	//auto gainBigScoreCommandGamepad = std::make_unique<game::GainPointsCommand>(playerInputObjectGamepad.get());
-	//gainBigScoreCommandGamepad->SetGainScore(100);
-
-	auto spawnBombCommandGamepad = std::make_unique<game::SpawnBombCommand>(playerInputObjectGamepad.get());
-
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommand), RamCoreEngine::KeyState::Pressed, 0x004, index);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommand), RamCoreEngine::KeyState::Pressed, 0x008, index);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommand), RamCoreEngine::KeyState::Pressed, 0x001, index);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommand), RamCoreEngine::KeyState::Pressed, 0x002, index);
-	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandGamepad), RamCoreEngine::KeyState::Up, 0x1000, 0);
-	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandGamepad), RamCoreEngine::KeyState::Up, 0x2000, 0);
-	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandGamepad), RamCoreEngine::KeyState::Up, 0x4000, 0);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandGamepad), RamCoreEngine::KeyState::Up, 0x8000, index);
-
-	scene->Add(std::move(playerInputObjectGamepad));
-	// --------END GAMEPAD-----------
-}
 
 void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index)
 {
-	//display lives
-	//auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-
-	//display Player
-	//auto playerKeyboardTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	//playerKeyboardTextObject->SetLocalPosition(50, 275);
-	//auto playerTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(playerKeyboardTextObject.get(), "Player Two:", font);
-	//playerTextKeyboard->ChangeFontSize(20);
-	//playerKeyboardTextObject->AddComponent(std::move(playerTextKeyboard));
-	//scene->Add(std::move(playerKeyboardTextObject));
-
-
 	auto playerInputObject = std::make_unique<RamCoreEngine::GameObject>();
 	playerInputObject->SetTag(make_sdbm_hash("Player"));
 
 	auto playerInputSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObject.get(), "PlayerMove.png", 4, 4, 0.2f, false);
-	auto playerInputSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObject.get());
+	auto playerInputSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObject.get(), 2.4f);
 	auto playerInputCollider = std::make_unique<game::PlayerCollider>(playerInputObject.get(), 28.f, 28.f, true);
 	auto playerInputSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObject.get());
 
@@ -143,12 +80,6 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	playerInputObject->AddComponent(std::move(playerInputSpriteSetter));
 	playerInputObject->AddComponent(std::move(playerInputCollider));
 	playerInputObject->AddComponent(std::move(playerInputSpawnBombComponent));
-
-	//lives
-	//auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectKeyboard.get(), 3);
-	//playerLivesKeyboard->GetActorDiedSubject()->AddObserver(playerLivesTextChange);
-	//playerInputObjectKeyboard->AddComponent(std::move(playerLivesKeyboard));
-
 
 	auto moveLeftCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
 	moveLeftCommand->SetSpeed({ -100.f, 0.f });
@@ -252,13 +183,6 @@ void LoadStartScene()
 	scene->Add(std::move(backgroundObject));
 
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-
-	//auto startButtonTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	//startButtonTextObject->SetLocalPosition(glm::vec3(500, 275, 0.f));
-	//auto startButtonText = std::make_unique<RamCoreEngine::TextComponent>(startButtonTextObject.get(), "Press E on keyboard or ??? (gamepad start not working yet) on gamepad to start game", font);
-	//startButtonText->ChangeFontSize(20);
-	//startButtonTextObject->AddComponent(std::move(startButtonText));
-	//scene->Add(std::move(startButtonTextObject));
 	
 	//UI Buttons
 	auto startButtonsObject = std::make_unique<RamCoreEngine::GameObject>();
@@ -275,12 +199,7 @@ void LoadStartScene()
 	auto buttonFour = std::make_unique<RamCoreEngine::TextComponent>(startButtonsObject.get(), "Look at High Scores", font, true);
 	buttonFour->SetCustomPosition(glm::vec2(256, 250));
 	startButtonsObject->AddComponent(std::move(buttonFour));
-	std::vector<std::string> scenesToLoad{}; //TODO: make hash maps
-	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
-	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
-	scenesToLoad.emplace_back("LoadingScreen"); //for this maybe set enum in game manager??
-	scenesToLoad.emplace_back("HighScoreScreen"); //for this maybe set enum in game manager??
-	auto uiHandler = std::make_unique<game::ButtonsComponent>(startButtonsObject.get(), uint8_t(18), uint8_t(25), 0, scenesToLoad);
+	auto uiHandler = std::make_unique<game::ButtonsComponent>(startButtonsObject.get(), uint8_t(18), uint8_t(25), 0);
 	startButtonsObject->AddComponent(std::move(uiHandler));
 
 	auto logoObject = std::make_unique<RamCoreEngine::GameObject>();
@@ -519,7 +438,7 @@ void LoadGameScene()
 
 			else if (enemyType == 1)
 			{
-				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 10.f, 200, false, true, 100.f);
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 20.f, 200, false, true, 100.f);
 				enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
@@ -528,6 +447,26 @@ void LoadGameScene()
 				enemy->AddComponent(std::move(enemySprite));
 			}
 
+			else if (enemyType == 2)
+			{
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 25.f, 400, false);
+				enemyMovement->SetDebugRendering(true);
+				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+
+				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Doll.png", 4, 3, 0.2f, false);
+				enemy->AddComponent(std::move(enemyMovement));
+				enemy->AddComponent(std::move(enemySprite));
+			}
+			else if (enemyType == 3)
+			{
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 25.f, 400, false, true, 100.f);
+				enemyMovement->SetDebugRendering(true);
+				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+
+				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Minvo.png", 4, 3, 0.2f, false);
+				enemy->AddComponent(std::move(enemyMovement));
+				enemy->AddComponent(std::move(enemySprite));
+			}
 			scene->Add(std::move(enemy));
 		}
 	}
@@ -720,16 +659,16 @@ void LoadHighScoreScene()
 void load()
 {
 	game::GameManager::GetInstance().SetMaxLives(3);
-
-	auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);
+	
+	auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene(make_sdbm_hash("Start"), true);
 	sceneStart.SetLoadingFunction(LoadStartScene);
-	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene("LoadingScreen", false);
+	auto& sceneLoading = RamCoreEngine::SceneManager::GetInstance().CreateScene(make_sdbm_hash("LoadingScreen"), false);
 	sceneLoading.SetLoadingFunction(LoadLoadingScene);
-	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene("Level", false);
+	auto& sceneGame = RamCoreEngine::SceneManager::GetInstance().CreateScene(make_sdbm_hash("Level"), false);
 	sceneGame.SetLoadingFunction(LoadGameScene);
-	auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene("EndScreen", false);
+	auto& sceneEnd = RamCoreEngine::SceneManager::GetInstance().CreateScene(make_sdbm_hash("EndScreen"), false);
 	sceneEnd.SetLoadingFunction(LoadEndScene);
-	auto& sceneHighScore = RamCoreEngine::SceneManager::GetInstance().CreateScene("HighScoreScreen", false);
+	auto& sceneHighScore = RamCoreEngine::SceneManager::GetInstance().CreateScene(make_sdbm_hash("HighScoreScreen"), false);
 	sceneHighScore.SetLoadingFunction(LoadHighScoreScene);
 
 	// ------------ SOUND --------------

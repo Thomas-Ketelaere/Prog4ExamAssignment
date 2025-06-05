@@ -66,8 +66,7 @@ namespace game
 
 		const glm::vec2& GetRandomEmptyCellPosition();
 
-		// TODO: RETURNS COPY NOW
-		const std::vector<glm::vec2> GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition);
+		const std::vector<glm::vec2>& GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition);
 		
 		bool ShouldGridMove(glm::vec2& playerPos, float moveDirection);
 
@@ -89,6 +88,7 @@ namespace game
 		std::vector<int> GetConnectionIndexFromCellIndex(int index);
 
 		std::vector<Cell*> m_pCells;
+		std::vector<glm::vec2> m_Path{};
 
 		float m_CellWidth;
 		float m_CellHeight;

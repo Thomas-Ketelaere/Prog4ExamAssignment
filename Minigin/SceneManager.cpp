@@ -50,14 +50,13 @@ void RamCoreEngine::SceneManager::LateUpdate()
 	{
 		for (auto& scene : m_Scenes)
 		{
-			if (scene->GetName() == m_LoadSceneName) //TODO: make with hash
+			if (scene->GetName() == m_LoadSceneName) 
 			{
 				if (m_pCurrentScene->GetName() == scene->GetName())
 				{
 					throw std::runtime_error("trying to load and destroy already existing/current scene. Use 'ReloadScene' instead.");
 				}
 				auto* previousScene = m_pCurrentScene;
-				//TODO: dont destroy on load (if necessary)
 				InputManager::GetInstance().ClearBindings();
 				RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadAllSound();
 				RamCoreEngine::ServiceLocator::GetSoundSystem().UnloadMusic();
@@ -93,9 +92,8 @@ void RamCoreEngine::SceneManager::Render()
 	//}
 }
 
-void RamCoreEngine::SceneManager::LoadScene(const std::string& sceneToLoadName)
+void RamCoreEngine::SceneManager::LoadScene(unsigned int sceneToLoadName)
 {
-	//TODO: IMPROVE with hash maps
 	m_ShouldLoadScene = true;
 	m_LoadSceneName = sceneToLoadName;
 	
@@ -107,7 +105,7 @@ void RamCoreEngine::SceneManager::ReloadScene()
 	
 }
 
-RamCoreEngine::Scene& RamCoreEngine::SceneManager::CreateScene(const std::string& name, bool setAsCurrentScene)
+RamCoreEngine::Scene& RamCoreEngine::SceneManager::CreateScene(unsigned int name, bool setAsCurrentScene)
 {
 	auto scene = std::make_unique<Scene>(name);
 	if (setAsCurrentScene)

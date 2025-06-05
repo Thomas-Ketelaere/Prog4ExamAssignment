@@ -8,6 +8,7 @@
 namespace game
 {
 	class GridComponent;
+	class PlayerSpriteComponent;
 	class SpawnBombComponent final : public RamCoreEngine::Component, public RamCoreEngine::Observer
 	{
 	public:
@@ -22,6 +23,7 @@ namespace game
 
 	private:
 		std::queue<BombComponent*> m_Bombs{};
+		PlayerSpriteComponent* m_pPlayerSpriteComponent{};
 		GridComponent* m_pGridComponent{};
 		const float m_TimeToExplode{ 2.f };
 		int m_Range;

@@ -12,6 +12,7 @@
 #include "Timer.h"
 #include <algorithm>
 #include "BaseColliderComponent.h"
+#include "EnemyScoreEffectComponent.h"
 
 game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool controlledByPlayer):
 	EnemyMovementComponent(gameObject, speed, scoreWhenDead, controlledByPlayer, false, 0.f)
@@ -84,6 +85,7 @@ void game::EnemyMovementComponent::Render() const
 
 void game::EnemyMovementComponent::OnDestroy()
 {
+
 	GameManager::GetInstance().GainScore(m_ScoreWhenDead);
 	game::GameManager().GetInstance().EnemyKilled();
 
@@ -101,7 +103,6 @@ void game::EnemyMovementComponent::StartDying()
 		m_pSpriteSheetComponent->SetColumn(0);
 		m_pSpriteSheetComponent->DestroyAfterPlayed();
 		m_pSpriteSheetComponent->SetInterval(0.5f);
-		//std::cout << "TODO: Enemy component removed but not enemy object itself" << std::endl; //wait for state machine maybe?
 		m_pEnemyState->OnExit();
 		m_pEnemyState = std::make_unique<DyingState>(this, 2.f);
 		m_pEnemyState->OnEnter();
@@ -368,6 +369,12 @@ std::unique_ptr<game::EnemyState> game::DyingState::Update()
 	m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	if (m_AccumulatedTime >= m_TimeToDie)
 	{
+		auto scoreEffectObject = std::make_unique<RamCoreEngine::GameObject>();
+		scoreEffectObject->SetLocalPosition(GetComponent()->GetTransform()->GetWorldPosition());
+		scoreEffectObject->SetParent(GetComponent()->GetGridComponent()->GetGameObject(), true);
+		auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(scoreEffectObject.get(), GetComponent()->GetScore(), 2.f);
+		scoreEffectObject->AddComponent(std::move(scoreEffectText));
+		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(scoreEffectObject));
 		GetComponent()->GetGameObject()->Destroy();
 	}
 	return nullptr;

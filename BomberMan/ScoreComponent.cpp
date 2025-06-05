@@ -18,22 +18,22 @@ void game::ScoreComponent::Notify(Event event, RamCoreEngine::GameObject* )
 {
 	if (event.id == make_sdbm_hash("KilledBalloom"))
 	{
-		m_CurrentScore += 100; // TODO: HARDCODED
+		m_CurrentScore += 100; 
 	}
 
 	else if (event.id == make_sdbm_hash("KilledOneal"))
 	{
-		m_CurrentScore += 200; // TODO: HARDCODED
+		m_CurrentScore += 200; 
 	}
 
 	else if (event.id == make_sdbm_hash("KilledDoll"))
 	{
-		m_CurrentScore += 400; // TODO: HARDCODED
+		m_CurrentScore += 400; 
 	}
 
 	else if (event.id == make_sdbm_hash("KilledMinvo"))
 	{
-		m_CurrentScore += 800; // TODO: HARDCODED
+		m_CurrentScore += 800; 
 	}
 
 	Event e(make_sdbm_hash("PlayerGainedScore"));
