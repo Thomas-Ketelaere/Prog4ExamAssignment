@@ -1,8 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "Collider.h"
-#include <vector>
-#include <memory>
 
 namespace game
 {
@@ -12,7 +10,7 @@ namespace game
 	public:
 		PlayerCollider(RamCoreEngine::GameObject* gameObject, const float width, const float height, bool isTrigger);
 
-		void Start() override;
+		
 		void Render() const override;
 
 		void OnTriggerOverlap(Collider* other) override;

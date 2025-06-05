@@ -10,7 +10,7 @@ RamCoreEngine::Collider::Collider(GameObject* gameObject, const float width, con
 	m_Trigger{isTrigger}
 {
 	ColliderManager::GetInstance().AddCollider(this);
-	m_pTransformComponent = gameObject->GetTransform(); //all gameobjects have a transform
+	m_pTransformComponent = gameObject->GetTransform();
 }
 
 RamCoreEngine::Collider::~Collider()

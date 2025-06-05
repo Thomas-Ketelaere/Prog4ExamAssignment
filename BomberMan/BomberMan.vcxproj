@@ -181,6 +181,8 @@
     <ClCompile Include="BombTimerComponent.cpp" />
     <ClCompile Include="EnemyMovementCommand.cpp" />
     <ClCompile Include="ExplodeBombCommand.cpp" />
+    <ClCompile Include="EnemyCollider.cpp" />
+    <ClCompile Include="ExplosionTimerComponent.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="ButtonsCommand.cpp" />
     <ClCompile Include="ButtonsComponent.cpp" />
@@ -219,6 +221,8 @@
     <ClInclude Include="BombTimerComponent.h" />
     <ClInclude Include="EnemyMovementCommand.h" />
     <ClInclude Include="ExplodeBombCommand.h" />
+    <ClInclude Include="EnemyCollider.h" />
+    <ClInclude Include="ExplosionTimerComponent.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="ButtonsCommand.h" />
     <ClInclude Include="ButtonsComponent.h" />

@@ -89,7 +89,6 @@ namespace game
 		std::vector<int> GetConnectionIndexFromCellIndex(int index);
 
 		std::vector<Cell*> m_pCells;
-		std::vector<int> m_ExplodedCellIndices;
 
 		float m_CellWidth;
 		float m_CellHeight;

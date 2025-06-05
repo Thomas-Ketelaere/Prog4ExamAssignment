@@ -38,7 +38,6 @@ std::vector<GameObject*> RamCoreEngine::Scene::GetAllObjectsWithTag(unsigned int
 
 GameObject* RamCoreEngine::Scene::GetFirstObjectWithTag(unsigned int tag)
 {
-	//tried find_if with execution::par and execution::par_unseq but are both slower than normal one
 
 	auto it = std::find_if(m_Objects.begin(), m_Objects.end(), [&](std::unique_ptr<GameObject>& gameObject)
 		{

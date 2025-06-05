@@ -3,7 +3,6 @@
 #include "SpriteSheetComponent.h"
 #include "GameManager.h"
 
-#include "Renderer.h" //TODO: remove after testing
 #include "LivesComponent.h"
 
 game::PlayerSpriteComponent::PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject):
@@ -17,7 +16,7 @@ void game::PlayerSpriteComponent::Start()
 	m_pSpriteSheetComponent = GetGameObject()->GetComponent<RamCoreEngine::SpriteSheetComponent>();
 }
 
-void game::PlayerSpriteComponent::Render() const//TODO: remove after testing
+void game::PlayerSpriteComponent::Render() const
 {
 	//glm::vec3 pos = GetTransform()->GetWorldPosition();
 	//SDL_Color color = { 0, 0, 255, 255 };
@@ -79,7 +78,7 @@ void game::PlayerSpriteComponent::StartDying()
 	if (!m_IsDying)
 	{
 		m_IsDying = true;
-		//play dead animation
+		//TODO: play dead animation
 		game::GameManager::GetInstance().LoseLive();
 		//GetGameObject()->GetComponent<LivesComponent>()->LoseLive();
 	}

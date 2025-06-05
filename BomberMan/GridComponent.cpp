@@ -11,6 +11,8 @@
 #include "PlayerSpriteComponent.h"
 #include "GameManager.h"
 #include "Subject.h"
+#include "BaseColliderComponent.h"
+#include "ExplosionTimerComponent.h"
 
 
 game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int gridWidth, int gridHeight, float cellSize, float offsetY, int screenWidth):
@@ -110,44 +112,14 @@ game::GridComponent::~GridComponent()
 
 void game::GridComponent::LateUpdate()
 {
-	if (m_BombExploded)
-	{
-		std::vector<RamCoreEngine::GameObject*> objectsOnGrid = GetGameObject()->GetChildren(); //TODO: copy? (maybe save it)
-		std::vector<RamCoreEngine::GameObject*> playerObjects = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Player")); //TODO: make it so it's possible to get it from one function and not adding vectors
-		objectsOnGrid.insert(objectsOnGrid.end(), playerObjects.begin(), playerObjects.end());
-		for (int index : m_ExplodedCellIndices)
-		{
-			for (RamCoreEngine::GameObject* object : objectsOnGrid)
-			{
-				if (IsObjectInCell(object->GetWorldPosition(), index))
-				{
-					EnemyMovementComponent* enemyComponent = object->GetComponent<EnemyMovementComponent>();
-					if (enemyComponent)
-					{
-						enemyComponent->StartDying();
-						continue;
-					}
-
-					PlayerSpriteComponent* playerComponent = object->GetComponent<PlayerSpriteComponent>();
-					if (playerComponent)
-					{
-						playerComponent->StartDying();
-					}
-
-				}
-			}
-		}
-		m_BombExploded = false; // this should be after some time
-		m_ExplodedCellIndices.clear();
-	}
-	
 }
 
 void game::GridComponent::ExplodeBomb(int index, int range)
 {
 	m_BombExploded = true;
-	
-	m_ExplodedCellIndices.emplace_back(index);
+
+	std::vector<int> horizontalCells;
+	std::vector<int> verticalCells;
 
 	// also check once for place with bomb on
 	Cell* cellCenter = m_pCells[index];
@@ -156,39 +128,6 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 	auto spriteSheetExplosionCenter = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExplosionCenter.png", 7, 1, 0.1f, true, true);
 	spriteSheetExplosionCenter->SetCustomPosition(cellCenter->m_Position);
 	GetGameObject()->AddComponent(std::move(spriteSheetExplosionCenter));
-
-	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
-	{
-		int indexRight = GetIndexWithCellOffset(rangeCounter, 0, index);
-		if (indexRight == -1) break;
-
-		Cell* cell = m_pCells[indexRight];
-		if (cell->m_CellState == CellState::HardWall) break;
-
-		m_ExplodedCellIndices.emplace_back(indexRight); // player cant stand on hardwall so after check
-
-		if (cell->m_CellState == CellState::BreakableWall)
-		{
-			HandleBreakableWall(cell);
-			break;
-		}
-		else // empty cell
-		{
-			if (cell->m_pBombComponent != nullptr)
-			{
-				cell->m_pBombComponent->Explode();
-				cell->m_pBombComponent = nullptr;
-			}
-			if (rangeCounter != range)
-			{
-				SpawnExplodeTexture(cell->m_Position, "ExplosionSide.png");
-			}
-			else
-			{
-				SpawnExplodeTexture(cell->m_Position, "ExplosionEndRight.png");
-			}
-		}
-	}
 
 	// Left direction
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
@@ -199,8 +138,6 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		Cell* cell = m_pCells[indexLeft];
 		if (cell->m_CellState == CellState::HardWall) break;
 
-		m_ExplodedCellIndices.emplace_back(indexLeft);
-
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
 			HandleBreakableWall(cell);
@@ -209,6 +146,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 		else // empty cell
 		{
+			horizontalCells.emplace_back(indexLeft);
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -225,6 +163,39 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		}
 	}
 
+	//right direction
+	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
+	{
+		int indexRight = GetIndexWithCellOffset(rangeCounter, 0, index);
+		if (indexRight == -1) break;
+
+		Cell* cell = m_pCells[indexRight];
+		if (cell->m_CellState == CellState::HardWall) break;
+
+		if (cell->m_CellState == CellState::BreakableWall)
+		{
+			HandleBreakableWall(cell);
+			break;
+		}
+		else // empty cell
+		{
+			horizontalCells.emplace_back(indexRight);
+			if (cell->m_pBombComponent != nullptr)
+			{
+				cell->m_pBombComponent->Explode();
+				cell->m_pBombComponent = nullptr;
+			}
+			if (rangeCounter != range)
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionSide.png");
+			}
+			else
+			{
+				SpawnExplodeTexture(cell->m_Position, "ExplosionEndRight.png");
+			}
+		}
+	}
+
 	// Down direction
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
 	{
@@ -234,8 +205,6 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		Cell* cell = m_pCells[indexDown];
 		if (cell->m_CellState == CellState::HardWall) break;
 
-		m_ExplodedCellIndices.emplace_back(indexDown);
-
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
 			HandleBreakableWall(cell);
@@ -244,6 +213,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 		else // empty cell
 		{
+			verticalCells.emplace_back(indexDown);
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -270,8 +240,6 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		Cell* cell = m_pCells[indexUp];
 		if (cell->m_CellState == CellState::HardWall) break;
 
-		m_ExplodedCellIndices.emplace_back(indexUp);
-
 		if (cell->m_CellState == CellState::BreakableWall)
 		{
 			HandleBreakableWall(cell);
@@ -280,6 +248,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 		else // empty cell
 		{
+			verticalCells.emplace_back(indexUp);
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -295,17 +264,60 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 			}
 		}
 	}
+
 	Event e(make_sdbm_hash("BombExploded"));
 	m_pGridEvent->NotifyObservers(e, GetGameObject());
+
+
+	//collider horizontal
+	if (!horizontalCells.empty())
+	{
+		float leftX = GetCellPositionFromIndexWorld(horizontalCells.front()).x;
+		float rightX = GetCellPositionFromIndexWorld(horizontalCells.back()).x;
+		float centerY = GetCellPositionFromIndexWorld(index).y;
+
+		float colliderWidth = (rightX - leftX) + m_CellWidth; // include center cell
+
+		auto horizontalColliderObject = std::make_unique<RamCoreEngine::GameObject>();
+		glm::vec3 posHorColl{ (leftX + rightX) / 2.f, centerY, 0.f };
+		horizontalColliderObject->SetLocalPosition(posHorColl);
+		horizontalColliderObject->SetTag(make_sdbm_hash("Explosion"));
+		horizontalColliderObject->SetParent(GetGameObject(), true);
+		auto horizontalCollComp = std::make_unique<RamCoreEngine::BaseColliderComponent>(horizontalColliderObject.get(), colliderWidth, m_CellHeight, false);
+		horizontalCollComp->SetDebugRendering(true);
+		auto horizontalTimerComp = std::make_unique<ExplosionTimerComponent>(horizontalColliderObject.get(), 0.7f);
+		horizontalColliderObject->AddComponent(std::move(horizontalCollComp));
+		horizontalColliderObject->AddComponent(std::move(horizontalTimerComp));
+
+		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(horizontalColliderObject));
+	}
+
+	//collider vertical
+	if (!verticalCells.empty())
+	{
+		float bottomY = GetCellPositionFromIndexWorld(verticalCells.front()).y;
+		float topY = GetCellPositionFromIndexWorld(verticalCells.back()).y;
+		float centerX = GetCellPositionFromIndexWorld(index).x;
+		float colliderHeight = (bottomY - topY) + m_CellHeight;
+
+		auto verticalColliderObject = std::make_unique<RamCoreEngine::GameObject>();
+		glm::vec3 posVerColl{ centerX, (topY + bottomY) / 2.f, 0.f };
+		verticalColliderObject->SetLocalPosition(posVerColl);
+		verticalColliderObject->SetTag(make_sdbm_hash("Explosion"));
+		verticalColliderObject->SetParent(GetGameObject(), true);
+		auto verticalCollComp = std::make_unique<RamCoreEngine::BaseColliderComponent>(verticalColliderObject.get(), m_CellWidth, colliderHeight, false);
+		verticalCollComp->SetDebugRendering(true);
+		auto verticalTimerComp = std::make_unique<ExplosionTimerComponent>(verticalColliderObject.get(), 0.7f);
+		verticalColliderObject->AddComponent(std::move(verticalCollComp));
+		verticalColliderObject->AddComponent(std::move(verticalTimerComp));
+
+		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(verticalColliderObject));
+	}
+
 }
 
 bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant (TODO: check if player can walk over bomb)
 {
-	//if (position.x < 0 || position.x > m_GridWidth || position.y < 0 || position.y > m_GridHeight)
-	//{
-	//	return false;
-	//}
-
 	int indexCell = GetIndexFromPosition(position);
 	if (isPlayer)
 	{
@@ -460,7 +472,7 @@ void game::GridComponent::HandleBreakableWall(Cell* cell)
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
 	}
 
-	//TODO: do this for all power ups
+
 	else if (cell->m_CellItem == CellItem::ExtraBombPU)
 	{
 		cell->m_pSpriteSheetWall->Destroy();
@@ -677,7 +689,7 @@ std::vector<int> game::GridComponent::FindPath(int startIndex, int endIndex)
 
 float game::GridComponent::GetHeuristicCost(glm::vec2 a, glm::vec2 b)
 {
-	//using the Manhattan distance (TODO: why this one)
+	//using the Manhattan distance
 	float manDistance = abs(a.x - b.x) + abs(a.y - b.y);
 	return manDistance;
 }

@@ -16,9 +16,9 @@ RamCoreEngine::GameObject::GameObject()
 RamCoreEngine::GameObject::~GameObject()
 {
 	SetParent(nullptr, false);
-	for (GameObject* child : m_Children)
+	for(size_t childCounter{ m_Children.size()}; childCounter > 0; --childCounter)
 	{
-		child->SetParent(nullptr, false);
+		m_Children[childCounter - 1]->SetParent(nullptr, false);
 	}
 }
 

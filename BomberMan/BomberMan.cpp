@@ -59,6 +59,7 @@
 #include "HighScoresTextComponent.h"
 #include "ReturnToStartCommand.h"
 #include "EnemyMovementCommand.h"
+#include "EnemyCollider.h"
 
 void LoadPlayerGamePad(RamCoreEngine::Scene* scene, int index)
 {
@@ -471,9 +472,7 @@ void LoadGameScene()
 	playerScoreTextObject->AddComponent(std::move(playerScoreText));
 	auto playerScoreTextChange = std::make_unique<game::ScoreTextComponent>(playerScoreTextObject.get());
 
-	//LoadPlayerGamePad(scene, 0);
 	LoadPlayer(scene, gridView.get(), 0);
-	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
 	bool spawnEnemies{ true };
 	switch (game::GameManager::GetInstance().GetGameMode())
@@ -503,7 +502,7 @@ void LoadGameScene()
 			enemy->SetTag(make_sdbm_hash("Enemy"));
 			enemy->SetParent(gridObject.get(), true);
 			enemy->SetLocalPosition(glm::vec3(enemyPos.x, enemyPos.y, 0));
-			auto enemyCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
+			auto enemyCollider = std::make_unique<game::EnemyCollider>(enemy.get(), 25.f, 25.f, true);
 			enemy->AddComponent(std::move(enemyCollider));
 
 			int enemyType = enemies[enemyCounter].second;

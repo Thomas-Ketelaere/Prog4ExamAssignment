@@ -95,7 +95,7 @@ void RamCoreEngine::SceneManager::Render()
 
 void RamCoreEngine::SceneManager::LoadScene(const std::string& sceneToLoadName)
 {
-	//TODO: IMPROVE
+	//TODO: IMPROVE with hash maps
 	m_ShouldLoadScene = true;
 	m_LoadSceneName = sceneToLoadName;
 	
