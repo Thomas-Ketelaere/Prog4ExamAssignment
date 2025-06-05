@@ -6,6 +6,7 @@
 #include "PlayerCollider.h"
 #include "SceneManager.h"
 #include "Hash.h"
+#include "GameManager.h"
 
 game::MoveCommand::MoveCommand(RamCoreEngine::GameObject* actor) :
 	GameActorCommand(actor),
@@ -19,12 +20,26 @@ void game::MoveCommand::Start()
 {
 	RamCoreEngine::GameObject* gridObject = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetFirstObjectWithTag(make_sdbm_hash("Grid"));
 	m_pGridComponent = gridObject->GetComponent<GridComponent>();
+	if (GameManager::GetInstance().GetGameMode() == GameMode::Coop)
+	{
+		std::vector<RamCoreEngine::GameObject*> players = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Player"));
+		auto it = std::find_if(players.begin(), players.end(), [&](RamCoreEngine::GameObject* player)
+			{
+				return player != GetGameActor();
+			});
+
+		if (it != players.end())
+		{
+			m_pOtherPlayer = *it;
+		}
+	}
+	
 }
 
 
 void game::MoveCommand::Execute()
 {
-	glm::vec3 pos = GetGameActor()->GetWorldPosition();
+	glm::vec3 pos = GetGameActor()->GetLocalPosition();
 	pos.x += m_Speed.x * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	pos.y += m_Speed.y * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
@@ -67,9 +82,17 @@ void game::MoveCommand::Execute()
 			glm::vec2 gridMovement = -m_Speed * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
 			gridPos.x += gridMovement.x;
-			//gridPos.y += gridMovement.y;
 
 			m_pGridComponent->GetGameObject()->SetLocalPosition(gridPos);
+
+			if (m_pOtherPlayer != nullptr) //no check in game manager for game mode cause it will always be null if it's not coop
+			{
+				glm::vec3 otherPlayerPos = m_pOtherPlayer->GetLocalPosition();
+				glm::vec3 newOtherPlayerPos{};
+				newOtherPlayerPos.x = otherPlayerPos.x + gridMovement.x;
+				newOtherPlayerPos.y = otherPlayerPos.y;
+				m_pOtherPlayer->SetLocalPosition(newOtherPlayerPos);
+			}
 		}
 		else
 		{

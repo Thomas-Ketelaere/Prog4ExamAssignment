@@ -301,10 +301,10 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 
 bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlayer) //player can walk over bomb while enemies cant (TODO: check if player can walk over bomb)
 {
-	if (position.x < 0 || position.x > m_GridWidth || position.y < 0 || position.y > m_GridHeight)
-	{
-		return false;
-	}
+	//if (position.x < 0 || position.x > m_GridWidth || position.y < 0 || position.y > m_GridHeight)
+	//{
+	//	return false;
+	//}
 
 	int indexCell = GetIndexFromPosition(position);
 	if (isPlayer)
@@ -314,7 +314,6 @@ bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlaye
 			switch (m_pCells[indexCell]->m_CellItem)
 			{
 			case CellItem::Exit:
-				//Check enemies (from game manager?)
 				if (game::GameManager::GetInstance().CanPlayerExit())
 				{
 					//Level completed
