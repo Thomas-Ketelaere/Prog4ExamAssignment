@@ -58,8 +58,9 @@
 #include "ExplodeBombCommand.h"
 #include "HighScoresTextComponent.h"
 #include "ReturnToStartCommand.h"
+#include "EnemyMovementCommand.h"
 
-void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
+void LoadPlayerGamePad(RamCoreEngine::Scene* scene, int index)
 {
 	// --------GAMEPAD-----------
 	auto playerInputObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
@@ -98,22 +99,21 @@ void LoadPlayerGamePad(RamCoreEngine::Scene* scene)
 
 	auto spawnBombCommandGamepad = std::make_unique<game::SpawnBombCommand>(playerInputObjectGamepad.get());
 
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommand), RamCoreEngine::KeyState::Pressed, 0x004, 0);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommand), RamCoreEngine::KeyState::Pressed, 0x008, 0);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommand), RamCoreEngine::KeyState::Pressed, 0x001, 0);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommand), RamCoreEngine::KeyState::Pressed, 0x002, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommand), RamCoreEngine::KeyState::Pressed, 0x004, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommand), RamCoreEngine::KeyState::Pressed, 0x008, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommand), RamCoreEngine::KeyState::Pressed, 0x001, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommand), RamCoreEngine::KeyState::Pressed, 0x002, index);
 	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandGamepad), RamCoreEngine::KeyState::Up, 0x1000, 0);
 	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandGamepad), RamCoreEngine::KeyState::Up, 0x2000, 0);
 	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandGamepad), RamCoreEngine::KeyState::Up, 0x4000, 0);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandGamepad), RamCoreEngine::KeyState::Up, 0x8000, 0);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandGamepad), RamCoreEngine::KeyState::Up, 0x8000, index);
 
 	scene->Add(std::move(playerInputObjectGamepad));
 	// --------END GAMEPAD-----------
 }
 
-void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, game::GridComponent* gridComp)
+void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index)
 {
-	// --------KEYBOARD-----------
 	//display lives
 	//auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
@@ -126,25 +126,22 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, game::GridComponent* gridCo
 	//scene->Add(std::move(playerKeyboardTextObject));
 
 
+	auto playerInputObject = std::make_unique<RamCoreEngine::GameObject>();
+	playerInputObject->SetTag(make_sdbm_hash("Player"));
 
-	// ------- INPUT KEYBOARD ---------
+	auto playerInputSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObject.get(), "PlayerMove.png", 4, 4, 0.2f, false);
+	auto playerInputSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObject.get());
+	auto playerInputCollider = std::make_unique<game::PlayerCollider>(playerInputObject.get(), 28.f, 28.f, true);
+	auto playerInputSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObject.get());
 
-	auto playerInputObjectKeyboard = std::make_unique<RamCoreEngine::GameObject>();
-	playerInputObjectKeyboard->SetTag(make_sdbm_hash("Player"));
+	gridComp->GetGridSubject()->AddObserver(playerInputSpawnBombComponent.get());
 
-	auto playerInputKeyboardSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObjectKeyboard.get(), "PlayerMove.png", 4, 4, 0.2f, false);
-	auto playerInputKeyboardSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObjectKeyboard.get());
-	auto playerInputKeyboardCollider = std::make_unique<game::PlayerCollider>(playerInputObjectKeyboard.get(), 28.f, 28.f, true);
-	auto playerInputKeyboardSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObjectKeyboard.get());
-
-	gridComp->GetGridSubject()->AddObserver(playerInputKeyboardSpawnBombComponent.get());
-
-	playerInputKeyboardCollider->SetDebugRendering(true);
-	playerInputObjectKeyboard->SetLocalPosition(glm::vec3(48, 112, 0.f));
-	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSheet));
-	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpriteSetter));
-	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardCollider));
-	playerInputObjectKeyboard->AddComponent(std::move(playerInputKeyboardSpawnBombComponent));
+	playerInputCollider->SetDebugRendering(true);
+	playerInputObject->SetLocalPosition(glm::vec3(48, 112 + 32*index, 0.f)); //move one down if second player
+	playerInputObject->AddComponent(std::move(playerInputSpriteSheet));
+	playerInputObject->AddComponent(std::move(playerInputSpriteSetter));
+	playerInputObject->AddComponent(std::move(playerInputCollider));
+	playerInputObject->AddComponent(std::move(playerInputSpawnBombComponent));
 
 	//lives
 	//auto playerLivesKeyboard = std::make_unique<game::LivesComponent>(playerInputObjectKeyboard.get(), 3);
@@ -152,39 +149,95 @@ void LoadPlayerKeyboard(RamCoreEngine::Scene* scene, game::GridComponent* gridCo
 	//playerInputObjectKeyboard->AddComponent(std::move(playerLivesKeyboard));
 
 
-	auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveLeftCommandKeyboard->SetSpeed({ -100.f, 0.f });
-	auto moveRightCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveRightCommandKeyboard->SetSpeed({ 100.f, 0.f });
-	auto moveUpCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveUpCommandKeyboard->SetSpeed({ 0.f, -100.f });
-	auto moveDownCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObjectKeyboard.get());
-	moveDownCommandKeyboard->SetSpeed({ 0.f, 100.f });
+	auto moveLeftCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	moveLeftCommand->SetSpeed({ -100.f, 0.f });
+	auto moveRightCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	moveRightCommand->SetSpeed({ 100.f, 0.f });
+	auto moveUpCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	moveUpCommand->SetSpeed({ 0.f, -100.f });
+	auto moveDownCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	moveDownCommand->SetSpeed({ 0.f, 100.f });
 
-	auto loseLivesCommandKeyboard = std::make_unique<game::LoseLiveCommand>(playerInputObjectKeyboard.get());
-	auto gainSmallScoreCommandKeyboard = std::make_unique<game::GainPointsCommand>(playerInputObjectKeyboard.get());
-	gainSmallScoreCommandKeyboard->SetGainScore(10);
-	auto gainBigScoreCommandKeyboard = std::make_unique<game::GainPointsCommand>(playerInputObjectKeyboard.get());
-	gainBigScoreCommandKeyboard->SetGainScore(100);
+	//auto loseLivesCommandKeyboard = std::make_unique<game::LoseLiveCommand>(playerInputObjectKeyboard.get());
+	//auto gainSmallScoreCommandKeyboard = std::make_unique<game::GainPointsCommand>(playerInputObjectKeyboard.get());
+	//gainSmallScoreCommandKeyboard->SetGainScore(10);
+	//auto gainBigScoreCommandKeyboard = std::make_unique<game::GainPointsCommand>(playerInputObjectKeyboard.get());
+	//gainBigScoreCommandKeyboard->SetGainScore(100);
 
-	auto spawnBombCommandKeyboard = std::make_unique<game::SpawnBombCommand>(playerInputObjectKeyboard.get());
-	auto explodeBombCommandKeyboard = std::make_unique<game::ExplodeBombCommand>(playerInputObjectKeyboard.get());
+	auto spawnBombCommand = std::make_unique<game::SpawnBombCommand>(playerInputObject.get());
+	auto explodeBombCommand = std::make_unique<game::ExplodeBombCommand>(playerInputObject.get());
 
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_a, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_d, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_w, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_s, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_q, -1);
-	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_r, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_f, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(explodeBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommand), RamCoreEngine::KeyState::Pressed, 0x004, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommand), RamCoreEngine::KeyState::Pressed, 0x008, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommand), RamCoreEngine::KeyState::Pressed, 0x001, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommand), RamCoreEngine::KeyState::Pressed, 0x002, index);
+	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(loseLivesCommand), RamCoreEngine::KeyState::Up, SDLK_q, -1);
+	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommand), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+	//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommand), RamCoreEngine::KeyState::Up, SDLK_r, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommand), RamCoreEngine::KeyState::Up, 0x8000, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(explodeBombCommand), RamCoreEngine::KeyState::Up, 0x4000, index);
 
-	scene->Add(std::move(playerInputObjectKeyboard));
+	if (index == 0) // if first controller, also set it for keyboard
+	{
+		auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		moveLeftCommandKeyboard->SetSpeed({ -100.f, 0.f });
+		auto moveRightCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		moveRightCommandKeyboard->SetSpeed({ 100.f, 0.f });
+		auto moveUpCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		moveUpCommandKeyboard->SetSpeed({ 0.f, -100.f });
+		auto moveDownCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		moveDownCommandKeyboard->SetSpeed({ 0.f, 100.f });
 
-	// --------END KEYBOARD-----------
+		auto spawnBombCommandKeyboard = std::make_unique<game::SpawnBombCommand>(playerInputObject.get());
+		auto explodeBombCommandKeyboard = std::make_unique<game::ExplodeBombCommand>(playerInputObject.get());
 
-	
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_a, -1);
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_d, -1);
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_w, -1);
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_s, -1);
+		//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(loseLivesCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_q, -1);
+		//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainSmallScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+		//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_r, -1);
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_f, -1);
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(explodeBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+	}
+
+	scene->Add(std::move(playerInputObject));
+}
+
+void LoadPlayerAsEnemy(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* gridObject, game::ScoreTextComponent* playerScoreTextChange, int index)
+{
+	const std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
+
+	auto enemy = std::make_unique<RamCoreEngine::GameObject>();
+	enemy->SetTag(make_sdbm_hash("Enemy"));
+	enemy->SetParent(gridObject, true);
+	enemy->SetLocalPosition(glm::vec3(enemies[0].first.x, enemies[0].first.y, 0));
+	auto enemyCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
+	enemy->AddComponent(std::move(enemyCollider));
+	auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
+	auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100, true);
+	enemyMovement->SetDebugRendering(true);
+	enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange);
+	enemy->AddComponent(std::move(enemyMovement));
+	enemy->AddComponent(std::move(enemySprite));
+
+	auto moveLeftCommand = std::make_unique<game::EnemyMovementCommand>(enemy.get());
+	moveLeftCommand->SetDirection({ -1.f, 0.f });
+	auto moveRightCommand = std::make_unique<game::EnemyMovementCommand>(enemy.get());
+	moveRightCommand->SetDirection({ 1.f, 0.f });
+	auto moveUpCommand = std::make_unique<game::EnemyMovementCommand>(enemy.get());
+	moveUpCommand->SetDirection({ 0.f, -1.f });
+	auto moveDownCommand = std::make_unique<game::EnemyMovementCommand>(enemy.get());
+	moveDownCommand->SetDirection({ 0.f, 1.f });
+
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommand), RamCoreEngine::KeyState::Pressed, 0x004, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommand), RamCoreEngine::KeyState::Pressed, 0x008, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpCommand), RamCoreEngine::KeyState::Pressed, 0x001, index);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownCommand), RamCoreEngine::KeyState::Pressed, 0x002, index);
+
+	scene->Add(std::move(enemy));
+	game::GameManager::GetInstance().SetAmountEnemies(1); //only one enemy in versus
 }
 
 void LoadStartScene()
@@ -418,52 +471,68 @@ void LoadGameScene()
 	playerScoreTextObject->AddComponent(std::move(playerScoreText));
 	auto playerScoreTextChange = std::make_unique<game::ScoreTextComponent>(playerScoreTextObject.get());
 
-	//please do smth about not passing a lot of pointers in functions
-	LoadPlayerGamePad(scene);
-	LoadPlayerKeyboard(scene, gridView.get());
+	//LoadPlayerGamePad(scene, 0);
+	LoadPlayer(scene, gridView.get(), 0);
 	//LoadEnemies(scene, gridObject.get(), playerKeyboardCollider);
 
-	gridObject->AddComponent(std::move(gridView));
-
-	// --------ENEMIES----------
-	const std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
-	game::GameManager::GetInstance().SetAmountEnemies(int(enemies.size()));
-
-	for (size_t enemyCounter{}; enemyCounter < enemies.size(); ++enemyCounter)
+	bool spawnEnemies{ true };
+	switch (game::GameManager::GetInstance().GetGameMode())
 	{
-		glm::vec2 enemyPos = enemies[enemyCounter].first;
-		auto enemy = std::make_unique<RamCoreEngine::GameObject>();
-		enemy->SetTag(make_sdbm_hash("Enemy"));
-		enemy->SetParent(gridObject.get(), true);
-		enemy->SetLocalPosition(glm::vec3(enemyPos.x, enemyPos.y, 0));
-		auto enemyCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
-		enemy->AddComponent(std::move(enemyCollider));
+	case game::GameMode::Single:
 
-		int enemyType = enemies[enemyCounter].second;
-		if (enemyType == 0)
-		{
-			auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100);
-			enemyMovement->SetDebugRendering(true);
-			enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
-
-			auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
-			enemy->AddComponent(std::move(enemyMovement));
-			enemy->AddComponent(std::move(enemySprite));
-		}
-
-		else if (enemyType == 1)
-		{
-			auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 10.f, 200, true, 100.f);
-			enemyMovement->SetDebugRendering(true);
-			enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
-
-			auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Oneal.png", 4, 3, 0.2f, false);
-			enemy->AddComponent(std::move(enemyMovement));
-			enemy->AddComponent(std::move(enemySprite));
-		}
-
-		scene->Add(std::move(enemy));
+		break;
+	case game::GameMode::Coop:
+		LoadPlayer(scene, gridView.get(), 1);
+		break;
+	case game::GameMode::Versus:
+		spawnEnemies = false;
+		LoadPlayerAsEnemy(scene, gridObject.get(), playerScoreTextChange.get(), 1);
+		break;
 	}
+
+	if (spawnEnemies)
+	{
+		// --------ENEMIES----------
+		const std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
+		game::GameManager::GetInstance().SetAmountEnemies(int(enemies.size()));
+
+		for (size_t enemyCounter{}; enemyCounter < enemies.size(); ++enemyCounter)
+		{
+			glm::vec2 enemyPos = enemies[enemyCounter].first;
+			auto enemy = std::make_unique<RamCoreEngine::GameObject>();
+			enemy->SetTag(make_sdbm_hash("Enemy"));
+			enemy->SetParent(gridObject.get(), true);
+			enemy->SetLocalPosition(glm::vec3(enemyPos.x, enemyPos.y, 0));
+			auto enemyCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
+			enemy->AddComponent(std::move(enemyCollider));
+
+			int enemyType = enemies[enemyCounter].second;
+			if (enemyType == 0)
+			{
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100, false);
+				enemyMovement->SetDebugRendering(true);
+				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+
+				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
+				enemy->AddComponent(std::move(enemyMovement));
+				enemy->AddComponent(std::move(enemySprite));
+			}
+
+			else if (enemyType == 1)
+			{
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 10.f, 200, false, true, 100.f);
+				enemyMovement->SetDebugRendering(true);
+				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
+
+				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Oneal.png", 4, 3, 0.2f, false);
+				enemy->AddComponent(std::move(enemyMovement));
+				enemy->AddComponent(std::move(enemySprite));
+			}
+
+			scene->Add(std::move(enemy));
+		}
+	}
+	
 
 
 	/*auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
@@ -499,6 +568,7 @@ void LoadGameScene()
 
 	scene->Add(std::move(enemyOnealOne));*/
 
+	gridObject->AddComponent(std::move(gridView));
 	playerScoreTextObject->AddComponent(std::move(playerScoreTextChange)); // moves after observer is set
 
 	scene->Add(std::move(gridObject));
@@ -506,8 +576,6 @@ void LoadGameScene()
 
 	SDL_Color color = { 56, 135, 0, 255 };
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
-
-	//game::GameManager::GetInstance().CountEnemies();
 
 	// --------SOUND----------
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
@@ -645,11 +713,13 @@ void LoadHighScoreScene()
 
 	auto returnToStartKeyboard = std::make_unique<game::ReturnToStartCommand>();
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(returnToStartKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+
+	auto returnToStartGamepad = std::make_unique<game::ReturnToStartCommand>();
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(returnToStartGamepad), RamCoreEngine::KeyState::Up, 0x8000, 0);
 }
 
 void load()
 {
-	// ------------ FileReading (TODO: IMPLEMENT) --------------
 	game::GameManager::GetInstance().SetMaxLives(3);
 
 	auto& sceneStart = RamCoreEngine::SceneManager::GetInstance().CreateScene("Start", true);

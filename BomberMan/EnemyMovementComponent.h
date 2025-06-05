@@ -9,11 +9,12 @@ namespace RamCoreEngine
 {
 	class SpriteSheetComponent;
 	class Subject;
+	class BaseColliderComponent;
 }
 
 namespace game
 {
-	class EnemyMovementComponent; // to forward it for ENemy states
+	class EnemyMovementComponent; // to forward it for Enemy states
 	//State Pattern
 	class EnemyState
 	{
@@ -78,10 +79,8 @@ namespace game
 	class EnemyMovementComponent final : public RamCoreEngine::Component
 	{
 	public:
-		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead);
-		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool shouldTrackPlayer, float triggerDistance);
-
-
+		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool isGettingControlled);
+		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool isGettingControlled, bool shouldTrackPlayer, float triggerDistance);
 
 		void Start() override;
 		void Update() override;
@@ -92,9 +91,16 @@ namespace game
 		void StartDying();
 		void SetDebugRendering(bool shouldDebugRender) { m_DebugRender = shouldDebugRender; }
 
+		void ControlledMove(glm::vec2 direction);
+		bool IsGettingControlled() const { return m_IsGettingControlled; }
+
 		GridComponent* GetGridComponent() { return m_pGridComponent; }
-		std::vector<RamCoreEngine::GameObject*> GetPlayers() { return m_pPlayers; }
-		RamCoreEngine::SpriteSheetComponent* GetSpriteSheet() { return m_pSpriteSheetComponent; }
+		const std::vector<RamCoreEngine::GameObject*>& GetPlayers() const { return m_pPlayers; }
+		RamCoreEngine::SpriteSheetComponent* GetSpriteSheet() const { return m_pSpriteSheetComponent; }
+		const glm::vec2& GetControlDirection() const { return m_ControlDirection; }
+		const RamCoreEngine::BaseColliderComponent* GetColliderComponent() const { return m_pColliderComp; }
+		bool ShouldControlMove() const { return m_ShouldControlledMove; }
+		void ResetShouldControlMove() { m_ShouldControlledMove = false; }
 
 		RamCoreEngine::Subject* GetEnemyDiedSubject() const { return m_pEnemyDiedEvent.get(); }
 
@@ -106,17 +112,22 @@ namespace game
 		GridComponent* m_pGridComponent = nullptr;
 		
 		std::vector<RamCoreEngine::GameObject*> m_pPlayers;
-		const int m_ScoreWhenDead;
-
 		const float m_Speed;
-		
-		bool m_ShouldTrackPlayer{};
 		const float m_TriggerDistance{};
-
+		const int m_ScoreWhenDead;
+		bool m_ShouldTrackPlayer{};
 		bool m_DebugRender{};
 		bool m_IsDying{};
+		
 
 		std::unique_ptr<EnemyState> m_pEnemyState;
+
+		//controlled
+		RamCoreEngine::BaseColliderComponent* m_pColliderComp = nullptr;
+		glm::vec2 m_ControlDirection{};
+		bool m_ShouldControlledMove{};
+		bool m_IsGettingControlled;
+
 	};
 
 	

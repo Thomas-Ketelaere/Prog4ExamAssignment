@@ -4,6 +4,10 @@
 
 namespace game
 {
+	enum class GameMode
+	{
+		Single, Coop, Versus
+	};
 	//IF TIME LEFT: (change these into events)
 	// - check if possible count enemies in Grid?
 	// - check if possible Lose Live in live component for both players?
@@ -20,24 +24,23 @@ namespace game
 
 		//Score
 		void GainScore(int scoreAdd) { m_TotalScore += scoreAdd; }
-		const int GetTotalScore() { return m_TotalScore; }
+		const int GetTotalScore() const { return m_TotalScore; }
 
 		//Enemies
 		void EnemyKilled();
 		void SetAmountEnemies(int amount) { m_AmountEnemies = amount; }
 
 		//Bomb
-		
-		bool RemoteExplodeActive() { return m_RemoteExplode; }
-		int GetBombRange() { return m_BombRange; }
-		int GetMaxBombs() { return m_MaxBombs; }
+		bool RemoteExplodeActive() const { return m_RemoteExplode; }
+		int GetBombRange() const  { return m_BombRange; }
+		int GetMaxBombs() const  { return m_MaxBombs; }
 		void SaveBombRange(int newRange) { m_BombRange = newRange; }
 		void SaveRemoteExplode(bool remoteExplode) { m_RemoteExplode = remoteExplode; }
 		void SaveMaxBombs(int newMaxBombs) { m_MaxBombs = newMaxBombs; }
 		
 		//Level
-		const int GetCurrentLevel() { return m_CurrentLevel; }
-		bool CanPlayerExit() { return m_AmountEnemies == 0; }
+		const int GetCurrentLevel() const { return m_CurrentLevel; }
+		bool CanPlayerExit() const { return m_AmountEnemies == 0; }
 		void AdvanceLevel();
 
 		//End
@@ -46,9 +49,13 @@ namespace game
 		void RemoveLetterFromName();
 		const std::string& GetName() { return m_Name; }
 
+		//Game mode
+		GameMode GetGameMode() const { return m_CurrentGameMode; }
+		void SetGameMode(GameMode newGameMode) { m_CurrentGameMode = newGameMode; }
+
 	private:
 		friend class Singleton<GameManager>;
-
+		GameMode m_CurrentGameMode{};
 		std::string m_Name{" "};
 		int m_TotalLives{};
 		int m_MaxLives{};

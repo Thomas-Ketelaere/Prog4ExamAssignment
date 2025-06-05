@@ -25,10 +25,13 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 {
 	if (event.id == make_sdbm_hash("BombExploded"))
 	{
-		--m_CurrentAmountBombs;
-		if (m_RemoteExplode)
+		if (m_CurrentAmountBombs > 0) // when in coop, first player spawns one, but this will get called also on second player who hasnt spawned bomb
 		{
-			m_Bombs.pop();
+			--m_CurrentAmountBombs;
+			if (m_RemoteExplode)
+			{
+				m_Bombs.pop();
+			}
 		}
 	}
 

@@ -22,7 +22,7 @@ namespace RamCoreEngine
 		const TransformComponent* GetColliderTransform() { return m_pTransformComponent; }
 		unsigned int GetTag();
 
-		bool IsTrigger() { return m_Trigger; }
+		bool IsTrigger() const { return m_Trigger; }
 
 
 	private:

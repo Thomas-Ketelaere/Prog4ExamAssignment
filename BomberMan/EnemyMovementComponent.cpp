@@ -11,18 +11,20 @@
 #include "GameManager.h"
 #include "Timer.h"
 #include <algorithm>
+#include "BaseColliderComponent.h"
 
-game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead):
-	EnemyMovementComponent(gameObject, speed, scoreWhenDead, false, 0.f)
+game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool controlledByPlayer):
+	EnemyMovementComponent(gameObject, speed, scoreWhenDead, controlledByPlayer, false, 0.f)
 {
 }
 
-game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool shouldTrackPlayer, float triggerDistance) :
+game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool controlledByPlayer, bool shouldTrackPlayer, float triggerDistance) :
 	Component(gameObject),
 	m_Speed{ speed },
 	m_ScoreWhenDead{ scoreWhenDead },
 	m_ShouldTrackPlayer{shouldTrackPlayer},
-	m_TriggerDistance{triggerDistance}
+	m_TriggerDistance{triggerDistance},
+	m_IsGettingControlled{controlledByPlayer}
 {
 	m_pEnemyState = std::make_unique<WanderingState>(this, speed, shouldTrackPlayer, triggerDistance);
 	m_pEnemyDiedEvent = std::make_unique<RamCoreEngine::Subject>();
@@ -32,7 +34,7 @@ void game::EnemyMovementComponent::Start()
 {
 	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
 	m_pSpriteSheetComponent = GetGameObject()->GetComponent<RamCoreEngine::SpriteSheetComponent>();
-	
+	m_pColliderComp = GetGameObject()->GetComponent<RamCoreEngine::BaseColliderComponent>();
 
 	if (m_ShouldTrackPlayer) // only need to get em if enemy needs to track
 	{
@@ -106,6 +108,12 @@ void game::EnemyMovementComponent::StartDying()
 	}
 }
 
+void game::EnemyMovementComponent::ControlledMove(glm::vec2 direction)
+{
+	m_ControlDirection = direction;
+	m_ShouldControlledMove = true;
+}
+
 void game::EnemyMovementComponent::SetSpriteDirection(glm::vec2 direction)
 {
 	glm::vec2 pos = GetTransform()->GetWorldPosition();
@@ -157,65 +165,116 @@ glm::vec2 game::EnemyMovementComponent::GetRandomPlayerPositionInRange()
 
 void game::WanderingState::OnEnter()
 {
-	m_Path = GetComponent()->GetGridComponent()->GetPath(GetComponent()->GetGameObject()->GetLocalPosition(), glm::vec2(848, 48));
+	auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCellPosition();
+	m_Path = GetComponent()->GetGridComponent()->GetPath(GetComponent()->GetGameObject()->GetLocalPosition(), randomTarget);
 	m_PathIndex = 0;
 }
 
 std::unique_ptr<game::EnemyState> game::WanderingState::Update()
 {
-	glm::vec2 worldPos = GetComponent()->GetGameObject()->GetWorldPosition();
-	glm::vec2 localPos = GetComponent()->GetGameObject()->GetLocalPosition();
-
-	glm::vec3 gridPos = GetComponent()->GetGridComponent()->GetGameObject()->GetWorldPosition();
-
-	// Convert path points to world space
-	std::vector<glm::vec2> movedPath(m_Path.size());
-	std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
-		{
-			point += glm::vec2(gridPos.x, gridPos.y);
-			return point;
-		});
-
-	if (glm::distance(worldPos, movedPath[m_PathIndex]) <= m_DistanceToReachPoint)
+	if (GetComponent()->IsGettingControlled())
 	{
-		++m_PathIndex;
-
-		if (m_PathIndex == movedPath.size() || !GetComponent()->GetGridComponent()->IsCellWalkable(movedPath[m_PathIndex], false))
+		if (GetComponent()->ShouldControlMove())
 		{
-			m_PathIndex = 1;
-			auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCellPosition();
-			m_Path = GetComponent()->GetGridComponent()->GetPath(worldPos, randomTarget);
-		}
-		glm::vec2 direction = movedPath[m_PathIndex] - worldPos;
-		GetComponent()->SetSpriteDirection(direction);
-	}
+			GetComponent()->ResetShouldControlMove();
+			glm::vec3 pos = GetComponent()->GetGameObject()->GetWorldPosition();
+			glm::vec2 direction = GetComponent()->GetControlDirection();
+			pos.x += m_Speed * direction.x * RamCoreEngine::Time::GetInstance().m_DeltaTime;
+			pos.y += m_Speed * direction.y * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
-	else
-	{
-		glm::vec2 direction = movedPath[m_PathIndex] - worldPos;
-		glm::vec2 dirNorm = glm::normalize(direction);
+			glm::vec3 posToCheck{ pos };
+			float colliderWidthHalf = GetComponent()->GetColliderComponent()->GetColliderWidth() / 2;
+			float colliderHeightHalf = GetComponent()->GetColliderComponent()->GetColliderHeight() / 2;
 
-		localPos += m_Speed * dirNorm * RamCoreEngine::Time::GetInstance().m_DeltaTime;
-		GetComponent()->GetGameObject()->SetLocalPosition(glm::vec3(localPos.x, localPos.y, 0.f));
-	}
+			bool canMove{ true };
 
-	if (m_ShouldTrackPlayer)
-	{
-		bool playerCloseEnough{ false };
-		for (RamCoreEngine::GameObject* player : GetComponent()->GetPlayers())
-		{
-			glm::vec3 playerPos = player->GetWorldPosition();
-			if (glm::distance(playerPos, GetComponent()->GetGameObject()->GetWorldPosition()) <= m_TriggerDistance)
+			glm::vec2 topLeft = { pos.x - colliderWidthHalf, pos.y - colliderHeightHalf };
+			glm::vec2 topRight = { pos.x + colliderWidthHalf, pos.y - colliderHeightHalf };
+			glm::vec2 bottomLeft = { pos.x - colliderWidthHalf, pos.y + colliderHeightHalf };
+			glm::vec2 bottomRight = { pos.x + colliderWidthHalf, pos.y + colliderHeightHalf };
+
+			//tried to also for perfomance do last index and check if it changed, but hitbox is bigger and not just position so wont work
+			if (!GetComponent()->GetGridComponent()->IsCellWalkable(topLeft, false))
 			{
-				playerCloseEnough = true;
+				canMove = false;
+			}
+			else if (!GetComponent()->GetGridComponent()->IsCellWalkable(topRight, false))
+			{
+				canMove = false;
+			}
+			else if (!GetComponent()->GetGridComponent()->IsCellWalkable(bottomLeft, false))
+			{
+				canMove = false;
+			}
+			else if (!GetComponent()->GetGridComponent()->IsCellWalkable(bottomRight, false))
+			{
+				canMove = false;
+			}
+
+			if (canMove)
+			{
+				GetComponent()->GetGameObject()->SetLocalPosition(glm::vec3(pos.x, pos.y, 0.f));
 			}
 		}
+		
+	}
+	else
+	{
+		glm::vec2 worldPos = GetComponent()->GetGameObject()->GetWorldPosition();
+		glm::vec2 localPos = GetComponent()->GetGameObject()->GetLocalPosition();
 
-		if (playerCloseEnough)
+		glm::vec3 gridPos = GetComponent()->GetGridComponent()->GetGameObject()->GetWorldPosition();
+
+		// Convert path points to world space
+		std::vector<glm::vec2> movedPath(m_Path.size());
+		std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
+			{
+				point += glm::vec2(gridPos.x, gridPos.y);
+				return point;
+			});
+
+		if (glm::distance(worldPos, movedPath[m_PathIndex]) <= m_DistanceToReachPoint)
 		{
-			return std::make_unique<ChaseState>(GetComponent(), m_Speed, m_TriggerDistance);
+			++m_PathIndex;
+
+			if (m_PathIndex == movedPath.size() || !GetComponent()->GetGridComponent()->IsCellWalkable(movedPath[m_PathIndex], false))
+			{
+				m_PathIndex = 1;
+				auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCellPosition();
+				m_Path = GetComponent()->GetGridComponent()->GetPath(worldPos, randomTarget);
+			}
+			glm::vec2 direction = movedPath[m_PathIndex] - worldPos;
+			GetComponent()->SetSpriteDirection(direction);
+		}
+
+		else
+		{
+			glm::vec2 direction = movedPath[m_PathIndex] - worldPos;
+			glm::vec2 dirNorm = glm::normalize(direction);
+
+			localPos += m_Speed * dirNorm * RamCoreEngine::Time::GetInstance().m_DeltaTime;
+			GetComponent()->GetGameObject()->SetLocalPosition(glm::vec3(localPos.x, localPos.y, 0.f));
+		}
+
+		if (m_ShouldTrackPlayer)
+		{
+			bool playerCloseEnough{ false };
+			for (RamCoreEngine::GameObject* player : GetComponent()->GetPlayers())
+			{
+				glm::vec3 playerPos = player->GetWorldPosition();
+				if (glm::distance(playerPos, GetComponent()->GetGameObject()->GetWorldPosition()) <= m_TriggerDistance)
+				{
+					playerCloseEnough = true;
+				}
+			}
+
+			if (playerCloseEnough)
+			{
+				return std::make_unique<ChaseState>(GetComponent(), m_Speed, m_TriggerDistance);
+			}
 		}
 	}
+	
 	return nullptr;
 }
 

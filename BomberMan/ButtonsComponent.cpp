@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "TextComponent.h"
 #include "SceneManager.h"
+#include "GameManager.h"
 
 game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex, std::vector<std::string> sceneNamesToLoad):
 	Component(gameObject),
@@ -60,6 +61,18 @@ void game::ButtonsComponent::ChangeIndex(bool up)
 
 void game::ButtonsComponent::ButtonPressed()
 {
+	if (m_Index == 0)
+	{
+		GameManager::GetInstance().SetGameMode(GameMode::Single);
+	}
+	else if (m_Index == 1)
+	{
+		GameManager::GetInstance().SetGameMode(GameMode::Coop);
+	}
+	else if (m_Index == 2)
+	{
+		GameManager::GetInstance().SetGameMode(GameMode::Versus);
+	}
 	std::string& sceneNameToLoad = m_pTextComponents[m_Index].second;
 	RamCoreEngine::SceneManager::GetInstance().LoadScene(sceneNameToLoad);
 }

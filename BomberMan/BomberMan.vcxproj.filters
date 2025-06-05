@@ -129,6 +129,9 @@
     <ClCompile Include="ReturnToStartCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyMovementCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -234,6 +237,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ReturnToStartCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyMovementCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
