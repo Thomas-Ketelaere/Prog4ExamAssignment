@@ -18,6 +18,6 @@ void game::ScoreTextComponent::Notify(Event event, RamCoreEngine::GameObject*)
 	if (event.id == make_sdbm_hash("EnemyDied"))
 	{
 		int newScore = game::GameManager::GetInstance().GetTotalScore();
-		m_TextComponent->ChangeText("Current score: " + std::to_string(newScore));
+		m_TextComponent->ChangeText(std::to_string(newScore));
 	}
 }

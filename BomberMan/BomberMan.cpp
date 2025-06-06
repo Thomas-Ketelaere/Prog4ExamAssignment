@@ -60,6 +60,7 @@
 #include "ReturnToStartCommand.h"
 #include "EnemyMovementCommand.h"
 #include "EnemyCollider.h"
+#include "TimerLevelComponent.h"
 
 
 void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index)
@@ -311,11 +312,11 @@ void LoadGameScene()
 
 	auto fpsObject = std::make_unique<RamCoreEngine::GameObject>();
 	auto fpsText = std::make_unique<RamCoreEngine::TextComponent>(fpsObject.get(), "FPS:", font);
-	fpsObject->SetLocalPosition(glm::vec3(40, 32, 0.f));
+	fpsObject->SetLocalPosition(glm::vec3(150, 32, 0.f));
 	fpsObject->AddComponent(std::move(fpsText));
-
 	auto fpsCounter = std::make_unique<game::FpsComponent>(fpsObject.get());
 	fpsObject->AddComponent(std::move(fpsCounter));
+	scene->Add(std::move(fpsObject));
 
 	//auto fpsMovement = std::make_unique<game::MovementComponent>();
 	//fpsMovement->SetSpeed(5.f, 0.f);
@@ -323,7 +324,13 @@ void LoadGameScene()
 	//fpsMovement->SetRotationSpeed(1.f, fpsRotPos);
 	//fpsObject->AddComponent(std::move(fpsMovement));
 
-	scene->Add(std::move(fpsObject));
+	auto timerLevelObject = std::make_unique<RamCoreEngine::GameObject>();
+	timerLevelObject->SetLocalPosition(glm::vec3(60, 32, 0.f));
+	auto timerText = std::make_unique<RamCoreEngine::TextComponent>(timerLevelObject.get(), "Time ", font);
+	auto timerCounter = std::make_unique<game::TimerLevelComponent>(timerLevelObject.get(), 200.f, 10);
+	timerLevelObject->AddComponent(std::move(timerText));
+	timerLevelObject->AddComponent(std::move(timerCounter));
+	scene->Add(std::move(timerLevelObject));
 
 
 	//PLAYER SINGLE SPRITE
@@ -384,8 +391,9 @@ void LoadGameScene()
 
 	//display score
 	auto playerScoreTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	playerScoreTextObject->SetLocalPosition(glm::vec3(230, 30, 0.f));
-	std::string score = "Current score: " + std::to_string(game::GameManager::GetInstance().GetTotalScore());
+	playerScoreTextObject->SetTag(make_sdbm_hash("ScoreText"));
+	playerScoreTextObject->SetLocalPosition(glm::vec3(300, 30, 0.f));
+	std::string score = std::to_string(game::GameManager::GetInstance().GetTotalScore());
 	auto playerScoreText = std::make_unique<RamCoreEngine::TextComponent>(playerScoreTextObject.get(), score, font);
 	playerScoreText->ChangeFontSize(28);
 	playerScoreTextObject->AddComponent(std::move(playerScoreText));
@@ -531,11 +539,11 @@ void LoadLoadingScene()
 
 	auto levelTextObject = std::make_unique<RamCoreEngine::GameObject>();
 	levelTextObject->SetLocalPosition(glm::vec3(256, 238, 0.f));
-	std::string level = "Level: " + std::to_string(game::GameManager::GetInstance().GetCurrentLevel());
+	std::string level = "Stage " + std::to_string(game::GameManager::GetInstance().GetCurrentLevel());
 	auto levelText = std::make_unique<RamCoreEngine::TextComponent>(levelTextObject.get(), level, font);
 	levelText->ChangeFontSize(50);
 	levelTextObject->AddComponent(std::move(levelText));
-	auto loadScreen = std::make_unique<game::LoadingScreenComponent>(levelTextObject.get(), 3.f);
+	auto loadScreen = std::make_unique<game::LoadingScreenComponent>(levelTextObject.get(), 2.5f);
 	levelTextObject->AddComponent(std::move(loadScreen));
 
 	scene->Add(std::move(levelTextObject));

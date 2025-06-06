@@ -86,9 +86,6 @@ void game::EnemyMovementComponent::Render() const
 void game::EnemyMovementComponent::OnDestroy()
 {
 
-	GameManager::GetInstance().GainScore(m_ScoreWhenDead);
-	game::GameManager().GetInstance().EnemyKilled();
-
 	Event e(make_sdbm_hash("EnemyDied"));
 	m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
 }
@@ -369,15 +366,10 @@ std::unique_ptr<game::EnemyState> game::DyingState::Update()
 	m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	if (m_AccumulatedTime >= m_TimeToDie)
 	{
-		//auto scoreEffectObject = std::make_unique<RamCoreEngine::GameObject>();
-		//scoreEffectObject->SetLocalPosition(GetComponent()->GetTransform()->GetWorldPosition());
-		//scoreEffectObject->SetParent(GetComponent()->GetGridComponent()->GetGameObject(), true);
-		//auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(scoreEffectObject.get(), GetComponent()->GetScore(), 2.f);
-		//scoreEffectObject->AddComponent(std::move(scoreEffectText));
-		//RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(scoreEffectObject));
-		auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(GetComponent()->GetGridComponent()->GetGameObject(), GetComponent()->GetScore(), 2.f, GetComponent()->GetTransform()->GetWorldPosition());
-		GetComponent()->GetGridComponent()->GetGameObject()->AddComponent(std::move(scoreEffectText));
-		std::cout << "added score" << std::endl;
+		auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(GetComponent()->GetGridComponent()->GetGameObject(), GetComponent()->GetScore(), 2.f, GetComponent()->GetTransform()->GetLocalPosition());
+		GetComponent()->GetGridComponent()->GetGameObject()->AddComponent(std::move(scoreEffectText));	
+		GameManager::GetInstance().GainScore(GetComponent()->GetScore()); //only gain score when getting killed from bomb and not getting "killed" by timer
+		game::GameManager().GetInstance().EnemyKilled();
 		GetComponent()->GetGameObject()->Destroy();
 	}
 	return nullptr;

@@ -29,7 +29,7 @@ namespace RamCoreEngine
 	private:
 		Font* m_Font;
 		std::unique_ptr<Texture2D> m_TextTexture;
-		glm::vec2 m_CustomPosition;
+		glm::vec2 m_CustomPosition{};
 		std::string m_Text;
 		bool m_NeedsUpdate;
 		bool m_UseCustomPosition;

@@ -77,9 +77,14 @@ void RamCoreEngine::Scene::Start()
 
 void Scene::Update()
 {
-	for(auto& object : m_Objects)
+	//for(auto& object : m_Objects)
+	//{
+	//	object->Update();
+	//}
+
+	for (size_t objectCounter{}; objectCounter < m_Objects.size(); ++objectCounter)
 	{
-		object->Update();
+		m_Objects[objectCounter]->Update();
 	}
 }
 

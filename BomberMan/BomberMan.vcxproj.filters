@@ -141,6 +141,9 @@
     <ClCompile Include="EnemyScoreEffectComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="TimerLevelComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -258,6 +261,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="EnemyScoreEffectComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerLevelComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>

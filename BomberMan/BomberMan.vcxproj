@@ -215,6 +215,7 @@
     <ClCompile Include="SpawnBombCommand.cpp" />
     <ClCompile Include="SpawnBombComponent.cpp" />
     <ClCompile Include="StartGameCommand.cpp" />
+    <ClCompile Include="TimerLevelComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Achievements.h" />
@@ -256,6 +257,7 @@
     <ClInclude Include="SpawnBombCommand.h" />
     <ClInclude Include="SpawnBombComponent.h" />
     <ClInclude Include="StartGameCommand.h" />
+    <ClInclude Include="TimerLevelComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
