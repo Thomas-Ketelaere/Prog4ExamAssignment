@@ -29,7 +29,6 @@ void game::TimerLevelComponent::Update()
 	m_TimeForLevel -= RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	if (m_TimeForLevel <= 0)
 	{
-		// spawn enemies, TODO destroy other enemies
 		
 		auto enemies = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->GetAllObjectsWithTag(make_sdbm_hash("Enemy"));
 		for (auto& enemy : enemies)
@@ -49,7 +48,7 @@ void game::TimerLevelComponent::Update()
 			enemy->SetLocalPosition(glm::vec3(enemyPos.x, enemyPos.y, 0));
 			auto enemyCollider = std::make_unique<game::EnemyCollider>(enemy.get(), 25.f, 25.f, true);
 			enemy->AddComponent(std::move(enemyCollider));
-			auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 25.f, 400, false, true, 100.f);
+			auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 100.f, 400, false, true, 100.f);
 			enemyMovement->SetDebugRendering(true);
 			enemyMovement->GetEnemyDiedSubject()->AddObserver(scoreTextComp);
 

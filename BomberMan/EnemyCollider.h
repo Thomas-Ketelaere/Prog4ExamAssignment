@@ -4,7 +4,7 @@
 
 namespace game
 {
-	class EnemyCollider final : public RamCoreEngine::Collider, public RamCoreEngine::Component
+	class EnemyCollider final : public RamCoreEngine::Component, public RamCoreEngine::Collider
 	{
 	public:
 		EnemyCollider(RamCoreEngine::GameObject* gameObject, const float width, const float height, bool isTrigger);
@@ -15,7 +15,5 @@ namespace game
 		EnemyCollider& operator=(EnemyCollider&& other) = delete;
 
 		void OnTriggerOverlap(Collider* other) override;
-
-	private:
 	};
 }

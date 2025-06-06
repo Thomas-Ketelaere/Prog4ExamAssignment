@@ -11,8 +11,9 @@
 #include "GameManager.h"
 #include "Timer.h"
 #include <algorithm>
-#include "BaseColliderComponent.h"
+#include "EnemyCollider.h"
 #include "EnemyScoreEffectComponent.h"
+
 
 game::EnemyMovementComponent::EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool controlledByPlayer):
 	EnemyMovementComponent(gameObject, speed, scoreWhenDead, controlledByPlayer, false, 0.f)
@@ -35,7 +36,7 @@ void game::EnemyMovementComponent::Start()
 {
 	m_pGridComponent = GetGameObject()->GetParent()->GetComponent<GridComponent>();
 	m_pSpriteSheetComponent = GetGameObject()->GetComponent<RamCoreEngine::SpriteSheetComponent>();
-	m_pColliderComp = GetGameObject()->GetComponent<RamCoreEngine::BaseColliderComponent>();
+	m_pColliderComp = GetGameObject()->GetComponent<EnemyCollider>();
 
 	if (m_ShouldTrackPlayer) // only need to get em if enemy needs to track
 	{
@@ -59,6 +60,10 @@ void game::EnemyMovementComponent::Update()
 
 void game::EnemyMovementComponent::Render() const
 {
+	if (m_DebugRender)
+	{
+		m_pEnemyState->Render();
+	}
 	//if (m_DebugRender)
 	//{
 	//	SDL_Color color = { 0, 0, 255, 255 };
@@ -85,7 +90,6 @@ void game::EnemyMovementComponent::Render() const
 
 void game::EnemyMovementComponent::OnDestroy()
 {
-
 	Event e(make_sdbm_hash("EnemyDied"));
 	m_pEnemyDiedEvent->NotifyObservers(e, GetGameObject());
 }
@@ -164,7 +168,7 @@ glm::vec2 game::EnemyMovementComponent::GetRandomPlayerPositionInRange()
 void game::WanderingState::OnEnter()
 {
 	auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCellPosition();
-	m_Path = GetComponent()->GetGridComponent()->GetPath(GetComponent()->GetGameObject()->GetLocalPosition(), randomTarget);
+	m_Path = GetComponent()->GetGridComponent()->GetPath(GetComponent()->GetGameObject()->GetWorldPosition(), randomTarget);
 	m_PathIndex = 0;
 }
 
@@ -237,7 +241,7 @@ std::unique_ptr<game::EnemyState> game::WanderingState::Update()
 
 			if (m_PathIndex == movedPath.size() || !GetComponent()->GetGridComponent()->IsCellWalkable(movedPath[m_PathIndex], false))
 			{
-				m_PathIndex = 1;
+				m_PathIndex = 0;
 				auto randomTarget = GetComponent()->GetGridComponent()->GetRandomEmptyCellPosition();
 				m_Path = GetComponent()->GetGridComponent()->GetPath(worldPos, randomTarget);
 			}
@@ -276,6 +280,29 @@ std::unique_ptr<game::EnemyState> game::WanderingState::Update()
 	return nullptr;
 }
 
+void game::WanderingState::Render()
+{
+	SDL_Color color = { 0, 0, 255, 255 };
+	glm::vec3 gridPos = GetComponent()->GetGridComponent()->GetGameObject()->GetLocalPosition();
+	std::vector<glm::vec2> movedPath;
+	movedPath.resize(m_Path.size());
+
+	std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
+		{
+			glm::vec2 movedPoint{ point };
+			movedPoint.x += gridPos.x;
+			movedPoint.y += gridPos.y;
+			return movedPoint;
+		});
+
+	for (unsigned int pathCounter{}; pathCounter < movedPath.size() - 1; ++pathCounter)
+	{
+		glm::vec2 pointOne = movedPath[pathCounter];
+		glm::vec2 pointTwo = movedPath[pathCounter + 1];
+		RamCoreEngine::Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
+	}
+}
+
 void game::ChaseState::OnEnter()
 {
 	glm::vec2 worldPos = GetComponent()->GetGameObject()->GetWorldPosition();
@@ -283,7 +310,7 @@ void game::ChaseState::OnEnter()
 	if (playerPos.x != 0 && playerPos.y != 0)
 	{
 		m_Path = GetComponent()->GetGridComponent()->GetPath(worldPos, playerPos);
-		m_PathIndex = 0;
+		m_PathIndex = 1;
 	}
 }
 
@@ -331,6 +358,29 @@ std::unique_ptr<game::EnemyState> game::ChaseState::Update()
 	return nullptr;
 }
 
+void game::ChaseState::Render()
+{
+	SDL_Color color = { 0, 0, 255, 255 };
+	glm::vec3 gridPos = GetComponent()->GetGridComponent()->GetGameObject()->GetLocalPosition();
+	std::vector<glm::vec2> movedPath;
+	movedPath.resize(m_Path.size());
+
+	std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
+		{
+			glm::vec2 movedPoint{ point };
+			movedPoint.x += gridPos.x;
+			movedPoint.y += gridPos.y;
+			return movedPoint;
+		});
+
+	for (unsigned int pathCounter{}; pathCounter < movedPath.size() - 1; ++pathCounter)
+	{
+		glm::vec2 pointOne = movedPath[pathCounter];
+		glm::vec2 pointTwo = movedPath[pathCounter + 1];
+		RamCoreEngine::Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
+	}
+}
+
 glm::vec2 game::ChaseState::GetRandomPlayerPositionInRange()
 {
 	std::vector<glm::vec3> playersPositions;
@@ -359,6 +409,11 @@ glm::vec2 game::ChaseState::GetRandomPlayerPositionInRange()
 		int randPos = rand() % playersPositions.size();
 		return playersPositions[randPos];
 	}
+}
+
+void game::DyingState::OnEnter()
+{
+	GetComponent()->GetColliderComponent()->Destroy();
 }
 
 std::unique_ptr<game::EnemyState> game::DyingState::Update()

@@ -9,12 +9,12 @@ namespace RamCoreEngine
 {
 	class SpriteSheetComponent;
 	class Subject;
-	class BaseColliderComponent;
 }
 
 namespace game
 {
 	class EnemyMovementComponent; // to forward it for Enemy states
+	class EnemyCollider;
 	//State Pattern
 	class EnemyState
 	{
@@ -24,6 +24,7 @@ namespace game
 		virtual void OnEnter() {};
 		virtual void OnExit() {};
 		virtual std::unique_ptr<EnemyState> Update() = 0;
+		virtual void Render() {};
 
 		EnemyMovementComponent* GetComponent() { return m_pComponent; }
 
@@ -37,6 +38,7 @@ namespace game
 		WanderingState(EnemyMovementComponent* component, float speed, bool shouldTrackPlayer, float triggerDistance) : EnemyState(component), m_Speed{ speed }, m_ShouldTrackPlayer{ shouldTrackPlayer }, m_TriggerDistance{ triggerDistance } {};
 		void OnEnter() override;
 		std::unique_ptr<EnemyState> Update() override;
+		void Render() override;
 
 	private:
 		std::vector<glm::vec2> m_Path;
@@ -53,6 +55,7 @@ namespace game
 		ChaseState(EnemyMovementComponent* component, float speed, float triggerDistance) : EnemyState(component), m_Speed{ speed }, m_TriggerDistance{ triggerDistance } {};
 		void OnEnter() override;
 		std::unique_ptr<EnemyState> Update() override;
+		void Render() override;
 
 	private:
 		glm::vec2 GetRandomPlayerPositionInRange();
@@ -67,6 +70,7 @@ namespace game
 	{
 	public:
 		DyingState(EnemyMovementComponent* component, float timeToDie) : EnemyState(component), m_TimeToDie{ timeToDie }, m_AccumulatedTime{} {};
+		void OnEnter() override;
 		std::unique_ptr<EnemyState> Update() override;
 
 	private:
@@ -103,7 +107,7 @@ namespace game
 		const std::vector<RamCoreEngine::GameObject*>& GetPlayers() const { return m_pPlayers; }
 		RamCoreEngine::SpriteSheetComponent* GetSpriteSheet() const { return m_pSpriteSheetComponent; }
 		const glm::vec2& GetControlDirection() const { return m_ControlDirection; }
-		const RamCoreEngine::BaseColliderComponent* GetColliderComponent() const { return m_pColliderComp; }
+		EnemyCollider* GetColliderComponent() const { return m_pColliderComp; }
 		bool ShouldControlMove() const { return m_ShouldControlledMove; }
 		void ResetShouldControlMove() { m_ShouldControlledMove = false; }
 		int GetScore() const { return m_ScoreWhenDead; }
@@ -129,7 +133,7 @@ namespace game
 		std::unique_ptr<EnemyState> m_pEnemyState;
 
 		//controlled
-		RamCoreEngine::BaseColliderComponent* m_pColliderComp = nullptr;
+		EnemyCollider* m_pColliderComp = nullptr;
 		glm::vec2 m_ControlDirection{};
 		bool m_ShouldControlledMove{};
 		bool m_IsGettingControlled;

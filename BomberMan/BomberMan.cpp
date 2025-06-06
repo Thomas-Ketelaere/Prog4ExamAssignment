@@ -61,6 +61,7 @@
 #include "EnemyMovementCommand.h"
 #include "EnemyCollider.h"
 #include "TimerLevelComponent.h"
+#include "SkipLevelCommand.h"
 
 
 void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index)
@@ -68,7 +69,7 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	auto playerInputObject = std::make_unique<RamCoreEngine::GameObject>();
 	playerInputObject->SetTag(make_sdbm_hash("Player"));
 
-	auto playerInputSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObject.get(), "PlayerMove.png", 4, 4, 0.2f, false);
+	auto playerInputSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObject.get(), "PlayerMove.png", 4, 4, 0.1f, false);
 	auto playerInputSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObject.get(), 2.4f);
 	auto playerInputCollider = std::make_unique<game::PlayerCollider>(playerInputObject.get(), 28.f, 28.f, true);
 	auto playerInputSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObject.get());
@@ -83,13 +84,13 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	playerInputObject->AddComponent(std::move(playerInputSpawnBombComponent));
 
 	auto moveLeftCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
-	moveLeftCommand->SetSpeed({ -100.f, 0.f });
+	moveLeftCommand->SetSpeed({ -80.f, 0.f });
 	auto moveRightCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
-	moveRightCommand->SetSpeed({ 100.f, 0.f });
+	moveRightCommand->SetSpeed({ 80.f, 0.f });
 	auto moveUpCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
-	moveUpCommand->SetSpeed({ 0.f, -100.f });
+	moveUpCommand->SetSpeed({ 0.f, -80.f });
 	auto moveDownCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
-	moveDownCommand->SetSpeed({ 0.f, 100.f });
+	moveDownCommand->SetSpeed({ 0.f, 80.f });
 
 	//auto loseLivesCommandKeyboard = std::make_unique<game::LoseLiveCommand>(playerInputObjectKeyboard.get());
 	//auto gainSmallScoreCommandKeyboard = std::make_unique<game::GainPointsCommand>(playerInputObjectKeyboard.get());
@@ -113,16 +114,18 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	if (index == 0) // if first controller, also set it for keyboard
 	{
 		auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
-		moveLeftCommandKeyboard->SetSpeed({ -100.f, 0.f });
+		moveLeftCommandKeyboard->SetSpeed({ -80.f, 0.f });
 		auto moveRightCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
-		moveRightCommandKeyboard->SetSpeed({ 100.f, 0.f });
+		moveRightCommandKeyboard->SetSpeed({ 80.f, 0.f });
 		auto moveUpCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
-		moveUpCommandKeyboard->SetSpeed({ 0.f, -100.f });
+		moveUpCommandKeyboard->SetSpeed({ 0.f, -80.f });
 		auto moveDownCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
-		moveDownCommandKeyboard->SetSpeed({ 0.f, 100.f });
+		moveDownCommandKeyboard->SetSpeed({ 0.f, 80.f });
 
 		auto spawnBombCommandKeyboard = std::make_unique<game::SpawnBombCommand>(playerInputObject.get());
 		auto explodeBombCommandKeyboard = std::make_unique<game::ExplodeBombCommand>(playerInputObject.get());
+
+		auto skipLevelCommandKeyboard = std::make_unique<game::SkipLevelCommand>();
 
 		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveLeftCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_a, -1);
 		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveRightCommandKeyboard), RamCoreEngine::KeyState::Pressed, SDLK_d, -1);
@@ -133,6 +136,7 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 		//RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(gainBigScoreCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_r, -1);
 		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_f, -1);
 		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(explodeBombCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+		RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(skipLevelCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_F1, -1);
 	}
 
 	scene->Add(std::move(playerInputObject));
@@ -435,7 +439,7 @@ void LoadGameScene()
 			int enemyType = enemies[enemyCounter].second;
 			if (enemyType == 0)
 			{
-				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100, false);
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 50.f, 100, false);
 				enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
@@ -446,7 +450,7 @@ void LoadGameScene()
 
 			else if (enemyType == 1)
 			{
-				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 20.f, 200, false, true, 100.f);
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 60.f, 200, false, true, 100.f);
 				enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
@@ -457,7 +461,7 @@ void LoadGameScene()
 
 			else if (enemyType == 2)
 			{
-				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 25.f, 400, false);
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 60.f, 400, false);
 				enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
@@ -467,7 +471,7 @@ void LoadGameScene()
 			}
 			else if (enemyType == 3)
 			{
-				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 25.f, 400, false, true, 100.f);
+				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 100.f, 800, false, true, 100.f);
 				enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 

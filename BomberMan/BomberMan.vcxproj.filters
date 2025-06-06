@@ -144,6 +144,9 @@
     <ClCompile Include="TimerLevelComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="SkipLevelCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FpsComponent.h">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="TimerLevelComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SkipLevelCommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -50,12 +50,27 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
 	}
 
+	std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
 	const int amountOfBreakableWalls{ game::LevelLoader::GetInstance().GetAmountBreakableWalls()};
 	for (int emptyCounter{}; emptyCounter < amountOfBreakableWalls; ++emptyCounter)
 	{
 		Cell* cell = GetRandomCell(CellState::Empty);
 		int index = GetIndexFromPosition(cell->m_Position);
-		if (index == 32 || index == 33 || index == 62 || index == 93)
+		bool onEnemyPos{};
+		for (auto& enemy : enemies)
+		{
+			if (index == GetIndexFromPosition(enemy.first))
+			{
+				--emptyCounter;
+				onEnemyPos = true;
+				break;
+			}
+		}
+		if (onEnemyPos)
+		{
+			continue;
+		}
+		else if (index == 32 || index == 33 || index == 34 || index == 64 || index == 96)
 		{
 			--emptyCounter; //these spots should stay free for player spawn
 		}
@@ -111,10 +126,6 @@ game::GridComponent::~GridComponent()
 }
 
 
-void game::GridComponent::LateUpdate()
-{
-}
-
 void game::GridComponent::ExplodeBomb(int index, int range)
 {
 	m_BombExploded = true;
@@ -168,6 +179,8 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 			}
 		}
 	}
+
+	horizontalCells.emplace_back(index); //add center between L and R
 
 	//right direction
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter) // need different for loop for each direction, so it'll break when hitting hard wall
@@ -247,6 +260,8 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		}
 	}
 
+	verticalCells.emplace_back(index); //add center between D and U
+
 	// Up direction
 	for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
 	{
@@ -296,8 +311,8 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		float leftX = GetCellPositionFromIndexWorld(horizontalCells.front()).x;
 		float rightX = GetCellPositionFromIndexWorld(horizontalCells.back()).x;
 		float centerY = GetCellPositionFromIndexWorld(index).y;
-
-		float colliderWidth = (rightX - leftX) + m_CellWidth; // include center cell
+		
+		float colliderWidth = rightX - leftX + m_CellWidth;
 
 		auto horizontalColliderObject = std::make_unique<RamCoreEngine::GameObject>();
 		glm::vec3 posHorColl{ (leftX + rightX) / 2.f, centerY, 0.f };
@@ -319,7 +334,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		float bottomY = GetCellPositionFromIndexWorld(verticalCells.front()).y;
 		float topY = GetCellPositionFromIndexWorld(verticalCells.back()).y;
 		float centerX = GetCellPositionFromIndexWorld(index).x;
-		float colliderHeight = (bottomY - topY) + m_CellHeight;
+		float colliderHeight = bottomY - topY + m_CellHeight;
 
 		auto verticalColliderObject = std::make_unique<RamCoreEngine::GameObject>();
 		glm::vec3 posVerColl{ centerX, (topY + bottomY) / 2.f, 0.f };

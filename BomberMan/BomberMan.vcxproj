@@ -212,6 +212,7 @@
     <ClCompile Include="SaveScoreReleaseCommand.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreTextComponent.cpp" />
+    <ClCompile Include="SkipLevelCommand.cpp" />
     <ClCompile Include="SpawnBombCommand.cpp" />
     <ClCompile Include="SpawnBombComponent.cpp" />
     <ClCompile Include="StartGameCommand.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="SaveScoreReleaseCommand.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreTextComponent.h" />
+    <ClInclude Include="SkipLevelCommand.h" />
     <ClInclude Include="SpawnBombCommand.h" />
     <ClInclude Include="SpawnBombComponent.h" />
     <ClInclude Include="StartGameCommand.h" />

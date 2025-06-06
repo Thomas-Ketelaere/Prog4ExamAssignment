@@ -59,8 +59,6 @@ namespace game
 		GridComponent& operator=(const GridComponent& other) = delete;
 		GridComponent& operator=(GridComponent&& other) = delete;
 
-		void LateUpdate() override;
-
 		void ExplodeBomb(int index, int range);
 
 		bool IsCellWalkable(const glm::vec2& position, bool isPlayer);

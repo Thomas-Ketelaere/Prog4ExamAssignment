@@ -30,7 +30,7 @@ namespace game
 		std::queue<BombComponent*> m_Bombs{};
 		PlayerSpriteComponent* m_pPlayerSpriteComponent{};
 		GridComponent* m_pGridComponent{};
-		const float m_TimeToExplode{ 2.f };
+		const float m_TimeToExplode{ 1.7f };
 		int m_Range;
 		int m_MaxAmountBombs;
 		int m_CurrentAmountBombs{};

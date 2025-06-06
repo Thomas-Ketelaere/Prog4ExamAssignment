@@ -33,7 +33,7 @@ void game::GameManager::ResetStats()
 void game::GameManager::AdvanceLevel()
 {
 	++m_CurrentLevel;
-	if (m_CurrentLevel >= m_MaxLevels)
+	if (m_CurrentLevel > m_MaxLevels)
 	{
 		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("EndScreen"));
 	}
@@ -46,7 +46,10 @@ void game::GameManager::AdvanceLevel()
 
 void game::GameManager::AddLetterToName(char letter)
 {
-	m_Name += letter;
+	if (m_Name.size() < m_MaxLetters)
+	{
+		m_Name += letter;
+	}
 }
 
 void game::GameManager::RemoveLetterFromName()

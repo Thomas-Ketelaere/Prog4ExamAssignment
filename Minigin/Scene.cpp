@@ -63,6 +63,10 @@ void Scene::Remove(std::unique_ptr<GameObject> object)
 
 void Scene::RemoveAll()
 {
+	for (auto& object : m_Objects )
+	{
+		object->OnDestroy();
+	}
 	m_Objects.clear();
 	m_Destroy = false;
 }

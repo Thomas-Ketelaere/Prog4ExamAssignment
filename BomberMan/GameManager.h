@@ -8,7 +8,7 @@ namespace game
 	{
 		Single, Coop, Versus
 	};
-	//TODO IF TIME LEFT: (change these into events)
+	// TODO IF TIME LEFT: (change these into events)
 	// - check if possible count enemies in Grid? Or enemy counter component with event (that already exists) when enemy dies, put game object on grid to check in grid component if enemies are stil alive
 	class GameManager : public RamCoreEngine::Singleton<GameManager>
 	{
@@ -61,7 +61,8 @@ namespace game
 		int m_CurrentLevel{ 1 };
 		int m_MaxBombs{ 1 };
 		int m_AmountEnemies{};
-		const int m_MaxLevels{ 1 }; //should be three but for testing one now
+		const int m_MaxLevels{ 3 }; 
+		const size_t m_MaxLetters{ 10 };
 		int m_BombRange{ 1 };
 		bool m_RemoteExplode{};
 	};
