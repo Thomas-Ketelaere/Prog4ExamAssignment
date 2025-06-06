@@ -3,13 +3,17 @@
 
 namespace game
 {
-	class ReturnToStartCommand : public RamCoreEngine::Command
+	class ReturnToStartCommand final : public RamCoreEngine::Command
 	{
 	public:
 		ReturnToStartCommand();
-		void Execute() override;
+		~ReturnToStartCommand() = default;
+		ReturnToStartCommand(const ReturnToStartCommand& other) = delete;
+		ReturnToStartCommand(ReturnToStartCommand&& other) = delete;
+		ReturnToStartCommand& operator=(const ReturnToStartCommand& other) = delete;
+		ReturnToStartCommand& operator=(ReturnToStartCommand&& other) = delete;
 
-		void Start() override {};
+		void Execute() override;
 	};
 }
 

@@ -14,6 +14,11 @@ namespace game
 	{
 	public:
 		HighScoresTextComponent(RamCoreEngine::GameObject* gameObject, const std::string& saveFileName, float offsetYBetween);
+		~HighScoresTextComponent() = default;
+		HighScoresTextComponent(const HighScoresTextComponent& other) = delete;
+		HighScoresTextComponent(HighScoresTextComponent&& other) = delete;
+		HighScoresTextComponent& operator=(const HighScoresTextComponent& other) = delete;
+		HighScoresTextComponent& operator=(HighScoresTextComponent&& other) = delete;
 
 	private:
 		std::vector<RamCoreEngine::TextComponent*> m_pHighScoreTexts;

@@ -13,6 +13,11 @@ namespace game
 	{
 	public:
 		FpsComponent(RamCoreEngine::GameObject* gameObject);
+		~FpsComponent() = default;
+		FpsComponent(const FpsComponent& other) = delete;
+		FpsComponent(FpsComponent&& other) = delete;
+		FpsComponent& operator=(const FpsComponent& other) = delete;
+		FpsComponent& operator=(FpsComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Update() override;

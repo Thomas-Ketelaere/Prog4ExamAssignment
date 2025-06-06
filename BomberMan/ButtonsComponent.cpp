@@ -12,7 +12,7 @@ game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, 
 	m_Index{startIndex}
 {
 	auto textComps = GetGameObject()->GetAllComponents<RamCoreEngine::TextComponent>();
-	for (unsigned int compCounter{}; compCounter < textComps.size(); ++compCounter)
+	for (size_t compCounter{}; compCounter < textComps.size(); ++compCounter)
 	{
 		m_pTextComponents.emplace_back(textComps[compCounter]);
 	}
@@ -38,7 +38,7 @@ void game::ButtonsComponent::ChangeIndex(bool up)
 	{
 		if (m_Index == 0)
 		{
-			m_Index = int(m_pTextComponents.size() - 1);
+			m_Index = static_cast<int>(m_pTextComponents.size()) - 1;
 		}
 		else
 		{

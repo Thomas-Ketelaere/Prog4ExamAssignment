@@ -8,10 +8,6 @@ game::ExplodeBombCommand::ExplodeBombCommand(RamCoreEngine::GameObject* actor):
 	m_pSpawnBombComponent = actor->GetComponent<SpawnBombComponent>();
 }
 
-void game::ExplodeBombCommand::Start()
-{
-}
-
 void game::ExplodeBombCommand::Execute()
 {
 	m_pSpawnBombComponent->RemoteExplodeBomb();

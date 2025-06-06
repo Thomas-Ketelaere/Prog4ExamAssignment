@@ -4,12 +4,16 @@
 namespace game
 {
 	class ButtonsComponent;
-	class ButtonsCommand : public RamCoreEngine::GameActorCommand
+	class ButtonsCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		ButtonsCommand(RamCoreEngine::GameObject* actor);
+		~ButtonsCommand() = default;
+		ButtonsCommand(const ButtonsCommand& other) = delete;
+		ButtonsCommand(ButtonsCommand&& other) = delete;
+		ButtonsCommand& operator=(const ButtonsCommand& other) = delete;
+		ButtonsCommand& operator=(ButtonsCommand&& other) = delete;
 		
-		void Start() override {};
 		void Execute() override;
 
 		void SetGoesDown(bool goesDown) { m_GoesDown = goesDown; }

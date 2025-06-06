@@ -12,6 +12,11 @@ namespace game
 	{
 	public:
 		ScoreTextComponent(RamCoreEngine::GameObject* gameObject);
+		~ScoreTextComponent() = default;
+		ScoreTextComponent(const ScoreTextComponent& other) = delete;
+		ScoreTextComponent(ScoreTextComponent&& other) = delete;
+		ScoreTextComponent& operator=(const ScoreTextComponent& other) = delete;
+		ScoreTextComponent& operator=(ScoreTextComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;

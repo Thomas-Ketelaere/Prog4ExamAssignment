@@ -23,6 +23,13 @@ void game::SpawnBombComponent::Start()
 	m_pPlayerSpriteComponent = GetGameObject()->GetComponent<PlayerSpriteComponent>();
 }
 
+void game::SpawnBombComponent::OnDestroy()
+{
+	game::GameManager::GetInstance().SaveBombRange(m_Range);
+	game::GameManager::GetInstance().SaveRemoteExplode(m_RemoteExplode);
+	game::GameManager::GetInstance().SaveMaxBombs(m_MaxAmountBombs);
+}
+
 void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 {
 	if (event.id == make_sdbm_hash("BombExploded"))
@@ -50,13 +57,6 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 		m_RemoteExplode = true;
 	}
 
-}
-
-game::SpawnBombComponent::~SpawnBombComponent()
-{
-	game::GameManager::GetInstance().SaveBombRange(m_Range);
-	game::GameManager::GetInstance().SaveRemoteExplode(m_RemoteExplode);
-	game::GameManager::GetInstance().SaveMaxBombs(m_MaxAmountBombs);
 }
 
 void game::SpawnBombComponent::SpawnBomb(const glm::vec2 position)

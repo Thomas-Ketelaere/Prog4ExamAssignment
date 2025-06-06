@@ -104,11 +104,12 @@ game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int am
 
 game::GridComponent::~GridComponent()
 {
-	for (const Cell* cell : m_pCells)
+	for (const Cell* cell : m_pCells) //doing this on "OnDestroy" doesnt get called when closing program so for safety doing it here
 	{
 		delete cell;
 	}
 }
+
 
 void game::GridComponent::LateUpdate()
 {
@@ -516,8 +517,8 @@ int game::GridComponent::GetIndexFromPosition(const glm::vec2& pos) const
 	glm::vec2 movedPos{};
 	movedPos.x = pos.x - gridPos.x;
 	movedPos.y = pos.y - gridPos.y;
-	int column = int(movedPos.x / m_CellWidth);
-	int row = int((movedPos.y - m_OffsetY) / m_CellHeight);
+	int column = static_cast<int>(movedPos.x / m_CellWidth);
+	int row = static_cast<int>((movedPos.y - m_OffsetY) / m_CellHeight);
 
 	int index = row * m_AmountColumns + column;
 

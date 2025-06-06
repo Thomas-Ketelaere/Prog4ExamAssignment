@@ -33,7 +33,7 @@ void game::OnScreenKeyboardComponent::Start()
 
 	glm::vec2 worldPos = GetGameObject()->GetWorldPosition();
 
-	if (int(m_Alphabet.size()) > m_Columns * m_Rows)
+	if (static_cast<int>(m_Alphabet.size()) > m_Columns * m_Rows)
 	{
 		throw std::runtime_error("too many places for the aplhabet");
 	}
@@ -85,8 +85,8 @@ void game::OnScreenKeyboardComponent::ChangeSelected(glm::vec2 direction)
 	int currentRow = m_Index / m_Columns;
 	int currentCol = m_Index % m_Columns;
 
-	currentCol += (int)direction.x;
-	currentRow += (int)direction.y;
+	currentCol += static_cast<int>(direction.x);
+	currentRow += static_cast<int>(direction.y);
 
 	if (currentCol >= m_Columns)
 	{

@@ -13,6 +13,11 @@ namespace game
 	{
 	public:
 		NameTextComponent(RamCoreEngine::GameObject* gameObject);
+		~NameTextComponent() = default;
+		NameTextComponent(const NameTextComponent& other) = delete;
+		NameTextComponent(NameTextComponent&& other) = delete;
+		NameTextComponent& operator=(const NameTextComponent& other) = delete;
+		NameTextComponent& operator=(NameTextComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;

@@ -8,6 +8,11 @@ namespace game
 	{
 	public:
 		MovementComponent(RamCoreEngine::GameObject* gameObject);
+		~MovementComponent() = default;
+		MovementComponent(const MovementComponent& other) = delete;
+		MovementComponent(MovementComponent&& other) = delete;
+		MovementComponent& operator=(const MovementComponent& other) = delete;
+		MovementComponent& operator=(MovementComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Update() override;

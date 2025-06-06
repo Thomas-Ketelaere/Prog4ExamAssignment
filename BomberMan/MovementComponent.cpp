@@ -73,7 +73,6 @@ void game::MovementComponent::InputMovement(float horizontal, float vertical)
 void game::MovementComponent::UpdatePosition()
 {
 	const float deltaTime = RamCoreEngine::Time::GetInstance().m_DeltaTime;
-	//glm::uvec3 newPosition{ GetTransform()->GetPosition() }; conversion problems
 	float xPos = GetGameObject()->GetWorldPosition().x;
 	float yPos = GetGameObject()->GetWorldPosition().y;
 	xPos += m_SpeedX * deltaTime;
@@ -88,9 +87,9 @@ void game::MovementComponent::UpdateRotation()
 {
 	m_Angle += m_RotationSpeed * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
-	if (m_Angle > 2.f * float(M_PI))
+	if (m_Angle > 2.f * static_cast<float>(M_PI))
 	{
-		m_Angle -= 2.f * float(M_PI);
+		m_Angle -= 2.f * static_cast<float>(M_PI);
 	}
 
 	const glm::vec3 newPosition {m_RotationPoint.x + m_Radius * cos(m_Angle), m_RotationPoint.y + m_Radius * sin(m_Angle), 0};

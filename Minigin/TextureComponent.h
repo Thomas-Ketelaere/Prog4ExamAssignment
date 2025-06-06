@@ -10,6 +10,11 @@ namespace RamCoreEngine
 	{
 	public:
 		TextureComponent(GameObject* gameObject, const std::string& fullPath, bool useCustomPosition = false);
+		~TextureComponent() = default;
+		TextureComponent(const TextureComponent& other) = delete;
+		TextureComponent(TextureComponent&& other) = delete;
+		TextureComponent& operator=(const TextureComponent& other) = delete;
+		TextureComponent& operator=(TextureComponent&& other) = delete;
 
 		virtual void Render() const override;
 		void SetCustomPosition(const glm::vec2 customPosition) { m_CustomPosition = customPosition; }

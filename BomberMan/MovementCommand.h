@@ -6,10 +6,16 @@ namespace game
 	class PlayerSpriteComponent;
 	class GridComponent;
 	class PlayerCollider;
-	class MoveCommand : public RamCoreEngine::GameActorCommand
+	class MoveCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		MoveCommand(RamCoreEngine::GameObject* actor);
+		~MoveCommand() = default;
+		MoveCommand(const MoveCommand& other) = delete;
+		MoveCommand(MoveCommand&& other) = delete;
+		MoveCommand& operator=(const MoveCommand& other) = delete;
+		MoveCommand& operator=(MoveCommand&& other) = delete;
+
 		virtual void Execute() override;
 		void Start() override;
 

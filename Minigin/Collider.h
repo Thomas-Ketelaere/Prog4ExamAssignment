@@ -11,6 +11,10 @@ namespace RamCoreEngine
 	public:
 		Collider(GameObject* gameObject, const float width, const float height, bool isTrigger);
 		~Collider();
+		Collider(const Collider& other) = delete;
+		Collider(Collider&& other) = delete;
+		Collider& operator=(const Collider& other) = delete;
+		Collider& operator=(Collider&& other) = delete;
 
 		virtual void OnTriggerOverlap(Collider* other) = 0;
 

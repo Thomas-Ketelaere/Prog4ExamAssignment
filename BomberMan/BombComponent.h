@@ -8,6 +8,11 @@ namespace game
 	{
 	public:
 		BombComponent(RamCoreEngine::GameObject* gameObject, GridComponent* gridComponent, int cellIndex, int range);
+		~BombComponent() = default;
+		BombComponent(const BombComponent& other) = delete;
+		BombComponent(BombComponent&& other) = delete;
+		BombComponent& operator=(const BombComponent& other) = delete;
+		BombComponent& operator=(BombComponent&& other) = delete;
 
 		void Explode();
 	private:

@@ -3,13 +3,17 @@
 namespace game
 {
 	class LivesComponent;
-	class LoseLiveCommand: public RamCoreEngine::GameActorCommand
+	class LoseLiveCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		LoseLiveCommand(RamCoreEngine::GameObject* actor);
-		virtual void Execute() override;
+		~LoseLiveCommand() = default;
+		LoseLiveCommand(const LoseLiveCommand& other) = delete;
+		LoseLiveCommand(LoseLiveCommand&& other) = delete;
+		LoseLiveCommand& operator=(const LoseLiveCommand& other) = delete;
+		LoseLiveCommand& operator=(LoseLiveCommand&& other) = delete;
 
-		void Start() override {}
+		virtual void Execute() override;
 
 	private:
 		LivesComponent* m_pLivesComponent;

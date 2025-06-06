@@ -6,12 +6,16 @@
 namespace game
 {
 	class OnScreenKeyboardComponent;
-	class OnScreenKeyboardCommand : public RamCoreEngine::GameActorCommand
+	class OnScreenKeyboardCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		OnScreenKeyboardCommand(RamCoreEngine::GameObject* actor);
+		~OnScreenKeyboardCommand() = default;
+		OnScreenKeyboardCommand(const OnScreenKeyboardCommand& other) = delete;
+		OnScreenKeyboardCommand(OnScreenKeyboardCommand&& other) = delete;
+		OnScreenKeyboardCommand& operator=(const OnScreenKeyboardCommand& other) = delete;
+		OnScreenKeyboardCommand& operator=(OnScreenKeyboardCommand&& other) = delete;
 
-		void Start() override {};
 		void Execute() override;
 
 		void SetDirection(glm::vec2 direction) { m_Direction = direction; }

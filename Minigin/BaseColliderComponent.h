@@ -9,6 +9,11 @@ namespace RamCoreEngine
 	{
 	public:
 		BaseColliderComponent(GameObject* gameObject, const float width, const float height, bool isTrigger);
+		~BaseColliderComponent() = default;
+		BaseColliderComponent(const BaseColliderComponent& other) = delete;
+		BaseColliderComponent(BaseColliderComponent&& other) = delete;
+		BaseColliderComponent& operator=(const BaseColliderComponent& other) = delete;
+		BaseColliderComponent& operator=(BaseColliderComponent&& other) = delete;
 
 		void Render() const override;
 

@@ -3,12 +3,17 @@
 namespace game
 {
 	class SpawnBombComponent;
-	class ExplodeBombCommand : public RamCoreEngine::GameActorCommand
+	class ExplodeBombCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		ExplodeBombCommand(RamCoreEngine::GameObject* actor);
+		~ExplodeBombCommand() = default;
+		ExplodeBombCommand(const ExplodeBombCommand& other) = delete;
+		ExplodeBombCommand(ExplodeBombCommand&& other) = delete;
+		ExplodeBombCommand& operator=(const ExplodeBombCommand& other) = delete;
+		ExplodeBombCommand& operator=(ExplodeBombCommand&& other) = delete;
+
 		void Execute() override;
-		void Start() override;
 
 	private:
 		SpawnBombComponent* m_pSpawnBombComponent;

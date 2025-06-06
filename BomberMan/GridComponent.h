@@ -53,9 +53,13 @@ namespace game
 	{
 	public:
 		GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int gridWidth, int gridHeight, float cellSize, float offsetY, int screenWidth);
-		virtual ~GridComponent() override;
+		~GridComponent();
+		GridComponent(const GridComponent& other) = delete;
+		GridComponent(GridComponent&& other) = delete;
+		GridComponent& operator=(const GridComponent& other) = delete;
+		GridComponent& operator=(GridComponent&& other) = delete;
 
-		virtual void LateUpdate() override;
+		void LateUpdate() override;
 
 		void ExplodeBomb(int index, int range);
 

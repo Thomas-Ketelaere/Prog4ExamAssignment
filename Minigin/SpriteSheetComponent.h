@@ -9,6 +9,11 @@ namespace RamCoreEngine
 	{
 	public:
 		SpriteSheetComponent(GameObject* gameObject, const std::string& fullPath, int amountColumns, int amountRows, float interval, bool destroyAfterPlayed, bool useCustomPosition = false);
+		~SpriteSheetComponent() = default;
+		SpriteSheetComponent(const SpriteSheetComponent& other) = delete;
+		SpriteSheetComponent(SpriteSheetComponent&& other) = delete;
+		SpriteSheetComponent& operator=(const SpriteSheetComponent& other) = delete;
+		SpriteSheetComponent& operator=(SpriteSheetComponent&& other) = delete;
 
 		virtual void Render() const override;
 		virtual void Update() override;

@@ -8,6 +8,11 @@ namespace RamCoreEngine
 	{
 	public:
 		TransformComponent(GameObject* gameObject);
+		~TransformComponent() = default;
+		TransformComponent(const TransformComponent& other) = delete;
+		TransformComponent(TransformComponent&& other) = delete;
+		TransformComponent& operator=(const TransformComponent& other) = delete;
+		TransformComponent& operator=(TransformComponent&& other) = delete;
 
 		const glm::vec3& GetWorldPosition() const { return m_WorldPosition; }
 		void SetWorldPosition(float x, float y, float z);

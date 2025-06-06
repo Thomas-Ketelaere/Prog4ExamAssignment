@@ -14,6 +14,11 @@ namespace game
 	{
 	public:
 		ScoreComponent(RamCoreEngine::GameObject* gameObject);
+		~ScoreComponent() = default;
+		ScoreComponent(const ScoreComponent& other) = delete;
+		ScoreComponent(ScoreComponent&& other) = delete;
+		ScoreComponent& operator=(const ScoreComponent& other) = delete;
+		ScoreComponent& operator=(ScoreComponent&& other) = delete;
 
 		void GainScore(int amount);
 

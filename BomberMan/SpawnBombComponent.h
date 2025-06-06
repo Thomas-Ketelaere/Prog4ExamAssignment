@@ -13,9 +13,14 @@ namespace game
 	{
 	public:
 		SpawnBombComponent(RamCoreEngine::GameObject* gameObject);
-		~SpawnBombComponent();
+		~SpawnBombComponent() = default;
+		SpawnBombComponent(const SpawnBombComponent& other) = delete;
+		SpawnBombComponent(SpawnBombComponent&& other) = delete;
+		SpawnBombComponent& operator=(const SpawnBombComponent& other) = delete;
+		SpawnBombComponent& operator=(SpawnBombComponent&& other) = delete;
 
 		void Start() override;
+		void OnDestroy() override;
 		void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;
 
 		void SpawnBomb(const glm::vec2 position);

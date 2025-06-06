@@ -14,6 +14,11 @@ namespace game
 	{
 	public:
 		LivesTextComponent(RamCoreEngine::GameObject* gameObject);
+		~LivesTextComponent() = default;
+		LivesTextComponent(const LivesTextComponent& other) = delete;
+		LivesTextComponent(LivesTextComponent&& other) = delete;
+		LivesTextComponent& operator=(const LivesTextComponent& other) = delete;
+		LivesTextComponent& operator=(LivesTextComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Notify(Event event, RamCoreEngine::GameObject* gameObject) override;

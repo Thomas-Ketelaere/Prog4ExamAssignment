@@ -12,6 +12,11 @@ namespace RamCoreEngine
 	{
 	public:
 		TextComponent(GameObject* gameObject, const std::string& text, Font* font, bool useCustomPosition = false);
+		~TextComponent() = default;
+		TextComponent(const TextComponent& other) = delete;
+		TextComponent(TextComponent&& other) = delete;
+		TextComponent& operator=(const TextComponent& other) = delete;
+		TextComponent& operator=(TextComponent&& other) = delete;
 		
 		virtual void Update() override;
 		virtual void Render() const override;

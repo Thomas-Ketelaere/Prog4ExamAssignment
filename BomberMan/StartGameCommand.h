@@ -3,13 +3,17 @@
 namespace game
 {
 	class ButtonsComponent;
-	class StartGameCommand : public RamCoreEngine::GameActorCommand
+	class StartGameCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		StartGameCommand(RamCoreEngine::GameObject* actor);
-		void Execute() override;
+		~StartGameCommand() = default;
+		StartGameCommand(const StartGameCommand& other) = delete;
+		StartGameCommand(StartGameCommand&& other) = delete;
+		StartGameCommand& operator=(const StartGameCommand& other) = delete;
+		StartGameCommand& operator=(StartGameCommand&& other) = delete;
 
-		void Start() override {}
+		void Execute() override;
 
 	private:
 		ButtonsComponent* m_pButtonComp{};

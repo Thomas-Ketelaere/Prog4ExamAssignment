@@ -16,6 +16,11 @@ namespace game
 	{
 	public:
 		OnScreenKeyboardComponent(RamCoreEngine::GameObject* gameObject, int columns, int rows, int offsetX, int offsetY, uint8_t smallFontSize, uint8_t bigFontSize);
+		~OnScreenKeyboardComponent() = default;
+		OnScreenKeyboardComponent(const OnScreenKeyboardComponent& other) = delete;
+		OnScreenKeyboardComponent(OnScreenKeyboardComponent&& other) = delete;
+		OnScreenKeyboardComponent& operator=(const OnScreenKeyboardComponent& other) = delete;
+		OnScreenKeyboardComponent& operator=(OnScreenKeyboardComponent&& other) = delete;
 
 		void Start() override;
 		void ButtonPressed(bool shouldRemove);

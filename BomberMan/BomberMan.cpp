@@ -412,7 +412,7 @@ void LoadGameScene()
 	{
 		// --------ENEMIES----------
 		const std::vector<std::pair<glm::vec2, int>> enemies = game::LevelLoader::GetInstance().GetEnemies();
-		game::GameManager::GetInstance().SetAmountEnemies(int(enemies.size()));
+		game::GameManager::GetInstance().SetAmountEnemies(static_cast<int>(enemies.size()));
 
 		for (size_t enemyCounter{}; enemyCounter < enemies.size(); ++enemyCounter)
 		{

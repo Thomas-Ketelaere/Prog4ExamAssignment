@@ -3,13 +3,17 @@
 namespace game
 {
 	class OnScreenKeyboardComponent;
-	class PressScreenKeyboardCommand : public RamCoreEngine::GameActorCommand
+	class PressScreenKeyboardCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
 		PressScreenKeyboardCommand(RamCoreEngine::GameObject* actor);
-		void Execute() override;
+		~PressScreenKeyboardCommand() = default;
+		PressScreenKeyboardCommand(const PressScreenKeyboardCommand& other) = delete;
+		PressScreenKeyboardCommand(PressScreenKeyboardCommand&& other) = delete;
+		PressScreenKeyboardCommand& operator=(const PressScreenKeyboardCommand& other) = delete;
+		PressScreenKeyboardCommand& operator=(PressScreenKeyboardCommand&& other) = delete;
 
-		void Start() override {}
+		void Execute() override;
 
 		void SetShouldRemove(bool shouldRemove) { m_ShouldRemove = shouldRemove; }
 

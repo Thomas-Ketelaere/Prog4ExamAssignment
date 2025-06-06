@@ -14,6 +14,11 @@ namespace game
 	{
 	public:
 		ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex); 
+		~ButtonsComponent() = default;
+		ButtonsComponent(const ButtonsComponent& other) = delete;
+		ButtonsComponent(ButtonsComponent&& other) = delete;
+		ButtonsComponent& operator=(const ButtonsComponent& other) = delete;
+		ButtonsComponent& operator=(ButtonsComponent&& other) = delete;
 
 		void Start() override;
 

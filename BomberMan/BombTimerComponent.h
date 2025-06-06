@@ -8,6 +8,11 @@ namespace game
 	{
 	public: 
 		BombTimerComponent(RamCoreEngine::GameObject* gameObject, float timeToExplode);
+		~BombTimerComponent() = default;
+		BombTimerComponent(const BombTimerComponent& other) = delete;
+		BombTimerComponent(BombTimerComponent&& other) = delete;
+		BombTimerComponent& operator=(const BombTimerComponent& other) = delete;
+		BombTimerComponent& operator=(BombTimerComponent&& other) = delete;
 
 		virtual void Update() override;
 

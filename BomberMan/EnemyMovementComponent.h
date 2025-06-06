@@ -81,6 +81,11 @@ namespace game
 	public:
 		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool isGettingControlled);
 		EnemyMovementComponent(RamCoreEngine::GameObject* gameObject, const float speed, const int scoreWhenDead, bool isGettingControlled, bool shouldTrackPlayer, float triggerDistance);
+		~EnemyMovementComponent() = default;
+		EnemyMovementComponent(const EnemyMovementComponent& other) = delete;
+		EnemyMovementComponent(EnemyMovementComponent&& other) = delete;
+		EnemyMovementComponent& operator=(const EnemyMovementComponent& other) = delete;
+		EnemyMovementComponent& operator=(EnemyMovementComponent&& other) = delete;
 
 		void Start() override;
 		void Update() override;

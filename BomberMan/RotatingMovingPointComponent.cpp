@@ -15,7 +15,7 @@ void game::RotatingMovingPointComponent::Start()
 	auto newRotationPoint = m_Parent->GetWorldPosition();
 	m_MovementComponent->SetRotationPoint(newRotationPoint.x, newRotationPoint.y);
 
-	m_MovementComponent->CalculateRadiusAndAngle(); // have to do this, otherwise radius will not be correct
+	m_MovementComponent->CalculateRadiusAndAngle(); 
 }
 
 void game::RotatingMovingPointComponent::Update()

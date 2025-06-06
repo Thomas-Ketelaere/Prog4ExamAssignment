@@ -8,6 +8,11 @@ namespace game
 	{
 	public:
 		RotatingMovingPointComponent(RamCoreEngine::GameObject* gameObject);
+		~RotatingMovingPointComponent() = default;
+		RotatingMovingPointComponent(const RotatingMovingPointComponent& other) = delete;
+		RotatingMovingPointComponent(RotatingMovingPointComponent&& other) = delete;
+		RotatingMovingPointComponent& operator=(const RotatingMovingPointComponent& other) = delete;
+		RotatingMovingPointComponent& operator=(RotatingMovingPointComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Update() override;

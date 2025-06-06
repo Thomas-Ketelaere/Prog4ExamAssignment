@@ -12,28 +12,6 @@ void RamCoreEngine::ColliderManager::ClearColliders()
 
 void RamCoreEngine::ColliderManager::UpdateColliders()
 {
-	//for (const auto& firstCollider : m_pColliderCompVct)
-	//{
-	//	for (const auto& secondCollider : m_pColliderCompVct)
-	//	{
-	//		if (firstCollider == secondCollider)
-	//		{
-	//			continue;
-	//		}
-	//		if (firstCollider->IsColliding(secondCollider))
-	//		{
-	//			if (firstCollider->IsTrigger())
-	//			{
-	//				firstCollider->OnTriggerOverlap(secondCollider);
-	//			}
-
-	//			if (secondCollider->IsTrigger())
-	//			{
-	//				secondCollider->OnTriggerOverlap(firstCollider);
-	//			}
-	//		}
-	//	}
-	//}
 
 	//cannot do 2 range based for loops bcs will go over every collider twice otherwise
 	for (unsigned int i{}; i < m_pColliderCompVct.size(); ++i)

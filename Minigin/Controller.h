@@ -8,6 +8,10 @@ namespace RamCoreEngine
 	public:
 		Controller(int controllerIndex);
 		~Controller();
+		Controller(const Controller& other) = delete;
+		Controller(Controller&& other) = delete;
+		Controller& operator=(const Controller& other) = delete;
+		Controller& operator=(Controller&& other) = delete;
 
 		void ProcessInputController();
 		int GetControllerIndex() const;

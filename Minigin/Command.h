@@ -6,7 +6,7 @@ namespace RamCoreEngine
 	{
 	public:
 		virtual ~Command() = default;
-		virtual void Start() = 0;
+		virtual void Start() {};
 		virtual void Execute() = 0;
 	};
 

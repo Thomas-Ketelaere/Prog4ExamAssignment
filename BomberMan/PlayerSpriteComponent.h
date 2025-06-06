@@ -14,6 +14,11 @@ namespace game
 	{
 	public:
 		PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject, float timeToDie);
+		~PlayerSpriteComponent() = default;
+		PlayerSpriteComponent(const PlayerSpriteComponent& other) = delete;
+		PlayerSpriteComponent(PlayerSpriteComponent&& other) = delete;
+		PlayerSpriteComponent& operator=(const PlayerSpriteComponent& other) = delete;
+		PlayerSpriteComponent& operator=(PlayerSpriteComponent&& other) = delete;
 
 		virtual void Start() override;
 		virtual void Update() override;

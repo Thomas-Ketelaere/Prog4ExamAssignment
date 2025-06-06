@@ -8,8 +8,13 @@ namespace game
 	{
 	public:
 		SaveScoreReleaseCommand(RamCoreEngine::GameObject* actor);
+		~SaveScoreReleaseCommand() = default;
+		SaveScoreReleaseCommand(const SaveScoreReleaseCommand& other) = delete;
+		SaveScoreReleaseCommand(SaveScoreReleaseCommand&& other) = delete;
+		SaveScoreReleaseCommand& operator=(const SaveScoreReleaseCommand& other) = delete;
+		SaveScoreReleaseCommand& operator=(SaveScoreReleaseCommand&& other) = delete;
+
 		void Execute() override;
-		void Start() override {}
 
 	private:
 		SaveScoreComponent* m_pSaveScoreComponent{};

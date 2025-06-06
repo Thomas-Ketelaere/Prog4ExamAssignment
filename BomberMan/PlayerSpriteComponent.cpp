@@ -85,7 +85,6 @@ void game::PlayerSpriteComponent::StartDying()
 	if (!m_IsDying)
 	{
 		m_IsDying = true;
-		//TODO: play dead animation
 		m_pSpriteSheetComponent->Destroy();
 		auto dyingSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "PlayerDying.png", 8, 1, 0.3f, true);
 		m_pSpriteSheetComponent = dyingSpriteSheet.get();

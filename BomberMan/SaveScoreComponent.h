@@ -8,6 +8,11 @@ namespace game
 	{
 	public:
 		SaveScoreComponent(RamCoreEngine::GameObject* gameObject, float lengthBar, float heightBar, float speed, const std::string& saveFileName);
+		~SaveScoreComponent() = default;
+		SaveScoreComponent(const SaveScoreComponent& other) = delete;
+		SaveScoreComponent(SaveScoreComponent&& other) = delete;
+		SaveScoreComponent& operator=(const SaveScoreComponent& other) = delete;
+		SaveScoreComponent& operator=(SaveScoreComponent&& other) = delete;
 
 		void Render() const override;
 

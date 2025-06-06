@@ -9,7 +9,11 @@ namespace game
 	{
 	public:
 		PlayerCollider(RamCoreEngine::GameObject* gameObject, const float width, const float height, bool isTrigger);
-
+		~PlayerCollider() = default;
+		PlayerCollider(const PlayerCollider& other) = delete;
+		PlayerCollider(PlayerCollider&& other) = delete;
+		PlayerCollider& operator=(const PlayerCollider& other) = delete;
+		PlayerCollider& operator=(PlayerCollider&& other) = delete;
 		
 		void Render() const override;
 

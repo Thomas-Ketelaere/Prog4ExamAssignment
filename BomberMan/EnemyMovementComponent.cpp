@@ -369,12 +369,15 @@ std::unique_ptr<game::EnemyState> game::DyingState::Update()
 	m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
 	if (m_AccumulatedTime >= m_TimeToDie)
 	{
-		auto scoreEffectObject = std::make_unique<RamCoreEngine::GameObject>();
-		scoreEffectObject->SetLocalPosition(GetComponent()->GetTransform()->GetWorldPosition());
-		scoreEffectObject->SetParent(GetComponent()->GetGridComponent()->GetGameObject(), true);
-		auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(scoreEffectObject.get(), GetComponent()->GetScore(), 2.f);
-		scoreEffectObject->AddComponent(std::move(scoreEffectText));
-		RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(scoreEffectObject));
+		//auto scoreEffectObject = std::make_unique<RamCoreEngine::GameObject>();
+		//scoreEffectObject->SetLocalPosition(GetComponent()->GetTransform()->GetWorldPosition());
+		//scoreEffectObject->SetParent(GetComponent()->GetGridComponent()->GetGameObject(), true);
+		//auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(scoreEffectObject.get(), GetComponent()->GetScore(), 2.f);
+		//scoreEffectObject->AddComponent(std::move(scoreEffectText));
+		//RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(scoreEffectObject));
+		auto scoreEffectText = std::make_unique<EnemyScoreEffectComponent>(GetComponent()->GetGridComponent()->GetGameObject(), GetComponent()->GetScore(), 2.f, GetComponent()->GetTransform()->GetWorldPosition());
+		GetComponent()->GetGridComponent()->GetGameObject()->AddComponent(std::move(scoreEffectText));
+		std::cout << "added score" << std::endl;
 		GetComponent()->GetGameObject()->Destroy();
 	}
 	return nullptr;
