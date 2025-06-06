@@ -148,6 +148,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		else // empty cell
 		{
 			horizontalCells.emplace_back(indexLeft);
+			if (cell->m_CellItem != CellItem::Empty && cell->m_CellItem != CellItem::Exit) //explode on ability
+			{
+				cell->m_CellItem = CellItem::Empty;
+				cell->m_pSpriteSheetWall->Destroy();
+			}
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -181,6 +186,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		else // empty cell
 		{
 			horizontalCells.emplace_back(indexRight);
+			if (cell->m_CellItem != CellItem::Empty && cell->m_CellItem != CellItem::Exit) //explode on ability
+			{
+				cell->m_CellItem = CellItem::Empty;
+				cell->m_pSpriteSheetWall->Destroy();
+			}
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -215,6 +225,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		else // empty cell
 		{
 			verticalCells.emplace_back(indexDown);
+			if (cell->m_CellItem != CellItem::Empty && cell->m_CellItem != CellItem::Exit) //explode on ability
+			{
+				cell->m_CellItem = CellItem::Empty;
+				cell->m_pSpriteSheetWall->Destroy();
+			}
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -250,6 +265,11 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		else // empty cell
 		{
 			verticalCells.emplace_back(indexUp);
+			if (cell->m_CellItem != CellItem::Empty && cell->m_CellItem != CellItem::Exit) //explode on ability
+			{
+				cell->m_CellItem = CellItem::Empty;
+				cell->m_pSpriteSheetWall->Destroy();
+			}
 			if (cell->m_pBombComponent != nullptr)
 			{
 				cell->m_pBombComponent->Explode();
@@ -701,7 +721,7 @@ std::vector<int> game::GridComponent::GetConnectionIndexFromCellIndex(int index)
 	int indexMoved = GetIndexWithCellOffset(-1, 0, index);
 	if (indexMoved != -1)
 	{
-		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty && m_pCells[indexMoved]->m_CellItem == CellItem::Empty && m_pCells[indexMoved]->m_pBombComponent == nullptr)
 		{
 			connections.emplace_back(indexMoved);
 		}
@@ -710,7 +730,7 @@ std::vector<int> game::GridComponent::GetConnectionIndexFromCellIndex(int index)
 	indexMoved = GetIndexWithCellOffset(1, 0, index);
 	if (indexMoved != -1)
 	{
-		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty && m_pCells[indexMoved]->m_CellItem == CellItem::Empty && m_pCells[indexMoved]->m_pBombComponent == nullptr)
 		{
 			connections.emplace_back(indexMoved);
 		}
@@ -719,7 +739,7 @@ std::vector<int> game::GridComponent::GetConnectionIndexFromCellIndex(int index)
 	indexMoved = GetIndexWithCellOffset(0, -1, index);
 	if (indexMoved != -1)
 	{
-		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty && m_pCells[indexMoved]->m_CellItem == CellItem::Empty && m_pCells[indexMoved]->m_pBombComponent == nullptr)
 		{
 			connections.emplace_back(indexMoved);
 		}
@@ -728,7 +748,7 @@ std::vector<int> game::GridComponent::GetConnectionIndexFromCellIndex(int index)
 	indexMoved = GetIndexWithCellOffset(0, 1, index);
 	if (indexMoved != -1)
 	{
-		if (m_pCells[indexMoved]->m_CellState == CellState::Empty)
+		if (m_pCells[indexMoved]->m_CellState == CellState::Empty && m_pCells[indexMoved]->m_CellItem == CellItem::Empty && m_pCells[indexMoved]->m_pBombComponent == nullptr)
 		{
 			connections.emplace_back(indexMoved);
 		}

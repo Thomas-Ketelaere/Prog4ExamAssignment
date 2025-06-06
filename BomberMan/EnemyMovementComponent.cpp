@@ -59,28 +59,28 @@ void game::EnemyMovementComponent::Update()
 
 void game::EnemyMovementComponent::Render() const
 {
-	/*if (m_DebugRender)
-	{
-		SDL_Color color = { 0, 0, 255, 255 };
-		glm::vec3 gridPos = m_pGridComponent->GetGameObject()->GetLocalPosition();
-		std::vector<glm::vec2> movedPath;
-		movedPath.resize(m_Path.size());
+	//if (m_DebugRender)
+	//{
+	//	SDL_Color color = { 0, 0, 255, 255 };
+	//	glm::vec3 gridPos = m_pGridComponent->GetGameObject()->GetLocalPosition();
+	//	std::vector<glm::vec2> movedPath;
+	//	movedPath.resize(m_Path.size());
 
-		std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
-			{
-				glm::vec2 movedPoint{ point };
-				movedPoint.x += gridPos.x;
-				movedPoint.y += gridPos.y;
-				return movedPoint;
-			});
+	//	std::transform(m_Path.begin(), m_Path.end(), movedPath.begin(), [gridPos](glm::vec2 point)
+	//		{
+	//			glm::vec2 movedPoint{ point };
+	//			movedPoint.x += gridPos.x;
+	//			movedPoint.y += gridPos.y;
+	//			return movedPoint;
+	//		});
 
-		for (unsigned int pathCounter{}; pathCounter < movedPath.size() - 1; ++pathCounter)
-		{
-			glm::vec2 pointOne = movedPath[pathCounter];
-			glm::vec2 pointTwo = movedPath[pathCounter + 1];
-			RamCoreEngine::Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
-		}
-	}*/
+	//	for (unsigned int pathCounter{}; pathCounter < movedPath.size() - 1; ++pathCounter)
+	//	{
+	//		glm::vec2 pointOne = movedPath[pathCounter];
+	//		glm::vec2 pointTwo = movedPath[pathCounter + 1];
+	//		RamCoreEngine::Renderer::GetInstance().DrawLine(pointOne.x, pointOne.y, pointTwo.x, pointTwo.y, color);
+	//	}
+	//}
 }
 
 void game::EnemyMovementComponent::OnDestroy()
