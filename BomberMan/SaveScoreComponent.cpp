@@ -29,11 +29,15 @@ void game::SaveScoreComponent::Render() const
 
 void game::SaveScoreComponent::IncreaseBar()
 {
-	m_CurrentPercent += m_Speed * RamCoreEngine::Time::GetInstance().m_DeltaTime;
-	if (m_CurrentPercent >= 100.f)
+	std::string newPlayerName = game::GameManager::GetInstance().GetName();
+	if (newPlayerName.size() > 1) //name always hold empty space, so need to be bigger than 1
 	{
-		//write and go back to main screen
-		SaveScore();
+		m_CurrentPercent += m_Speed * RamCoreEngine::Time::GetInstance().m_DeltaTime;
+		if (m_CurrentPercent >= 100.f)
+		{
+			//write and go back to main screen
+			SaveScore();
+		}
 	}
 }
 
@@ -65,7 +69,7 @@ void game::SaveScoreComponent::SaveScore()
 			return playerOneInfo.first > playerTwoInfo.first;
 		});
 
-	if (playersInfo.size() >= m_MaxPlayersInFile)
+	if (playersInfo.size() > m_MaxPlayersInFile)
 	{
 		playersInfo.pop_back(); //will never be able to succeed 5, so just removing last one
 	}
