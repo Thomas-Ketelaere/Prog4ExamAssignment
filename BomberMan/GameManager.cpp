@@ -3,6 +3,7 @@
 #include "Hash.h"
 #include <iostream>
 #include <ServiceLocator.h>
+#include "InputManager.h"
 
 void game::GameManager::LoseLive()
 {
@@ -71,6 +72,15 @@ void game::GameManager::RemoveLetterFromName()
 	if (m_Name.size() == 1) //first letter should be space, otherwise error name empty
 	{
 		m_Name = " ";
+	}
+}
+
+void game::GameManager::SetControllerRumble(float percentLeft, float percentRight)
+{
+	RamCoreEngine::InputManager::GetInstance().SetControllerRumble(0, percentLeft, percentRight);
+	if (m_CurrentGameMode != GameMode::Single) //2 controllers
+	{
+		RamCoreEngine::InputManager::GetInstance().SetControllerRumble(1, percentLeft, percentRight);
 	}
 }
 

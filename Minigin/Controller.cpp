@@ -6,10 +6,13 @@ class RamCoreEngine::Controller::ControllerImpl
 {
 public:
 	ControllerImpl(int controllerIndex): 
-		m_ControllerIndex{ controllerIndex }, 
-		m_ButtonsPressedThisFrame{}, 
-		m_ButtonsReleasedThisFrame{}
+		m_ControllerIndex{ controllerIndex }
 	{
+	}
+
+	~ControllerImpl()
+	{
+		SetControllerRumble( 0.f, 0.f); //just to be sure they always stop on stopping game
 	}
 
 	void ProcessInputController()
@@ -23,6 +26,14 @@ public:
 		m_ButtonsReleasedThisFrame = buttonChanges & (~m_CurrentState.Gamepad.wButtons);
 	}
 
+	void SetControllerRumble(float percentLeft, float percentRight)
+	{
+		ZeroMemory(&m_Vibration, sizeof(XINPUT_VIBRATION));
+		m_Vibration.wLeftMotorSpeed = static_cast<WORD>(percentLeft * m_MaxControllerSpeed);
+		m_Vibration.wRightMotorSpeed = static_cast<WORD>(percentRight * m_MaxControllerSpeed);
+		XInputSetState(m_ControllerIndex, &m_Vibration);
+	}
+
 	int GetControllerIndex() const { return m_ControllerIndex; }
 
 	bool IsDownThisFrame(unsigned int button) const { return (m_ButtonsPressedThisFrame & button); }
@@ -32,9 +43,11 @@ public:
 private:
 	XINPUT_STATE m_CurrentState{};
 	XINPUT_STATE m_PreviousState{};
+	XINPUT_VIBRATION m_Vibration{};
 	int m_ControllerIndex;
-	int m_ButtonsPressedThisFrame;
-	int m_ButtonsReleasedThisFrame;
+	int m_ButtonsPressedThisFrame{};
+	int m_ButtonsReleasedThisFrame{};
+	const int m_MaxControllerSpeed{ 65535 };
 };
 
 RamCoreEngine::Controller::Controller(int controllerIndex) :
@@ -52,6 +65,11 @@ void RamCoreEngine::Controller::ProcessInputController()
 int RamCoreEngine::Controller::GetControllerIndex() const
 {
 	return m_pImpl->GetControllerIndex();
+}
+
+void RamCoreEngine::Controller::SetControllerRumble(float percentLeft, float percentRight)
+{
+	m_pImpl->SetControllerRumble(percentLeft, percentRight);
 }
 
 bool RamCoreEngine::Controller::IsDownThisFrame(unsigned int button) const

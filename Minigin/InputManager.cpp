@@ -126,3 +126,8 @@ void RamCoreEngine::InputManager::ClearBindings()
 	m_GameBindingVct.clear();
 	m_ControllerVct.clear();
 }
+
+void RamCoreEngine::InputManager::SetControllerRumble(int index, float percentLeft, float percentRight)
+{
+	m_ControllerVct[index]->SetControllerRumble(percentLeft, percentRight);
+}

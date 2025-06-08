@@ -51,6 +51,9 @@ namespace game
 		GameMode GetGameMode() const { return m_CurrentGameMode; }
 		void SetGameMode(GameMode newGameMode) { m_CurrentGameMode = newGameMode; }
 
+		//Controller rumble
+		void SetControllerRumble(float percentLeft, float percentRight); //doing it in game manager to check amount of controllers need to be set as rumble (so no need to keep checking game mode in other classes)
+
 	private:
 		friend class Singleton<GameManager>;
 		GameMode m_CurrentGameMode{};

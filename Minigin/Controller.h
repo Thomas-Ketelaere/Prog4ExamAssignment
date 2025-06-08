@@ -16,6 +16,8 @@ namespace RamCoreEngine
 		void ProcessInputController();
 		int GetControllerIndex() const;
 
+		void SetControllerRumble(float percentLeft, float percentRight);
+
 		bool IsDownThisFrame(unsigned int button) const;
 		bool IsUpThisFrame(unsigned int button) const;
 		bool IsPressed(unsigned int button) const;

@@ -30,6 +30,7 @@ namespace RamCoreEngine
 		bool ProcessInput();
 		void AddBinding(std::unique_ptr<Command> binding, KeyState keyState, unsigned int keyBind, int controllerIndex);
 		void ClearBindings();
+		void SetControllerRumble(int index, float percentLeft, float percentRight);
 
 	private:
 		std::vector<std::unique_ptr<Controller>> m_ControllerVct;

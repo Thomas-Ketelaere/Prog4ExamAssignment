@@ -72,7 +72,7 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	auto playerInputSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(playerInputObject.get(), "PlayerMove.png", 4, 4, 0.1f, false);
 	auto playerInputSpriteSetter = std::make_unique<game::PlayerSpriteComponent>(playerInputObject.get(), 2.4f);
 	auto playerInputCollider = std::make_unique<game::PlayerCollider>(playerInputObject.get(), 28.f, 28.f, true);
-	auto playerInputSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObject.get());
+	auto playerInputSpawnBombComponent = std::make_unique<game::SpawnBombComponent>(playerInputObject.get(), 0.3f, 0.5f);
 
 	gridComp->GetGridSubject()->AddObserver(playerInputSpawnBombComponent.get());
 

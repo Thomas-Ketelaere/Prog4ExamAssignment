@@ -8,9 +8,12 @@
 #include "BombTimerComponent.h"
 #include "PlayerSpriteComponent.h"
 #include <ServiceLocator.h>
+#include "Timer.h"
 
-game::SpawnBombComponent::SpawnBombComponent(RamCoreEngine::GameObject* gameObject):
-	Component(gameObject)
+game::SpawnBombComponent::SpawnBombComponent(RamCoreEngine::GameObject* gameObject, float strengthRumble, float timeRumble):
+	Component(gameObject),
+	m_StrengthRumble{strengthRumble},
+	m_TimeRumble{timeRumble}
 {
 	m_Range = game::GameManager::GetInstance().GetBombRange();
 	m_RemoteExplode = game::GameManager::GetInstance().RemoteExplodeActive();
@@ -24,11 +27,25 @@ void game::SpawnBombComponent::Start()
 	m_pPlayerSpriteComponent = GetGameObject()->GetComponent<PlayerSpriteComponent>();
 }
 
+void game::SpawnBombComponent::Update()
+{
+	if (m_BombExploded)
+	{
+		m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
+		if (m_AccumulatedTime >= m_TimeRumble)
+		{
+			GameManager::GetInstance().SetControllerRumble(0, 0);
+			m_AccumulatedTime = 0;
+			m_BombExploded = false;
+		}
+	}
+}
+
 void game::SpawnBombComponent::OnDestroy()
 {
-	game::GameManager::GetInstance().SaveBombRange(m_Range);
-	game::GameManager::GetInstance().SaveRemoteExplode(m_RemoteExplode);
-	game::GameManager::GetInstance().SaveMaxBombs(m_MaxAmountBombs);
+	GameManager::GetInstance().SaveBombRange(m_Range);
+	GameManager::GetInstance().SaveRemoteExplode(m_RemoteExplode);
+	GameManager::GetInstance().SaveMaxBombs(m_MaxAmountBombs);
 }
 
 void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
@@ -38,6 +55,8 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 		if (m_CurrentAmountBombs > 0) // when in coop, first player spawns one, but this will get called also on second player who hasnt spawned bomb
 		{
 			--m_CurrentAmountBombs;
+			m_BombExploded = true;
+			GameManager::GetInstance().SetControllerRumble(m_StrengthRumble, m_StrengthRumble);
 			if (m_RemoteExplode)
 			{
 				m_Bombs.pop();
