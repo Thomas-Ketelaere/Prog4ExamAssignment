@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "Hash.h"
 #include <iostream>
+#include <ServiceLocator.h>
 
 void game::GameManager::LoseLive()
 {
@@ -35,7 +36,15 @@ void game::GameManager::AdvanceLevel()
 	++m_CurrentLevel;
 	if (m_CurrentLevel > m_MaxLevels)
 	{
-		RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("EndScreen"));
+		if (m_CurrentGameMode == GameMode::Single)
+		{
+			RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("EndScreen"));
+		}
+		else
+		{
+			RamCoreEngine::SceneManager::GetInstance().LoadScene(make_sdbm_hash("Start"));
+		}
+		
 	}
 	else
 	{
@@ -68,5 +77,9 @@ void game::GameManager::RemoveLetterFromName()
 void game::GameManager::EnemyKilled()
 {
 	--m_AmountEnemies;
+	if (m_AmountEnemies == 0)
+	{
+		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("KilledLastEnemy"), 80, 0);
+	}
 	std::cout << "amount enemies left: " << m_AmountEnemies << std::endl;
 }

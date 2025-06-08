@@ -13,6 +13,7 @@
 #include "Subject.h"
 #include "BaseColliderComponent.h"
 #include "ExplosionTimerComponent.h"
+#include "Timer.h"
 
 
 game::GridComponent::GridComponent(RamCoreEngine::GameObject* gameObject, int amountColumns, int amountRows, int gridWidth, int gridHeight, float cellSize, float offsetY, int screenWidth):
@@ -125,6 +126,18 @@ game::GridComponent::~GridComponent()
 	}
 }
 
+
+void game::GridComponent::Update()
+{
+	if (m_Won)
+	{
+		m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
+		if (m_AccumulatedTime >= m_TimeToAdvanceLevel)
+		{
+			game::GameManager::GetInstance().AdvanceLevel();
+		}
+	}
+}
 
 void game::GridComponent::ExplodeBomb(int index, int range)
 {
@@ -367,7 +380,8 @@ bool game::GridComponent::IsCellWalkable(const glm::vec2& position, bool isPlaye
 					//Level completed
 					m_pCells[indexCell]->m_CellItem = CellItem::Empty;
 					m_pCells[indexCell]->m_pSpriteSheetWall->Destroy();
-					game::GameManager::GetInstance().AdvanceLevel();
+					RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/StageClear.mp3", 50, 0);
+					m_Won = true;
 				}
 				break;
 			case CellItem::DetonatorPU: 

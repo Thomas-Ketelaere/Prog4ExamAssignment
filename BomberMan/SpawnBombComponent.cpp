@@ -7,6 +7,7 @@
 #include "SpriteSheetComponent.h"
 #include "BombTimerComponent.h"
 #include "PlayerSpriteComponent.h"
+#include <ServiceLocator.h>
 
 game::SpawnBombComponent::SpawnBombComponent(RamCoreEngine::GameObject* gameObject):
 	Component(gameObject)
@@ -47,14 +48,20 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 	else if (event.id == make_sdbm_hash("CollectedFlamesPU"))
 	{
 		++m_Range;
+		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("CollectedPU"), 80, 0);
+		RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/PUMusic.mp3", 50, -1);
 	}
 	else if (event.id == make_sdbm_hash("CollectedExtraBombPU"))
 	{
 		++m_MaxAmountBombs;
+		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("CollectedPU"), 80, 0);
+		RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/PUMusic.mp3", 50, -1);
 	}
 	else if (event.id == make_sdbm_hash("CollectedDetonatorPU"))
 	{
 		m_RemoteExplode = true;
+		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("CollectedPU"), 80, 0);
+		RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/PUMusic.mp3", 50, -1);
 	}
 
 }
@@ -95,6 +102,7 @@ void game::SpawnBombComponent::SpawnBomb(const glm::vec2 position)
 			bombObject->AddComponent(std::move(bombSpriteComponent));
 			RamCoreEngine::SceneManager::GetInstance().GetCurrentScene()->Add(std::move(bombObject));
 			++m_CurrentAmountBombs;
+			RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("PlacedBomb"), 80, 0);
 		}
 	}
 }

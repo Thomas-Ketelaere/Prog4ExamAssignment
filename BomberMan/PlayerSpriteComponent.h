@@ -34,8 +34,10 @@ namespace game
 		RamCoreEngine::SpriteSheetComponent* m_pSpriteSheetComponent = nullptr;
 		float m_AccumulatedTime{};
 		const float m_TimeToDie;
+		const float m_TimeToAdvanceLevel{3.f};
 		bool m_Move{};
 		bool m_IsDying{};
+		bool m_Died{};
 
 	};
 }

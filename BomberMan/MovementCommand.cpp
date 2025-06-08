@@ -7,10 +7,12 @@
 #include "SceneManager.h"
 #include "Hash.h"
 #include "GameManager.h"
+#include <ServiceLocator.h>
 
-game::MoveCommand::MoveCommand(RamCoreEngine::GameObject* actor) :
+game::MoveCommand::MoveCommand(RamCoreEngine::GameObject* actor, float footstepInterval) :
 	GameActorCommand(actor),
-	m_Speed{}
+	m_Speed{},
+	m_FootstepInterval{footstepInterval}
 {
 	m_pPlayerSpriteComponent = actor->GetComponent<PlayerSpriteComponent>();
 	m_pColliderComponent = actor->GetComponent<PlayerCollider>();
@@ -103,6 +105,19 @@ void game::MoveCommand::Execute()
 			GetGameActor()->SetLocalPosition(glm::vec3(pos.x, pos.y, 0.f));
 		}
 		m_pPlayerSpriteComponent->SetDirectionSprite(m_Speed);
+		m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
+		if (m_AccumulatedTime >= m_FootstepInterval)
+		{
+			if (m_Speed.x != 0) //horizontal
+			{
+				RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("MoveHor"), 80, 0);
+			}
+			else //vertical
+			{
+				RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("MoveVer"), 80, 0);
+			}
+			m_AccumulatedTime -= m_FootstepInterval;
+		}
 	}
 }
 

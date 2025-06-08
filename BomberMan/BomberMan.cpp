@@ -83,13 +83,13 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	playerInputObject->AddComponent(std::move(playerInputCollider));
 	playerInputObject->AddComponent(std::move(playerInputSpawnBombComponent));
 
-	auto moveLeftCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	auto moveLeftCommand = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 	moveLeftCommand->SetSpeed({ -80.f, 0.f });
-	auto moveRightCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	auto moveRightCommand = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 	moveRightCommand->SetSpeed({ 80.f, 0.f });
-	auto moveUpCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	auto moveUpCommand = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 	moveUpCommand->SetSpeed({ 0.f, -80.f });
-	auto moveDownCommand = std::make_unique<game::MoveCommand>(playerInputObject.get());
+	auto moveDownCommand = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 	moveDownCommand->SetSpeed({ 0.f, 80.f });
 
 	//auto loseLivesCommandKeyboard = std::make_unique<game::LoseLiveCommand>(playerInputObjectKeyboard.get());
@@ -113,13 +113,13 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 
 	if (index == 0) // if first controller, also set it for keyboard
 	{
-		auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 		moveLeftCommandKeyboard->SetSpeed({ -80.f, 0.f });
-		auto moveRightCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		auto moveRightCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 		moveRightCommandKeyboard->SetSpeed({ 80.f, 0.f });
-		auto moveUpCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		auto moveUpCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 		moveUpCommandKeyboard->SetSpeed({ 0.f, -80.f });
-		auto moveDownCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get());
+		auto moveDownCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 		moveDownCommandKeyboard->SetSpeed({ 0.f, 80.f });
 
 		auto spawnBombCommandKeyboard = std::make_unique<game::SpawnBombCommand>(playerInputObject.get());
@@ -283,7 +283,8 @@ void LoadStartScene()
 	tutorialNotes->AddComponent(std::move(tutorialNotesText));
 	scene->Add(std::move(tutorialNotes));
 
-	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 0, -1);//30 volume
+	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 30, -1);//30 volume
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveUI"), "../Data/Sound/MoveVertical.mp3");
 	game::GameManager::GetInstance().ResetStats(); //every time going to menu stops game so need to reset
 }
 
@@ -529,7 +530,13 @@ void LoadGameScene()
 
 	// --------SOUND----------
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
-	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 0, -1); //50 volume
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveHor"), "../Data/Sound/MoveHorizontal.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveVer"), "../Data/Sound/MoveVertical.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("KilledLastEnemy"), "../Data/Sound/KilledLastEnemy.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("CollectedPU"), "../Data/Sound/PowerUp.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("PlacedBomb"), "../Data/Sound/PlaceBomb.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("Dying"), "../Data/Sound/Dying.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 50, -1); //50 volume
 }
 
 void LoadLoadingScene()
@@ -547,13 +554,14 @@ void LoadLoadingScene()
 	auto levelText = std::make_unique<RamCoreEngine::TextComponent>(levelTextObject.get(), level, font);
 	levelText->ChangeFontSize(50);
 	levelTextObject->AddComponent(std::move(levelText));
-	auto loadScreen = std::make_unique<game::LoadingScreenComponent>(levelTextObject.get(), 2.5f);
+	auto loadScreen = std::make_unique<game::LoadingScreenComponent>(levelTextObject.get(), 2.6f);
 	levelTextObject->AddComponent(std::move(loadScreen));
 
 	scene->Add(std::move(levelTextObject));
 
 	SDL_Color color = { 0, 0, 0, 255 };
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
+	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/StageStart.mp3", 50, -1); //50 volume
 }
 
 void LoadEndScene()
@@ -641,6 +649,8 @@ void LoadEndScene()
 
 	scene->Add(std::move(onScreenKeyboardObject));
 	scene->Add(std::move(saveBarObject));
+
+	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveUI"), "../Data/Sound/MoveVertical.mp3");
 	
 }
 

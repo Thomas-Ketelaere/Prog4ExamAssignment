@@ -59,6 +59,8 @@ namespace game
 		GridComponent& operator=(const GridComponent& other) = delete;
 		GridComponent& operator=(GridComponent&& other) = delete;
 
+		void Update() override;
+
 		void ExplodeBomb(int index, int range);
 
 		bool IsCellWalkable(const glm::vec2& position, bool isPlayer);
@@ -102,6 +104,11 @@ namespace game
 		const int m_ScreenWidth;
 
 		bool m_BombExploded;
+
+		//sound winning level
+		float m_AccumulatedTime{};
+		const float m_TimeToAdvanceLevel{3.f};
+		bool m_Won{};
 	};
 }
 

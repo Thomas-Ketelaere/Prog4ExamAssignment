@@ -5,6 +5,7 @@
 #include "ResourceManager.h"
 #include "GameManager.h"
 #include <Subject.h>
+#include <ServiceLocator.h>
 
 game::OnScreenKeyboardComponent::OnScreenKeyboardComponent(RamCoreEngine::GameObject* gameObject, int columns, int rows, int offsetX, int offsetY, uint8_t smallFontSize, uint8_t bigFontSize) :
 	Component(gameObject),
@@ -108,4 +109,5 @@ void game::OnScreenKeyboardComponent::ChangeSelected(glm::vec2 direction)
 	m_pLetters[m_Index]->ChangeFontSize(m_SmallFontSize);
 	m_Index = newIndex;
 	m_pLetters[m_Index]->ChangeFontSize(m_BigFontSize);
+	RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("MoveUI"), 60, 0);
 }

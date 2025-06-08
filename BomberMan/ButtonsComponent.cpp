@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "GameManager.h"
 #include <Hash.h>
+#include <ServiceLocator.h>
 
 game::ButtonsComponent::ButtonsComponent(RamCoreEngine::GameObject* gameObject, uint8_t smallFontSize, uint8_t bigFontSize, unsigned int startIndex):
 	Component(gameObject),
@@ -58,6 +59,7 @@ void game::ButtonsComponent::ChangeIndex(bool up)
 	}
 
 	m_pTextComponents[m_Index]->ChangeFontSize(m_BigFontSize);
+	RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("MoveUI"), 60, 0);
 }
 
 void game::ButtonsComponent::ButtonPressed()

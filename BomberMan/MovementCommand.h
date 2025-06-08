@@ -9,7 +9,7 @@ namespace game
 	class MoveCommand final : public RamCoreEngine::GameActorCommand
 	{
 	public:
-		MoveCommand(RamCoreEngine::GameObject* actor);
+		MoveCommand(RamCoreEngine::GameObject* actor, float footstepInterval);
 		~MoveCommand() = default;
 		MoveCommand(const MoveCommand& other) = delete;
 		MoveCommand(MoveCommand&& other) = delete;
@@ -27,6 +27,8 @@ namespace game
 		GridComponent* m_pGridComponent{};
 		PlayerCollider* m_pColliderComponent;
 		
+		float m_AccumulatedTime{};
+		const float m_FootstepInterval;
 	};
 }
 

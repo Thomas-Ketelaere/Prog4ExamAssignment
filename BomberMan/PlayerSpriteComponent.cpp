@@ -3,6 +3,8 @@
 #include "SpriteSheetComponent.h"
 #include "GameManager.h"
 #include "Timer.h"
+#include <Hash.h>
+#include <ServiceLocator.h>
 
 game::PlayerSpriteComponent::PlayerSpriteComponent(RamCoreEngine::GameObject* gameObject, float timeToDie):
 	Component(gameObject),
@@ -31,12 +33,23 @@ void game::PlayerSpriteComponent::Update()
 			m_pSpriteSheetComponent->SetColumn(3);
 		}
 	}
+	else if (m_Died)
+	{
+		m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
+		if (m_AccumulatedTime >= m_TimeToAdvanceLevel)
+		{
+			game::GameManager::GetInstance().LoseLive();
+		}
+	}
 	else
 	{
 		m_AccumulatedTime += RamCoreEngine::Time::GetInstance().m_DeltaTime;
 		if (m_AccumulatedTime >= m_TimeToDie)
 		{
-			game::GameManager::GetInstance().LoseLive();
+			m_Died = true;
+			//sound
+			m_AccumulatedTime -= m_TimeToDie;
+			RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/LosingStage.mp3", 50, 0);
 		}
 	}
 }
@@ -89,6 +102,6 @@ void game::PlayerSpriteComponent::StartDying()
 		auto dyingSpriteSheet = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "PlayerDying.png", 8, 1, 0.3f, true);
 		m_pSpriteSheetComponent = dyingSpriteSheet.get();
 		GetGameObject()->AddComponent(std::move(dyingSpriteSheet));
-		
+		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("Dying"), 60, 0);
 	}
 }

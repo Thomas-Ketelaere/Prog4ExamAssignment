@@ -142,6 +142,10 @@ private:
 				break;
 
 			case SoundRequest::PlayMusic:
+				if (m_pMusic != nullptr)
+				{
+					Mix_FreeMusic(m_pMusic);
+				}
 				m_pMusic = Mix_LoadMUS(pair.first.m_FilePath);
 				Mix_VolumeMusic(pair.first.m_Volume);
 				Mix_PlayMusic(m_pMusic, pair.first.m_Loops);
