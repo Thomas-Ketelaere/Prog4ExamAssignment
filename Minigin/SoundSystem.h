@@ -12,6 +12,9 @@ namespace RamCoreEngine
 		virtual void PlayMusic(const char* filePath, const int volume, const int loops) = 0;
 		virtual void StopMusic() = 0;
 
+		virtual void Mute() = 0;
+		virtual void Unmute() = 0;
+
 		virtual void AddSound(const SoundId id, const char* filePath) = 0;
 
 		virtual void UnloadMusic() = 0;

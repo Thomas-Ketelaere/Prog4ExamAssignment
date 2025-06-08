@@ -14,6 +14,9 @@ namespace RamCoreEngine
 		void PlayMusic(const char* filePath, const int volume, const int loops) override;
 		void StopMusic() override;
 
+		void Mute() override;
+		void Unmute() override;
+
 		void AddSound(const SoundId id, const char* filePath) override;
 		void UnloadMusic() override;
 		void UnloadAllSound() override;

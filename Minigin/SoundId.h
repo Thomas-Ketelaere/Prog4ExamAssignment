@@ -6,13 +6,12 @@ using SoundId = unsigned int;
 
 enum class SoundRequest
 {
-	PlaySound, PlayMusic, StopSound, StopMusic, UnloadSound, UnloadMusic
+	PlaySound, PlayMusic, StopSound, StopMusic, UnloadSound, UnloadMusic, Mute, Unmute
 };
 
 struct Sound
 {
 	const SoundId id;
-	bool m_IsLoaded = false;
 	SoundRequest m_RequestType;
 	int m_Loops = 0;
 	const char* m_FilePath;

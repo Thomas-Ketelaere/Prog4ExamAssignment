@@ -62,7 +62,7 @@
 #include "EnemyCollider.h"
 #include "TimerLevelComponent.h"
 #include "SkipLevelCommand.h"
-
+#include "MuteSoundCommand.h"
 
 void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index)
 {
@@ -236,9 +236,14 @@ void LoadStartScene()
 
 	auto startGameCommandKeyboard = std::make_unique<game::StartGameCommand>(startButtonsObject.get());
 
+	
+
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownKeyboard), RamCoreEngine::KeyState::Up, SDLK_s, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpKeyboard), RamCoreEngine::KeyState::Up, SDLK_w, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+
+	auto muteCommand = std::make_unique<game::MuteSoundCommand>();
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(muteCommand), RamCoreEngine::KeyState::Up, SDLK_F2, -1);
 
 	//GAMEPAD
 	auto moveDownGamepad = std::make_unique<game::ButtonsCommand>(startButtonsObject.get());
@@ -537,6 +542,9 @@ void LoadGameScene()
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("PlacedBomb"), "../Data/Sound/PlaceBomb.mp3");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("Dying"), "../Data/Sound/Dying.mp3");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 50, -1); //50 volume
+
+	auto muteCommand = std::make_unique<game::MuteSoundCommand>();
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(muteCommand), RamCoreEngine::KeyState::Up, SDLK_F2, -1);
 }
 
 void LoadLoadingScene()
@@ -562,6 +570,9 @@ void LoadLoadingScene()
 	SDL_Color color = { 0, 0, 0, 255 };
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/StageStart.mp3", 50, -1); //50 volume
+
+	auto muteCommand = std::make_unique<game::MuteSoundCommand>();
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(muteCommand), RamCoreEngine::KeyState::Up, SDLK_F2, -1);
 }
 
 void LoadEndScene()

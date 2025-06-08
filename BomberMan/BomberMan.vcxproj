@@ -190,6 +190,7 @@
     <ClCompile Include="HighScoresTextComponent.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="LoadingScreenComponent.cpp" />
+    <ClCompile Include="MuteSoundCommand.cpp" />
     <ClCompile Include="NameTextComponent.cpp" />
     <ClCompile Include="OnScreenKeyboardCommand.cpp" />
     <ClCompile Include="OnScreenKeyboardComponent.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="HighScoresTextComponent.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LoadingScreenComponent.h" />
+    <ClInclude Include="MuteSoundCommand.h" />
     <ClInclude Include="NameTextComponent.h" />
     <ClInclude Include="OnScreenKeyboardCommand.h" />
     <ClInclude Include="OnScreenKeyboardComponent.h" />

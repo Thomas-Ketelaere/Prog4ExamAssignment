@@ -74,6 +74,7 @@ public:
 		Sound music(0, filePath, SoundRequest::PlayMusic); // dont check id in queue, so doesnt matter what it is
 		music.m_Loops = loops;
 		music.m_Volume = volume;
+		m_MusicVolume = volume;
 		Mix_Chunk* soundEffect = nullptr; //doesnt require a chunk, just loaded music in queue itself
 		m_Queue.push(std::make_pair(music, soundEffect));
 		m_CondVar.notify_one();
@@ -114,6 +115,22 @@ public:
 		m_Samples.clear();
 	}
 
+	void Mute()
+	{
+		Sound music(0, nullptr, SoundRequest::Mute); // dont check id in queue, so doesnt matter what it is
+		Mix_Chunk* soundEffect = nullptr; //doesnt require a chunk, just loaded music in queue itself
+		m_Queue.push(std::make_pair(music, soundEffect));
+		m_CondVar.notify_one();
+	}
+
+	void Unmute()
+	{
+		Sound music(0, nullptr, SoundRequest::Unmute); // dont check id in queue, so doesnt matter what it is
+		Mix_Chunk* soundEffect = nullptr; //doesnt require a chunk, just loaded music in queue itself
+		m_Queue.push(std::make_pair(music, soundEffect));
+		m_CondVar.notify_one();
+	}
+
 private:
 	void SoundQueueThread(const std::stop_token& stopToken)
 	{
@@ -132,13 +149,23 @@ private:
 			switch (pair.first.m_RequestType)
 			{
 			case SoundRequest::PlaySound:
-				if (!pair.first.m_IsLoaded)
+				if (pair.second == nullptr)
 				{
 					pair.second = Mix_LoadWAV(pair.first.m_FilePath);
-					pair.first.m_IsLoaded = true;
+					for (auto& pairSample : m_Samples)
+					{
+						if (pairSample.first.id == pair.first.id)
+						{
+							pairSample.second = pair.second;
+							break;
+						}
+					}
 				}
-				pair.second->volume = Uint8(pair.first.m_Volume);
-				pair.first.m_Channel = Mix_PlayChannel(-1, pair.second, pair.first.m_Loops);
+				if (pair.second != nullptr)
+				{
+					pair.second->volume = Uint8(pair.first.m_Volume);
+					pair.first.m_Channel = Mix_PlayChannel(-1, pair.second, pair.first.m_Loops);
+				}
 				break;
 
 			case SoundRequest::PlayMusic:
@@ -174,12 +201,28 @@ private:
 					m_pMusic = nullptr;
 				}
 				break;
+			case SoundRequest::Mute:
+				Mix_VolumeMusic(0);
+				Mix_Volume(-1, 0);
+				break;
+			case SoundRequest::Unmute:
+				Mix_VolumeMusic(m_MusicVolume);
+				Mix_Volume(-1, MIX_MAX_VOLUME);
+				for (auto& pairSample : m_Samples)
+				{
+					if (pairSample.first.m_Channel != -1)
+					{
+						Mix_Volume(pairSample.first.m_Channel, pairSample.first.m_Volume);
+					}
+				}
+				break;
 			}
 		}
 	}
 
 	std::vector<std::pair<Sound, Mix_Chunk*>> m_Samples;
 	Mix_Music* m_pMusic = nullptr;
+	int m_MusicVolume{};
 
 	std::jthread m_SoundQueueThread;
 	std::mutex m_Mutex;
@@ -212,6 +255,16 @@ void RamCoreEngine::SDLSoundSystem::PlayMusic(const char* filePath, const int vo
 void RamCoreEngine::SDLSoundSystem::StopMusic()
 {
 	m_pImpl->StopMusic();
+}
+
+void RamCoreEngine::SDLSoundSystem::Mute()
+{
+	m_pImpl->Mute();
+}
+
+void RamCoreEngine::SDLSoundSystem::Unmute()
+{
+	m_pImpl->Unmute();
 }
 
 void RamCoreEngine::SDLSoundSystem::AddSound(const SoundId id, const char* filePath)

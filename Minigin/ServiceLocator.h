@@ -13,6 +13,8 @@ namespace RamCoreEngine
 		void PlayMusic(const char*, const int , const int) override {}
 		void StopMusic() override {}
 
+		void Mute() override {}
+		void Unmute() override {}
 
 		void UnloadMusic() override {}
 		void UnloadAllSound() override {}
