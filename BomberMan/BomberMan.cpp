@@ -64,7 +64,7 @@
 #include "SkipLevelCommand.h"
 #include "MuteSoundCommand.h"
 
-void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index)
+void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int index, bool loadKeyboard)
 {
 	auto playerInputObject = std::make_unique<RamCoreEngine::GameObject>();
 	playerInputObject->SetTag(make_sdbm_hash("Player"));
@@ -111,7 +111,7 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(spawnBombCommand), RamCoreEngine::KeyState::Up, 0x8000, index);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(explodeBombCommand), RamCoreEngine::KeyState::Up, 0x4000, index);
 
-	if (index == 0) // if first controller, also set it for keyboard
+	if (loadKeyboard) 
 	{
 		auto moveLeftCommandKeyboard = std::make_unique<game::MoveCommand>(playerInputObject.get(), 0.2f);
 		moveLeftCommandKeyboard->SetSpeed({ -80.f, 0.f });
@@ -236,11 +236,9 @@ void LoadStartScene()
 
 	auto startGameCommandKeyboard = std::make_unique<game::StartGameCommand>(startButtonsObject.get());
 
-	
-
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveDownKeyboard), RamCoreEngine::KeyState::Up, SDLK_s, -1);
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(moveUpKeyboard), RamCoreEngine::KeyState::Up, SDLK_w, -1);
-	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_e, -1);
+	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(startGameCommandKeyboard), RamCoreEngine::KeyState::Up, SDLK_f, -1);
 
 	auto muteCommand = std::make_unique<game::MuteSoundCommand>();
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(muteCommand), RamCoreEngine::KeyState::Up, SDLK_F2, -1);
@@ -269,22 +267,22 @@ void LoadStartScene()
 
 	auto tutorialObjectGamepad = std::make_unique<RamCoreEngine::GameObject>();
 	tutorialObjectGamepad->SetLocalPosition(glm::vec3(256, 400, 0.f));
-	auto tutorialTextGamepad = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectGamepad.get(), "Use D-Pad to move, Y to place bomb, kill Balloom to get score", font);
-	tutorialTextGamepad->ChangeFontSize(15);
+	auto tutorialTextGamepad = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectGamepad.get(), "Use D-Pad to move, Y to place bomb, X to remote explode bomb", font);
+	tutorialTextGamepad->ChangeFontSize(17);
 	tutorialObjectGamepad->AddComponent(std::move(tutorialTextGamepad));
 	scene->Add(std::move(tutorialObjectGamepad));
 
 	auto tutorialObjectKeyboard = std::make_unique<RamCoreEngine::GameObject>();
 	tutorialObjectKeyboard->SetLocalPosition(glm::vec3(256, 420, 0.f));
-	auto tutorialTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectKeyboard.get(), "Use WASD to move, F to place bomb, kill Balloom to get score", font);
-	tutorialTextKeyboard->ChangeFontSize(15);
+	auto tutorialTextKeyboard = std::make_unique<RamCoreEngine::TextComponent>(tutorialObjectKeyboard.get(), "Use WASD to move, F to place bomb, E to remote explode bomb", font);
+	tutorialTextKeyboard->ChangeFontSize(17);
 	tutorialObjectKeyboard->AddComponent(std::move(tutorialTextKeyboard));
 	scene->Add(std::move(tutorialObjectKeyboard));
 
 	auto tutorialNotes = std::make_unique<RamCoreEngine::GameObject>();
 	tutorialNotes->SetLocalPosition(glm::vec3(256, 450, 0.f));
-	auto tutorialNotesText = std::make_unique<RamCoreEngine::TextComponent>(tutorialNotes.get(), "only keyboard player can get killed by balloom for now", font);
-	tutorialNotesText->ChangeFontSize(20);
+	auto tutorialNotesText = std::make_unique<RamCoreEngine::TextComponent>(tutorialNotes.get(), "WASD/D-pad to control UI, F/Y to confirm button", font);
+	tutorialNotesText->ChangeFontSize(18);
 	tutorialNotes->AddComponent(std::move(tutorialNotesText));
 	scene->Add(std::move(tutorialNotes));
 
@@ -409,7 +407,7 @@ void LoadGameScene()
 	playerScoreTextObject->AddComponent(std::move(playerScoreText));
 	auto playerScoreTextChange = std::make_unique<game::ScoreTextComponent>(playerScoreTextObject.get());
 
-	LoadPlayer(scene, gridView.get(), 0);
+	LoadPlayer(scene, gridView.get(), 0, true);
 
 	bool spawnEnemies{ true };
 	switch (game::GameManager::GetInstance().GetGameMode())
@@ -418,7 +416,7 @@ void LoadGameScene()
 
 		break;
 	case game::GameMode::Coop:
-		LoadPlayer(scene, gridView.get(), 1);
+		LoadPlayer(scene, gridView.get(), 1, false);
 		break;
 	case game::GameMode::Versus:
 		spawnEnemies = false;
@@ -437,8 +435,8 @@ void LoadGameScene()
 			glm::vec2 enemyPos = enemies[enemyCounter].first;
 			auto enemy = std::make_unique<RamCoreEngine::GameObject>();
 			enemy->SetTag(make_sdbm_hash("Enemy"));
-			enemy->SetParent(gridObject.get(), true);
 			enemy->SetLocalPosition(glm::vec3(enemyPos.x, enemyPos.y, 0));
+			enemy->SetParent(gridObject.get(), true);
 			auto enemyCollider = std::make_unique<game::EnemyCollider>(enemy.get(), 25.f, 25.f, true);
 			enemy->AddComponent(std::move(enemyCollider));
 
@@ -601,7 +599,7 @@ void LoadEndScene()
 	onScreenKeyboardObject->AddComponent(std::move(onScreenKeyboardComp));
 
 	auto saveBarObject = std::make_unique<RamCoreEngine::GameObject>();
-	saveBarObject->SetLocalPosition(glm::vec3(256, 400, 0));
+	saveBarObject->SetLocalPosition(glm::vec3(256, 350, 0));
 	auto saveBar = std::make_unique<game::SaveScoreComponent>(saveBarObject.get(), 100.f, 20.f, 50.f, "../Data/HighScores/highScores.txt");
 	saveBarObject->AddComponent(std::move(saveBar));
 	
@@ -661,6 +659,20 @@ void LoadEndScene()
 	scene->Add(std::move(onScreenKeyboardObject));
 	scene->Add(std::move(saveBarObject));
 
+	auto controlObject = std::make_unique<RamCoreEngine::GameObject>();
+	controlObject->SetLocalPosition(glm::vec3(256, 400, 0.f));
+	auto controlsText = std::make_unique<RamCoreEngine::TextComponent>(controlObject.get(), "WASD/D-pad to control UI, Hold F/Y to confirm", font);
+	controlsText->ChangeFontSize(18);
+	controlObject->AddComponent(std::move(controlsText));
+	scene->Add(std::move(controlObject));
+
+	auto addRemoveObject = std::make_unique<RamCoreEngine::GameObject>();
+	addRemoveObject->SetLocalPosition(glm::vec3(256, 430, 0.f));
+	auto addRemoveText = std::make_unique<RamCoreEngine::TextComponent>(addRemoveObject.get(), "Press E/Y to add letter, Press Q/B to remove letter", font);
+	addRemoveText->ChangeFontSize(18);
+	addRemoveObject->AddComponent(std::move(addRemoveText));
+	scene->Add(std::move(addRemoveObject));
+
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveUI"), "../Data/Sound/MoveVertical.mp3");
 	
 }
@@ -668,6 +680,7 @@ void LoadEndScene()
 void LoadHighScoreScene()
 {
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
+	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
 	auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
 	backgroundObject->SetLocalPosition(glm::vec3(256, 238, 0.f));
@@ -676,7 +689,7 @@ void LoadHighScoreScene()
 	scene->Add(std::move(backgroundObject));
 
 	auto highScores = std::make_unique<RamCoreEngine::GameObject>();
-	highScores->SetLocalPosition(glm::vec3(256, 100, 0.f));
+	highScores->SetLocalPosition(glm::vec3(256, 150, 0.f));
 	auto highScoresText = std::make_unique<game::HighScoresTextComponent>(highScores.get(), "../Data/HighScores/highScores.txt", 50.f);
 	highScores->AddComponent(std::move(highScoresText));
 
@@ -687,6 +700,13 @@ void LoadHighScoreScene()
 
 	auto returnToStartGamepad = std::make_unique<game::ReturnToStartCommand>();
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(returnToStartGamepad), RamCoreEngine::KeyState::Up, 0x8000, 0);
+
+	auto tutorialNotes = std::make_unique<RamCoreEngine::GameObject>();
+	tutorialNotes->SetLocalPosition(glm::vec3(256, 450, 0.f));
+	auto tutorialNotesText = std::make_unique<RamCoreEngine::TextComponent>(tutorialNotes.get(), "Press E on keyboard or Y on gamepad to return to start", font);
+	tutorialNotesText->ChangeFontSize(18);
+	tutorialNotes->AddComponent(std::move(tutorialNotesText));
+	scene->Add(std::move(tutorialNotes));
 }
 
 void load()

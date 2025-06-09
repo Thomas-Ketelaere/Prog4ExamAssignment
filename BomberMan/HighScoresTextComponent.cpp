@@ -34,7 +34,7 @@ game::HighScoresTextComponent::HighScoresTextComponent(RamCoreEngine::GameObject
 
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 	auto highScoreText = std::make_unique<RamCoreEngine::TextComponent>(gameObject, "HighScores", font, true);
-	highScoreText->SetCustomPosition(glm::vec2(0, -offsetYBetween));
+	highScoreText->SetCustomPosition(glm::vec2(0, -offsetYBetween * 2));
 	highScoreText->ChangeFontSize(40);
 	gameObject->AddComponent(std::move(highScoreText));
 

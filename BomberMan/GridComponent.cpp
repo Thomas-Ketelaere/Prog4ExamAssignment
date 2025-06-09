@@ -126,7 +126,6 @@ game::GridComponent::~GridComponent()
 	}
 }
 
-
 void game::GridComponent::Update()
 {
 	if (m_Won)
@@ -317,7 +316,6 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 	Event e(make_sdbm_hash("BombExploded"));
 	m_pGridEvent->NotifyObservers(e, GetGameObject());
 
-
 	//collider horizontal
 	if (!horizontalCells.empty())
 	{
@@ -334,7 +332,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		horizontalColliderObject->SetParent(GetGameObject(), true);
 		auto horizontalCollComp = std::make_unique<RamCoreEngine::BaseColliderComponent>(horizontalColliderObject.get(), colliderWidth, m_CellHeight, false);
 		horizontalCollComp->SetDebugRendering(true);
-		auto horizontalTimerComp = std::make_unique<ExplosionTimerComponent>(horizontalColliderObject.get(), 0.7f);
+		auto horizontalTimerComp = std::make_unique<ExplosionTimerComponent>(horizontalColliderObject.get(), 0.5f);
 		horizontalColliderObject->AddComponent(std::move(horizontalCollComp));
 		horizontalColliderObject->AddComponent(std::move(horizontalTimerComp));
 
@@ -356,7 +354,7 @@ void game::GridComponent::ExplodeBomb(int index, int range)
 		verticalColliderObject->SetParent(GetGameObject(), true);
 		auto verticalCollComp = std::make_unique<RamCoreEngine::BaseColliderComponent>(verticalColliderObject.get(), m_CellWidth, colliderHeight, false);
 		verticalCollComp->SetDebugRendering(true);
-		auto verticalTimerComp = std::make_unique<ExplosionTimerComponent>(verticalColliderObject.get(), 0.7f);
+		auto verticalTimerComp = std::make_unique<ExplosionTimerComponent>(verticalColliderObject.get(), 0.5f);
 		verticalColliderObject->AddComponent(std::move(verticalCollComp));
 		verticalColliderObject->AddComponent(std::move(verticalTimerComp));
 
@@ -440,7 +438,6 @@ const glm::vec2& game::GridComponent::GetRandomEmptyCellPosition()
 	return GetRandomCell(CellState::Empty)->m_Position;
 }
 
-
 const std::vector<glm::vec2>& game::GridComponent::GetPath(const glm::vec2& startPosition, const glm::vec2& endPosition)
 {
 	const int startIndex = GetIndexFromPosition(startPosition); 
@@ -501,56 +498,60 @@ bool game::GridComponent::ShouldGridMove(glm::vec2& playerPos, float moveDirecti
 	return false;
 }
 
-
 void game::GridComponent::HandleBreakableWall(Cell* cell)
 {
 	cell->m_CellState = CellState::Empty;
-	if (cell->m_CellItem == CellItem::Empty)
-	{
+	switch(cell->m_CellItem)	
+	{	
+	case CellItem::Empty:
 		cell->m_pSpriteSheetWall->ShouldAnimate(true);
 		cell->m_pSpriteSheetWall->SetColumn(1);
-	}
+		break;
 
-	else if (cell->m_CellItem == CellItem::Exit)
-	{
+	case CellItem::Exit:
+		{
 		cell->m_pSpriteSheetWall->Destroy();
 		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "Exit.png", 1, 1, 0.1f, false, true);
 		spriteSheetWall->SetCustomPosition(cell->m_Position);
 		spriteSheetWall->ShouldAnimate(false);
 		cell->m_pSpriteSheetWall = spriteSheetWall.get();
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
-	}
+		}
+		break;
 
-
-	else if (cell->m_CellItem == CellItem::ExtraBombPU)
-	{
+	case CellItem::ExtraBombPU:
+		{
 		cell->m_pSpriteSheetWall->Destroy();
 		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "ExtraBomb.png", 1, 1, 0.1f, false, true);
 		spriteSheetWall->SetCustomPosition(cell->m_Position);
 		spriteSheetWall->ShouldAnimate(false);
 		cell->m_pSpriteSheetWall = spriteSheetWall.get();
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
-	}
+		}
+		break;
 
-	else if (cell->m_CellItem == CellItem::DetonatorPU)
-	{
+	case CellItem::DetonatorPU:
+		{
 		cell->m_pSpriteSheetWall->Destroy();
 		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "RemoteControl.png", 1, 1, 0.1f, false, true);
 		spriteSheetWall->SetCustomPosition(cell->m_Position);
 		spriteSheetWall->ShouldAnimate(false);
 		cell->m_pSpriteSheetWall = spriteSheetWall.get();
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
-	}
-
-	else if (cell->m_CellItem == CellItem::FlamesPU)
-	{
+		}
+		break;
+	case CellItem::FlamesPU:
+		{
 		cell->m_pSpriteSheetWall->Destroy();
 		auto spriteSheetWall = std::make_unique<RamCoreEngine::SpriteSheetComponent>(GetGameObject(), "FireUp.png", 1, 1, 0.1f, false, true);
 		spriteSheetWall->SetCustomPosition(cell->m_Position);
 		spriteSheetWall->ShouldAnimate(false);
 		cell->m_pSpriteSheetWall = spriteSheetWall.get();
 		GetGameObject()->AddComponent(std::move(spriteSheetWall));
+		}
+		break;
 	}
+	
 }
 
 void game::GridComponent::SpawnExplodeTexture(const glm::vec2& position, const std::string& fullPath)
@@ -785,5 +786,4 @@ std::vector<int> game::GridComponent::GetConnectionIndexFromCellIndex(int index)
 
 	return connections;
 }
-
 
