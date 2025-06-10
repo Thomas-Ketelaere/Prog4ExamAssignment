@@ -14,7 +14,6 @@ namespace RamCoreEngine
 		void StopMusic() override {}
 
 		void Mute() override {}
-		void Unmute() override {}
 
 		void UnloadMusic() override {}
 		void UnloadAllSound() override {}

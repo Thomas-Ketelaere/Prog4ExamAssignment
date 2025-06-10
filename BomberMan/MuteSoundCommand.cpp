@@ -8,13 +8,5 @@ game::MuteSoundCommand::MuteSoundCommand():
 
 void game::MuteSoundCommand::Execute()
 {
-	m_Muted = !m_Muted;
-	if (m_Muted)
-	{
-		RamCoreEngine::ServiceLocator::GetSoundSystem().Mute();
-	}
-	else
-	{
-		RamCoreEngine::ServiceLocator::GetSoundSystem().Unmute();
-	}
+	RamCoreEngine::ServiceLocator::GetSoundSystem().Mute();
 }

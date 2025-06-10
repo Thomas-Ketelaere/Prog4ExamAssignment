@@ -57,13 +57,7 @@ namespace RamCoreEngine
 		void Mute() override
 		{
 			_real_ss->Mute();
-			std::cout << "muted all sound" << std::endl;
-		}
-
-		void Unmute() override
-		{
-			_real_ss->Unmute();
-			std::cout << "unmuted all sound" << std::endl;
+			std::cout << "(Un)muted all sound" << std::endl;
 		}
 	};
 }

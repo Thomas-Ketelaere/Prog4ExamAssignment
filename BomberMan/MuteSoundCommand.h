@@ -14,9 +14,6 @@ namespace game
 		MuteSoundCommand& operator=(MuteSoundCommand&& other) = delete;
 
 		void Execute() override;
-
-	private:
-		bool m_Muted{};
 	};
 }
 

@@ -150,7 +150,7 @@ void LoadPlayerAsEnemy(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* g
 	enemy->SetTag(make_sdbm_hash("Enemy"));
 	enemy->SetParent(gridObject, true);
 	enemy->SetLocalPosition(glm::vec3(enemies[0].first.x, enemies[0].first.y, 0));
-	auto enemyCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemy.get(), 25.f, 25.f, false);
+	auto enemyCollider = std::make_unique<game::EnemyCollider>(enemy.get(), 25.f, 25.f, true);
 	enemy->AddComponent(std::move(enemyCollider));
 	auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
 	auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100, true);

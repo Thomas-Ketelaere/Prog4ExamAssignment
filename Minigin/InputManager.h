@@ -21,7 +21,7 @@ namespace RamCoreEngine
 		KeyState m_KeyState{};
 		unsigned int m_KeyBinding{};
 		int m_ControllerIndex{};
-	};
+	};	
 
 	class InputManager final : public Singleton<InputManager>
 	{
