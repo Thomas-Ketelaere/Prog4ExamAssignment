@@ -76,7 +76,7 @@ void LoadPlayer(RamCoreEngine::Scene* scene, game::GridComponent* gridComp, int 
 
 	gridComp->GetGridSubject()->AddObserver(playerInputSpawnBombComponent.get());
 
-	playerInputCollider->SetDebugRendering(true);
+	//playerInputCollider->SetDebugRendering(true);
 	playerInputObject->SetLocalPosition(glm::vec3(48, 112 + 32*index, 0.f)); //move one down if second player
 	playerInputObject->AddComponent(std::move(playerInputSpriteSheet));
 	playerInputObject->AddComponent(std::move(playerInputSpriteSetter));
@@ -154,7 +154,7 @@ void LoadPlayerAsEnemy(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* g
 	enemy->AddComponent(std::move(enemyCollider));
 	auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
 	auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 75.f, 100, true);
-	enemyMovement->SetDebugRendering(true);
+	//enemyMovement->SetDebugRendering(true);
 	enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange);
 	enemy->AddComponent(std::move(enemyMovement));
 	enemy->AddComponent(std::move(enemySprite));
@@ -374,7 +374,7 @@ void LoadGameScene()
 			if (enemyType == 0)
 			{
 				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 50.f, 100, false);
-				enemyMovement->SetDebugRendering(true);
+				//enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
 				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
@@ -385,7 +385,7 @@ void LoadGameScene()
 			else if (enemyType == 1)
 			{
 				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 60.f, 200, false, true, 100.f);
-				enemyMovement->SetDebugRendering(true);
+				//enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
 				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Oneal.png", 4, 3, 0.2f, false);
@@ -396,7 +396,7 @@ void LoadGameScene()
 			else if (enemyType == 2)
 			{
 				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 60.f, 400, false);
-				enemyMovement->SetDebugRendering(true);
+				//enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
 				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Doll.png", 4, 3, 0.2f, false);
@@ -406,7 +406,7 @@ void LoadGameScene()
 			else if (enemyType == 3)
 			{
 				auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 100.f, 800, false, true, 100.f);
-				enemyMovement->SetDebugRendering(true);
+				//enemyMovement->SetDebugRendering(true);
 				enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
 
 				auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Minvo.png", 4, 3, 0.2f, false);
