@@ -115,6 +115,17 @@ public:
 		m_Samples.clear();
 	}
 
+	void LoadAllSound()
+	{
+		for (auto& pair : m_Samples)
+		{
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			pair.first.m_RequestType = SoundRequest::LoadSound;
+			m_Queue.push(pair);
+			m_CondVar.notify_one();
+		}
+	}
+
 	void Mute()
 	{
 		m_IsMuted = !m_IsMuted;
@@ -154,30 +165,15 @@ private:
 			switch (pair.first.m_RequestType)
 			{
 			case SoundRequest::PlaySound:
-				if (pair.second == nullptr)
+				if (m_IsMuted)
 				{
-					pair.second = Mix_LoadWAV(pair.first.m_FilePath);
-					for (auto& pairSample : m_Samples)
-					{
-						if (pairSample.first.id == pair.first.id)
-						{
-							pairSample.second = pair.second;
-							break;
-						}
-					}
+					pair.second->volume = 0;
 				}
-				if (pair.second != nullptr)
+				else
 				{
-					if (m_IsMuted)
-					{
-						pair.second->volume = 0;
-					}
-					else
-					{
-						pair.second->volume = Uint8(pair.first.m_Volume);
-					}
-					pair.first.m_Channel = Mix_PlayChannel(-1, pair.second, pair.first.m_Loops);
+					pair.second->volume = Uint8(pair.first.m_Volume);
 				}
+				pair.first.m_Channel = Mix_PlayChannel(-1, pair.second, pair.first.m_Loops);
 				break;
 
 			case SoundRequest::PlayMusic:
@@ -185,7 +181,7 @@ private:
 				{
 					Mix_FreeMusic(m_pMusic);
 				}
-				m_pMusic = Mix_LoadMUS(pair.first.m_FilePath); 
+				m_pMusic = Mix_LoadMUS(pair.first.m_FilePath);
 				if (m_IsMuted)
 				{
 					Mix_VolumeMusic(0);
@@ -234,6 +230,19 @@ private:
 						Mix_Volume(pairSample.first.m_Channel, pairSample.first.m_Volume);
 					}
 				}
+				break;
+			case SoundRequest::LoadSound:
+				pair.second = Mix_LoadWAV(pair.first.m_FilePath);
+				std::unique_lock<std::mutex> samplesLock(m_Mutex);
+				for (auto& pairSample : m_Samples)
+				{
+					if (pairSample.first.id == pair.first.id)
+					{
+						pairSample.second = pair.second;
+						break;
+					}
+				}
+				samplesLock.unlock();
 				break;
 			}
 		}
@@ -296,6 +305,11 @@ void RamCoreEngine::SDLSoundSystem::UnloadMusic()
 void RamCoreEngine::SDLSoundSystem::UnloadAllSound()
 {
 	m_pImpl->UnloadAllSound();
+}
+
+void RamCoreEngine::SDLSoundSystem::LoadAllSound()
+{
+	m_pImpl->LoadAllSound();
 }
 
 

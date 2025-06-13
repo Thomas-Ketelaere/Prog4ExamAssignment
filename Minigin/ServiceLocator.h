@@ -17,6 +17,7 @@ namespace RamCoreEngine
 
 		void UnloadMusic() override {}
 		void UnloadAllSound() override {}
+		void LoadAllSound() override {}
 
 	};
 

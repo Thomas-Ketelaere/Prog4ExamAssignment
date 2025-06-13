@@ -19,6 +19,7 @@ namespace RamCoreEngine
 		void AddSound(const SoundId id, const char* filePath) override;
 		void UnloadMusic() override;
 		void UnloadAllSound() override;
+		void LoadAllSound() override;
 
 	private:
 		class SDLSoundSystemImpl;

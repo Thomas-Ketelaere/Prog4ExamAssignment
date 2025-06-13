@@ -180,9 +180,12 @@ std::unique_ptr<game::EnemyState> game::WanderingState::Update()
 		{
 			GetComponent()->ResetShouldControlMove();
 			glm::vec3 pos = GetComponent()->GetGameObject()->GetWorldPosition();
+			glm::vec3 posLocal = GetComponent()->GetGameObject()->GetLocalPosition();
 			glm::vec2 direction = GetComponent()->GetControlDirection();
 			pos.x += m_Speed * direction.x * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 			pos.y += m_Speed * direction.y * RamCoreEngine::Time::GetInstance().m_DeltaTime;
+			posLocal.x += m_Speed * direction.x * RamCoreEngine::Time::GetInstance().m_DeltaTime;
+			posLocal.y += m_Speed * direction.y * RamCoreEngine::Time::GetInstance().m_DeltaTime;
 
 			glm::vec3 posToCheck{ pos };
 			float colliderWidthHalf = GetComponent()->GetColliderComponent()->GetColliderWidth() / 2;
@@ -215,10 +218,9 @@ std::unique_ptr<game::EnemyState> game::WanderingState::Update()
 
 			if (canMove)
 			{
-				GetComponent()->GetGameObject()->SetLocalPosition(glm::vec3(pos.x, pos.y, 0.f));
+				GetComponent()->GetGameObject()->SetLocalPosition(glm::vec3(posLocal.x, posLocal.y, 0.f));
 			}
 		}
-		
 	}
 	else
 	{

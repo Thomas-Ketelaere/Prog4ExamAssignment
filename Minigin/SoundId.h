@@ -6,7 +6,7 @@ using SoundId = unsigned int;
 
 enum class SoundRequest
 {
-	PlaySound, PlayMusic, StopSound, StopMusic, UnloadSound, UnloadMusic, Mute, Unmute
+	PlaySound, PlayMusic, StopSound, StopMusic, UnloadSound, UnloadMusic, Mute, Unmute, LoadSound
 };
 
 struct Sound

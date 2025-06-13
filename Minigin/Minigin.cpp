@@ -116,7 +116,6 @@ void RamCoreEngine::Minigin::Run(const std::function<void()>& load)
 		sceneManager.Update();
 		sceneManager.LateUpdate();
 		renderer.Render();
-		Renderer::GetInstance().DrawRectangle(245, 0, 10, 500, SDL_Color(1, 1, 0, 1));
 		const auto sleepTime = currentTime + std::chrono::milliseconds(m_MsPerFrame) - std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_for(sleepTime);
 	}

@@ -18,6 +18,7 @@ namespace RamCoreEngine
 
 		virtual void UnloadMusic() = 0;
 		virtual void UnloadAllSound() = 0;
+		virtual void LoadAllSound() = 0;
 
 	};
 }

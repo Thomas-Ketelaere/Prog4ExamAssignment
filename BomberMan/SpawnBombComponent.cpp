@@ -66,9 +66,9 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 
 	else if (event.id == make_sdbm_hash("CollectedFlamesPU"))
 	{
-		++m_Range;
+		++m_Range; 
 		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("CollectedPU"), 80, 0);
-		RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/PUMusic.mp3", 50, -1);
+		
 	}
 	else if (event.id == make_sdbm_hash("CollectedExtraBombPU"))
 	{
@@ -82,7 +82,7 @@ void game::SpawnBombComponent::Notify(Event event, RamCoreEngine::GameObject*)
 		RamCoreEngine::ServiceLocator::GetSoundSystem().Play(make_sdbm_hash("CollectedPU"), 80, 0);
 		RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/PUMusic.mp3", 50, -1);
 	}
-
+	
 }
 
 void game::SpawnBombComponent::SpawnBomb(const glm::vec2 position)

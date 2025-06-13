@@ -150,10 +150,10 @@ void LoadPlayerAsEnemy(RamCoreEngine::Scene* scene, RamCoreEngine::GameObject* g
 	enemy->SetTag(make_sdbm_hash("Enemy"));
 	enemy->SetParent(gridObject, true);
 	enemy->SetLocalPosition(glm::vec3(enemies[0].first.x, enemies[0].first.y, 0));
-	auto enemyCollider = std::make_unique<game::EnemyCollider>(enemy.get(), 25.f, 25.f, true);
+	auto enemyCollider = std::make_unique<game::EnemyCollider>(enemy.get(), 20.f, 20.f, true);
 	enemy->AddComponent(std::move(enemyCollider));
 	auto enemySprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemy.get(), "Balloom.png", 4, 3, 0.2f, false);
-	auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 15.f, 100, true);
+	auto enemyMovement = std::make_unique<game::EnemyMovementComponent>(enemy.get(), 75.f, 100, true);
 	enemyMovement->SetDebugRendering(true);
 	enemyMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange);
 	enemy->AddComponent(std::move(enemyMovement));
@@ -289,34 +289,13 @@ void LoadStartScene()
 	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/TitleScreen.mp3", 30, -1);//30 volume
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveUI"), "../Data/Sound/MoveVertical.mp3");
 	game::GameManager::GetInstance().ResetStats(); //every time going to menu stops game so need to reset
+	RamCoreEngine::ServiceLocator::GetSoundSystem().LoadAllSound();
 }
 
 void LoadGameScene()
 {
 	auto scene = RamCoreEngine::SceneManager::GetInstance().GetCurrentScene();
-
-	
-	//auto backgroundObject = std::make_unique<RamCoreEngine::GameObject>();
-	//auto background = std::make_unique<RamCoreEngine::TextureComponent>(backgroundObject.get(), "background.tga");
-	//backgroundObject->SetLocalPosition(0, 0);
-	//backgroundObject->AddComponent(std::move(background));
-	//
-	//scene->Add(std::move(backgroundObject));
-
-	//auto logoObject = std::make_unique<RamCoreEngine::GameObject>();
-	//auto logo = std::make_unique<RamCoreEngine::TextureComponent>(logoObject.get(), "logo.tga");
-	//logoObject->SetLocalPosition(216, 180);
-	//logoObject->AddComponent(std::move(logo));
-	//
-	//scene->Add(std::move(logoObject));
 	auto font = RamCoreEngine::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-
-	//auto assignmentTextObject = std::make_unique<RamCoreEngine::GameObject>();
-	//
-	//auto assignmentText = std::make_unique<RamCoreEngine::TextComponent>(assignmentTextObject.get(), "Programming 4 Assignment", font);
-	//assignmentTextObject->SetLocalPosition(80, 50);
-	//assignmentTextObject->AddComponent(std::move(assignmentText));
-	//scene->Add(std::move(assignmentTextObject));
 
 	auto fpsObject = std::make_unique<RamCoreEngine::GameObject>();
 	auto fpsText = std::make_unique<RamCoreEngine::TextComponent>(fpsObject.get(), "FPS:", font);
@@ -326,12 +305,6 @@ void LoadGameScene()
 	fpsObject->AddComponent(std::move(fpsCounter));
 	scene->Add(std::move(fpsObject));
 
-	//auto fpsMovement = std::make_unique<game::MovementComponent>();
-	//fpsMovement->SetSpeed(5.f, 0.f);
-	//auto fpsRotPos = glm::vec3{ 216, 180, 0 };
-	//fpsMovement->SetRotationSpeed(1.f, fpsRotPos);
-	//fpsObject->AddComponent(std::move(fpsMovement));
-
 	auto timerLevelObject = std::make_unique<RamCoreEngine::GameObject>();
 	timerLevelObject->SetLocalPosition(glm::vec3(60, 32, 0.f));
 	auto timerText = std::make_unique<RamCoreEngine::TextComponent>(timerLevelObject.get(), "Time ", font);
@@ -340,61 +313,18 @@ void LoadGameScene()
 	timerLevelObject->AddComponent(std::move(timerCounter));
 	scene->Add(std::move(timerLevelObject));
 
-
-	//PLAYER SINGLE SPRITE
-	// auto playerObject = std::make_unique<RamCoreEngine::GameObject>();
-	// auto player = std::make_unique<RamCoreEngine::TextureComponent>(playerObject.get(), "Bomberman.png");
-	// playerObject->SetLocalPosition(120, 300);
-	// playerObject->AddComponent(std::move(player));
-	// 
-	// auto playerMovement = std::make_unique<game::MovementComponent>(playerObject.get());
-	// //playerMovement->SetSpeed(20.f, 0.f);
-	// playerMovement->SetRotation(3.f, 170, 300);
-	// playerObject->AddComponent(std::move(playerMovement));
-	// 
-	// 
-	// 
-	// //PLAYER ROTATION AROUND OTHER PLAYER
-	// auto secondPlayerObject = std::make_unique<RamCoreEngine::GameObject>();
-	// secondPlayerObject->SetParent(playerObject.get(), false);
-	// auto secondPlayer = std::make_unique<RamCoreEngine::TextureComponent>(secondPlayerObject.get(), "Bomberman.png");
-	// secondPlayerObject->SetLocalPosition(100, 300);
-	// glm::vec3 secondPlayerLocPos = { 40, 0, 0 };
-	// secondPlayerObject->SetLocalPosition(secondPlayerLocPos);
-	// secondPlayerObject->AddComponent(std::move(secondPlayer));
-	// 
-	// auto secondPlayerMovement = std::make_unique<game::MovementComponent>(secondPlayerObject.get());
-	// secondPlayerMovement->SetRotation(-50.f, playerObject->GetWorldPosition().x, playerObject->GetWorldPosition().y);
-	// secondPlayerObject->AddComponent(std::move(secondPlayerMovement));
-	// 
-	// auto secondPlayerRotatePoint = std::make_unique<game::RotatingMovingPointComponent>(secondPlayerObject.get());
-	// secondPlayerObject->AddComponent(std::move(secondPlayerRotatePoint));
-	// 
-	// 
-	// 
-	// scene->Add(std::move(playerObject));
-	// scene->Add(std::move(secondPlayerObject));
-
-	//auto trashCashObject = std::make_unique<RamCoreEngine::GameObject>();
-	//auto trashCash = std::make_unique<game::TrashCashComponent>(trashCashObject.get());
-	//trashCashObject->AddComponent(std::move(trashCash));
-	//scene->Add(std::move(trashCashObject));
-
 	//Input
 	auto gridObject = std::make_unique<RamCoreEngine::GameObject>();
 	gridObject->SetTag(make_sdbm_hash("Grid"));
 	gridObject->SetLocalPosition(glm::vec3(0, 0, 0.f));
 	auto gridView = std::make_unique<game::GridComponent>(gridObject.get(), 31, 13, 992, 476, 32.f, 64.f, 512);
 	
-
 	auto playerLivesTextObject = std::make_unique<RamCoreEngine::GameObject>();
 	playerLivesTextObject->SetLocalPosition(glm::vec3(420, 30, 0.f));
 	std::string lives = "Lives: " + std::to_string(game::GameManager::GetInstance().GetTotalLives());
 	auto playerLivesText = std::make_unique<RamCoreEngine::TextComponent>(playerLivesTextObject.get(), lives, font);
 	playerLivesText->ChangeFontSize(28);
 	playerLivesTextObject->AddComponent(std::move(playerLivesText));
-	//auto playerLivesTextChange = std::make_unique<game::LivesTextComponent>(playerLivesTextObject.get());
-	//playerLivesTextObject->AddComponent(std::move(playerLivesTextChange)); // moves after observer is set
 	scene->Add(std::move(playerLivesTextObject));
 
 	//display score
@@ -486,41 +416,6 @@ void LoadGameScene()
 			scene->Add(std::move(enemy));
 		}
 	}
-	
-
-
-	/*auto enemyBalloomOne = std::make_unique<RamCoreEngine::GameObject>();
-	enemyBalloomOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyBalloomOne->SetParent(gridObject.get(), true);
-	enemyBalloomOne->SetLocalPosition(glm::vec3(48, 304, 0));
-	auto enemyBalloomOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyBalloomOne.get(), 15.f, 100);
-	enemyBalloomOneMovement->SetDebugRendering(true);
-	enemyBalloomOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
-	auto enemyBalloomOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyBalloomOne.get(), 25.f, 25.f, false);
-	auto enemyBalloomOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyBalloomOne.get(), "Balloom.png", 4, 3, 0.2f, false);
-	
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneMovement));
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneCollider));
-	enemyBalloomOne->AddComponent(std::move(enemyBalloomOneSprite));
-	
-	scene->Add(std::move(enemyBalloomOne));
-
-
-	auto enemyOnealOne = std::make_unique<RamCoreEngine::GameObject>();
-	enemyOnealOne->SetTag(make_sdbm_hash("Enemy"));
-	enemyOnealOne->SetParent(gridObject.get(), true);
-	enemyOnealOne->SetLocalPosition(glm::vec3(48, 336, 0));
-	auto enemyOnealOneMovement = std::make_unique<game::EnemyMovementComponent>(enemyOnealOne.get(), 10.f, 200, true, 100.f);
-	enemyOnealOneMovement->SetDebugRendering(true);
-	enemyOnealOneMovement->GetEnemyDiedSubject()->AddObserver(playerScoreTextChange.get());
-	auto enemyOnealOneCollider = std::make_unique<RamCoreEngine::BaseColliderComponent>(enemyOnealOne.get(), 25.f, 25.f, false);
-	auto enemyOnealOneSprite = std::make_unique<RamCoreEngine::SpriteSheetComponent>(enemyOnealOne.get(), "Oneal.png", 4, 3, 0.2f, false);
-
-	enemyOnealOne->AddComponent(std::move(enemyOnealOneMovement));
-	enemyOnealOne->AddComponent(std::move(enemyOnealOneCollider));
-	enemyOnealOne->AddComponent(std::move(enemyOnealOneSprite));
-
-	scene->Add(std::move(enemyOnealOne));*/
 
 	gridObject->AddComponent(std::move(gridView));
 	playerScoreTextObject->AddComponent(std::move(playerScoreTextChange)); // moves after observer is set
@@ -532,6 +427,7 @@ void LoadGameScene()
 	RamCoreEngine::Renderer::GetInstance().SetBackgroundColor(color);
 
 	// --------SOUND----------
+	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 50, -1); //50 volume
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("ExplodeBombSFX"), "../Data/Sound/BombExplodes.wav");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveHor"), "../Data/Sound/MoveHorizontal.mp3");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveVer"), "../Data/Sound/MoveVertical.mp3");
@@ -539,10 +435,11 @@ void LoadGameScene()
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("CollectedPU"), "../Data/Sound/PowerUp.mp3");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("PlacedBomb"), "../Data/Sound/PlaceBomb.mp3");
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("Dying"), "../Data/Sound/Dying.mp3");
-	RamCoreEngine::ServiceLocator::GetSoundSystem().PlayMusic("../Data/Sound/MainBGM.mp3", 50, -1); //50 volume
+	RamCoreEngine::ServiceLocator::GetSoundSystem().LoadAllSound();
 
 	auto muteCommand = std::make_unique<game::MuteSoundCommand>();
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(muteCommand), RamCoreEngine::KeyState::Up, SDLK_F2, -1);
+
 }
 
 void LoadLoadingScene()
@@ -571,6 +468,8 @@ void LoadLoadingScene()
 
 	auto muteCommand = std::make_unique<game::MuteSoundCommand>();
 	RamCoreEngine::InputManager::GetInstance().AddBinding(std::move(muteCommand), RamCoreEngine::KeyState::Up, SDLK_F2, -1);
+
+	RamCoreEngine::ServiceLocator::GetSoundSystem().LoadAllSound();
 }
 
 void LoadEndScene()
@@ -661,7 +560,7 @@ void LoadEndScene()
 
 	auto controlObject = std::make_unique<RamCoreEngine::GameObject>();
 	controlObject->SetLocalPosition(glm::vec3(256, 400, 0.f));
-	auto controlsText = std::make_unique<RamCoreEngine::TextComponent>(controlObject.get(), "WASD/D-pad to control UI, Hold F/Y to confirm", font);
+	auto controlsText = std::make_unique<RamCoreEngine::TextComponent>(controlObject.get(), "WASD/D-pad to control UI, Hold F/X to confirm", font);
 	controlsText->ChangeFontSize(18);
 	controlObject->AddComponent(std::move(controlsText));
 	scene->Add(std::move(controlObject));
@@ -674,6 +573,7 @@ void LoadEndScene()
 	scene->Add(std::move(addRemoveObject));
 
 	RamCoreEngine::ServiceLocator::GetSoundSystem().AddSound(make_sdbm_hash("MoveUI"), "../Data/Sound/MoveVertical.mp3");
+	RamCoreEngine::ServiceLocator::GetSoundSystem().LoadAllSound();
 	
 }
 
